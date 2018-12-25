@@ -17,7 +17,7 @@ namespace HonorAmongThieves.Game
 
         public Lobby()
         {
-            const int CLEANUPINTERVAL = 60000;
+            const int CLEANUPINTERVAL = 120000;
             this.Timer = new Timer(CLEANUPINTERVAL)
             {
                 Enabled = true,
@@ -68,7 +68,7 @@ namespace HonorAmongThieves.Game
             return null;
         }
 
-        public async void Cleanup(Object source, ElapsedEventArgs e)
+        public void Cleanup(Object source, ElapsedEventArgs e)
         {
             const int MAXROOMIDLEMINUTES = 30;
             List<string> roomsToDestroy = new List<string>();
@@ -82,8 +82,8 @@ namespace HonorAmongThieves.Game
 
             foreach (var roomId in roomsToDestroy)
             {
-                await this.Rooms[roomId].Destroy();
-                this.Rooms[roomId] = null;
+                this.Rooms[roomId].Destroy();
+                this.Rooms.Remove(roomId);
             }
         }
     }

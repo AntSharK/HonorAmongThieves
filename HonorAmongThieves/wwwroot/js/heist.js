@@ -24,6 +24,7 @@ connection.on("JoinRoom_ChangeState", function (roomJoined, userJoined) {
     var startButton = document.getElementById("startButtonDiv");
     startButton.style.display = "none";
 
+    // This event is only sent to the caller on joining a room
     userName = userJoined;
     roomId = roomJoined;
 
@@ -33,8 +34,7 @@ connection.on("JoinRoom_ChangeState", function (roomJoined, userJoined) {
     }
 
     document.getElementById("pageName").textContent = "LOBBY: " + roomJoined;
-    document.getElementById("startLobby").style.display = "block";
-    
+    document.getElementById("startLobby").style.display = "block";    
 });
 
 connection.on("JoinRoom_UpdateState", function (playersConcat, userJoined) {
@@ -77,6 +77,18 @@ document.getElementById("startbutton").addEventListener("click", function (event
         return console.error(err.toString());
     });
     event.preventDefault();
+});
+
+// -------------------------------
+// ----- STATE: HEIST SIGNUP -----
+// -------------------------------
+connection.on("StartRoom_ChangeState", function (roomStarted) {
+    var elements = document.getElementsByClassName("state");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+    }
+
+    document.getElementById("pageName").textContent = "GAME STARTED: " + roomStarted;
 });
 
 connection.start().catch(function (err) {

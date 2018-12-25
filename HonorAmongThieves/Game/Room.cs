@@ -1,8 +1,6 @@
 ﻿using HonorAmongThieves.Hubs;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Game
 {
@@ -60,15 +58,16 @@ namespace HonorAmongThieves.Game
             var playerToAdd = new Player(playerName, this);
             playerToAdd.ConnectionId = connectionId;
             this.Players.Add(playerToAdd);
+            this.UpdatedTime = DateTime.UtcNow;
+
             return playerToAdd;
         }
 
-        public async Task Destroy()
+        public void Destroy()
         {
             foreach (var player in this.Players)
             {
                 player.CurrentStatus = Player.Status.CleaningUp;
-                await this.Hub.Groups.RemoveFromGroupAsync(player.ConnectionId, this.Id);
             }
         }
     }

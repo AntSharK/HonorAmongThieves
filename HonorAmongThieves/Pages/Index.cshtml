@@ -1,45 +1,23 @@
 ﻿@page
-<div class="container">
-    <h2><u>
-        <div id="pageName">JOIN A GAME</div>
-    </u></h2>
+@model HonorAmongThieves.Pages.IndexModel
 
-    <div class="state" id="startLobby" style="display:none">
-        <ul id="lobbyList"></ul>
-
-        <div id="startButtonDiv" style="display:none">
-            At least 4 players are required to start the game.<br />
-            Make sure there are no players who are in the lobby but cannot see the game!!.<br />
-            <input type="button" id="startbutton" value="START GAME" />
-        </div>
-    </div>
-    <div class="row">&nbsp;</div>
-
-    <div class="state" id="joinroom">
-        <input type="button" id="createroombutton" value="CREATE ROOM" />
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
-            Names are unique per room.<br />
-            Only letters and numbers allowed in username. Username cannot be longer than 10 letters.<br />
-            You need a username to create a room.<br /><br />
-            User Name<input type="text" id="username" /><br />
-            Room ID<input type="text" id="roomid" /><br /><br />
-            <input type="button" id="joinroombutton" value="JOIN ROOM" />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <hr />
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
-    </div>
-</div>
-
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/heist.js"></script>
+<a href="/Heist">HEIST</a>
+<br />
+<br />
+<h2><u>Existing Lobbies</u></h2>
+@{
+    <h3><u>Heist Lobbies</u></h3>
+    <table border="1px solid black">
+        <th>Room ID</th>
+        <th>Start Time</th>
+        <th>Updated Time</th>
+        @foreach (var heistGame in Model.HeistLobbies)
+        {
+        <tr>
+            <th>@heistGame.Item1</th>
+            <th>@heistGame.Item2.ToString()</th>
+            <th>@heistGame.Item3.ToString()</th>
+        </tr>
+        }
+    </table>
+}
