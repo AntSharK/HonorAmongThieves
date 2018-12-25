@@ -11,7 +11,9 @@ namespace HonorAmongThieves.Game
 
         public string Name { get; private set; }
 
-        public int NetWorth { get; set; } = 0;
+        public int NetWorth { get; set; } = 10;
+
+        public int TimeSpentInJail { get; set; } = 0;
 
         public int YearsLeftInJail { get; set; } = -1;
 

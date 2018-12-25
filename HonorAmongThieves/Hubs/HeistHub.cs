@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Hubs
@@ -40,19 +41,25 @@ namespace HonorAmongThieves.Hubs
 
         public async Task JoinRoom_UpdateState(string roomId, string newUser)
         {
-            var playerNames = "";
+            var playerNames = new StringBuilder();
             foreach (var player in Program.Instance.Rooms[roomId].Players)
             {
-                playerNames = player.Name + "|" + playerNames + "|";
+                playerNames.Append(player.Name);
+                playerNames.Append("|");
             }
 
-            await Clients.Group(roomId).SendAsync("JoinRoom_UpdateState", playerNames.TrimEnd('|'), newUser);
+            if (playerNames.Length > 0)
+            {
+                playerNames.Length--;
+            }
+
+            await Clients.Group(roomId).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newUser);
         }
 
         // To start a game
         public async Task StartRoom(string roomId)
         {
-            const int MINPLAYERCOUNT = 4;
+            const int MINPLAYERCOUNT = 1;
 
             if (Program.Instance.Rooms.ContainsKey(roomId)
                 && Program.Instance.Rooms[roomId].SigningUp
@@ -66,22 +73,68 @@ namespace HonorAmongThieves.Hubs
         public async Task StartRoom_ChangeState(string roomId)
         {
             await Clients.Group(roomId).SendAsync("StartRoom_ChangeState", roomId);
+            await this.StartRoom_UpdateState(roomId);
         }
 
-        public async Task StartRoom_UpdateState(string roomId, Heist heist)
+        public async Task StartRoom_UpdateState(string roomId)
         {
-            // Complex logic to resolve who is in a heist and who transitions states to be in a heist
-        }
+            var room = Program.Instance.Rooms[roomId];
 
-        public async Task HeistSignup(bool signsUp)
-        {
-            // A player opts on or out of a heist
+            foreach (var player in room.Players)
+            {
+                await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, room.Years + 2018);
+            }
+
+            foreach (var player in room.Players)
+            {
+                player.CurrentStatus = Player.Status.InHeist;
+            }
+
+            room.SpawnHeists();
+            foreach (var heist in room.Heists.Values)
+            {
+                foreach (var player in heist.Players.Values)
+                {
+                    await Groups.AddToGroupAsync(player.ConnectionId, heist.Id);
+                }
+            }
+
+            foreach (var heist in room.Heists.Values)
+            {
+                await this.HeistPrep_ChangeState(heist);
+            }
         }
 
         public async Task HeistPrep_ChangeState(Heist heist)
         {
-            // Change state to the heist screen
-            // Add players to be in heist groups
+            var random = new Random();
+
+            var playerInfo = new StringBuilder();
+            foreach (var player in heist.Players.Values)
+            {
+                playerInfo.Append(player.Name);
+                playerInfo.Append("|");
+                var fudgedNetworth = player.NetWorth * random.Next(50, 150) / 100;
+                playerInfo.Append(fudgedNetworth);
+                playerInfo.Append("|");
+                playerInfo.Append(player.TimeSpentInJail);
+                playerInfo.Append("=");
+
+                // TODO: Remove test stuff
+                playerInfo.Append(player.Name);
+                playerInfo.Append("|");
+                playerInfo.Append(fudgedNetworth);
+                playerInfo.Append("|");
+                playerInfo.Append(player.TimeSpentInJail);
+                playerInfo.Append("=");
+            }
+
+            if (playerInfo.Length > 0)
+            {
+                playerInfo.Length = playerInfo.Length - 1;
+            }
+
+            await Clients.Group(heist.Id).SendAsync("HeistPrep_ChangeState", playerInfo.ToString());
         }
 
 

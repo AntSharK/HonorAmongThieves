@@ -22,7 +22,7 @@ namespace HonorAmongThieves.Game
 
         public int Years { get; set; } = 0;
 
-        public List<Heist> Heists { get; } = new List<Heist>();
+        public Dictionary<string, Heist> Heists { get; } = new Dictionary<string, Heist>();
 
         public HeistHub Hub { get; private set; }
 
@@ -32,6 +32,20 @@ namespace HonorAmongThieves.Game
             this.Hub = hub;
             this.CreatedTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
+        }
+
+        public void SpawnHeists()
+        {
+            foreach (var player in this.Players)
+            {
+                player.CurrentStatus = Player.Status.InHeist;
+            }
+
+            // TODO: Dummy logic currently in place
+            var heistId = Utils.GenerateId(12, this.Heists);
+            var heist = new Heist(heistId);
+            heist.Players[this.Players[0].Name] = this.Players[0];
+            this.Heists[heistId] = heist;
         }
 
         public Player CreatePlayer(string playerName, string connectionId)

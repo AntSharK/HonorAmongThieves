@@ -89,6 +89,35 @@ connection.on("StartRoom_ChangeState", function (roomStarted) {
     }
 
     document.getElementById("pageName").textContent = "GAME STARTED: " + roomStarted;
+    var gamestartarea = document.getElementById("gamestart");
+    gamestartarea.style.display = "block";
+});
+
+connection.on("StartRoom_UpdateState", function (netWorth, years) {
+    document.getElementById("years").textContent = "YEAR: " + years;
+    document.getElementById("networth").textContent = "NETWORTH: $" + netWorth + " MILLION";
+});
+
+connection.on("HeistPrep_ChangeState", function (playerInfos) {
+    var heistParticipantInfo = document.getElementsByClassName("heistparticipantinfo");
+    for(var i = heistParticipantInfo.length - 1; i >= 0; i--)
+    {
+        heistParticipantInfo[i].parentNode.removeChild(heistParticipantInfo[i]);
+    }
+
+    var playerList = document.getElementById("heistparticipants");
+    var players = playerInfos.split("=");
+    for (let i = 0; i < players.length; i++) {
+        var playerInfo = players[i].split("|");
+        var newRow = playerList.insertRow(playerList.rows.length);
+        newRow.className = "heistparticipantinfo";
+        newRow.insertCell(0).textContent = playerInfo[0];
+        newRow.insertCell(1).textContent = playerInfo[1];
+        newRow.insertCell(2).textContent = playerInfo[2];
+    }
+
+    var heistsetup = document.getElementById("heistsetup");
+    heistsetup.style.display = "block";
 });
 
 connection.start().catch(function (err) {

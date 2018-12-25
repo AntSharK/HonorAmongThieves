@@ -1,8 +1,10 @@
 ﻿@page
 <div class="container">
-    <h2><u>
-        <div id="pageName">JOIN A GAME</div>
-    </u></h2>
+    <h2>
+        <u>
+            <div id="pageName">JOIN A GAME</div>
+        </u>
+    </h2>
 
     <div class="state" id="startLobby" style="display:none">
         <ul id="lobbyList"></ul>
@@ -10,6 +12,7 @@
         <div id="startButtonDiv" style="display:none">
             At least 4 players are required to start the game.<br />
             Make sure there are no players who are in the lobby but cannot see the game!!.<br />
+            <br />
             <input type="button" id="startbutton" value="START GAME" />
         </div>
     </div>
@@ -22,11 +25,30 @@
             Names are unique per room.<br />
             Only letters and numbers allowed in username. Username cannot be longer than 10 letters.<br />
             You need a username to create a room.<br /><br />
-            User Name<input type="text" id="username" /><br />
-            Room ID<input type="text" id="roomid" /><br /><br />
+            User Name: <input type="text" id="username" /><br />
+            Room ID: <input type="text" id="roomid" /><br /><br />
             <input type="button" id="joinroombutton" value="JOIN ROOM" />
         </div>
     </div>
+
+    <div class="state" id="gamestart" style="display:none">
+        <h3><div id="years"> </div></h3>
+        <h3><div id="networth"> </div></h3>
+        <br />
+
+        <div class="state" id="heistsetup" style="display:none">
+            <u><h4>Current Heist</h4></u>
+            <table border="1px solid black" id="heistparticipants">
+                <tr>
+                    <th>Thief</th>
+                    <th>Estimated Networth</th>
+                    <th>Time Spent In Jail</th>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
     <div class="row">
         <div class="col-12">
             <hr />
