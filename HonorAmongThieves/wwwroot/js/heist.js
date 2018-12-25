@@ -4,26 +4,40 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/heistHub").build()
 var userName = null;
 var roomId = null;
 
-connection.on("JoinRoom", function (roomJoined, userJoined) {
-    if (userName == null) {
-        userName = userJoined;
-        roomId = roomJoined;
+// -------------------------
+// ----- STATE: LOBBY ------
+// -------------------------
+document.getElementById("createroombutton").addEventListener("click", function (event) {
+    var userNameIn = document.getElementById("username").value;
 
-        document.getElementById("joinroom").style.display = "none";
-        document.getElementById("pageName").textContent = "LOBBY: " + roomJoined;
-    }
-
-    document.getElementById("startLobby").style.display = "block";
-    var li = document.createElement("li");
-    li.textContent = userJoined + " has joined room.";
-    var messageList = document.getElementById("messagesList")
-
-    if (messageList != null) {
-        messageList.appendChild(li);
-    }
+    connection.invoke("CreateRoom", userNameIn).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
 });
 
-connection.on("UpdateRoomList", function (playersConcat) {
+// ---------------------------
+// ----- STATE: PRE-GAME -----
+// ---------------------------
+connection.on("JoinRoom_ChangeState", function (roomJoined, userJoined) {
+    // Hide the start button by default
+    var startButton = document.getElementById("startButtonDiv");
+    startButton.style.display = "none";
+
+    userName = userJoined;
+    roomId = roomJoined;
+
+    var elements = document.getElementsByClassName("state");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+    }
+
+    document.getElementById("pageName").textContent = "LOBBY: " + roomJoined;
+    document.getElementById("startLobby").style.display = "block";
+    
+});
+
+connection.on("JoinRoom_UpdateState", function (playersConcat, userJoined) {
     var playerList = document.getElementById("lobbyList");
     playerList.innerHTML = "";
     var players = playersConcat.split("|");
@@ -32,18 +46,14 @@ connection.on("UpdateRoomList", function (playersConcat) {
         li.textContent = players[i];
         playerList.appendChild(li);
     }
-});
 
-connection.on("CreateStartButton", function (ownerName) {
-    if (userName == ownerName) {
+    var li = document.createElement("li");
+    li.textContent = userJoined + " has joined room.";
+    var messageList = document.getElementById("messagesList")
 
-        var startButton = document.getElementById("startButtonDiv");
-        startButton.style.display = "block";
+    if (messageList != null) {
+        messageList.appendChild(li);
     }
-});
-
-connection.start().catch(function (err) {
-    return console.error(err.toString());
 });
 
 document.getElementById("joinroombutton").addEventListener("click", function (event) {
@@ -56,19 +66,19 @@ document.getElementById("joinroombutton").addEventListener("click", function (ev
     event.preventDefault();
 });
 
-document.getElementById("createroombutton").addEventListener("click", function (event) {
-    var userNameIn = document.getElementById("username").value;
-
-    connection.invoke("CreateRoom", userNameIn).catch(function (err) {
-        return console.error(err.toString());
-    });
-    event.preventDefault();
+// Start button
+connection.on("JoinRoom_CreateStartButton", function () {
+    var startButton = document.getElementById("startButtonDiv");
+    startButton.style.display = "block";
 });
-
 
 document.getElementById("startbutton").addEventListener("click", function (event) {
     connection.invoke("StartRoom", roomId).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
+});
+
+connection.start().catch(function (err) {
+    return console.error(err.toString());
 });

@@ -1,7 +1,9 @@
-﻿using System;
+﻿using HonorAmongThieves.Hubs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace HonorAmongThieves.Game
 {
@@ -11,26 +13,38 @@ namespace HonorAmongThieves.Game
 
         public static DateTime CreationTime { get; } = DateTime.UtcNow;
 
-        public const int ROOMCAPACITY = 10;
+        public Timer Timer { get; private set; }
 
-        public string CreateRoom()
+        public Lobby()
+        {
+            const int CLEANUPINTERVAL = 60000;
+            this.Timer = new Timer(CLEANUPINTERVAL)
+            {
+                Enabled = true,
+                AutoReset = true,
+            };
+
+            this.Timer.Elapsed += this.Cleanup;
+        }
+
+        public string CreateRoom(HeistHub hub, string playerName)
         {
             const int MAXLOBBYSIZE = 300;
             const int ROOMIDLENGTH = 5;
 
-            if (Rooms.Values.Count < MAXLOBBYSIZE)
+            if (!Utils.IsValidName(playerName))
             {
-                string roomId = null;
-                while (roomId == null || Rooms.ContainsKey(roomId))
-                {
-                    roomId = Guid.NewGuid().ToString().Substring(0, ROOMIDLENGTH);
-                }
+                return null;
+            }
 
-                var room = new Room(roomId);
+            var roomId = Utils.GenerateId(ROOMIDLENGTH, this.Rooms);
+            if (Rooms.Values.Count < MAXLOBBYSIZE && !string.IsNullOrEmpty(roomId))
+            {
+                var room = new Room(roomId, hub);
+                room.OwnerName = playerName;
                 this.Rooms[roomId] = room;
                 return roomId;
             }
-
             else
             {
                 Console.WriteLine("MAX LOBBY SIZE REACHED: {0}", MAXLOBBYSIZE);
@@ -38,53 +52,23 @@ namespace HonorAmongThieves.Game
             }
         }
 
-        public bool JoinRoom(string playerName, string roomId, string connectionId)
+        public Player JoinRoom(string playerName, string roomId, string connectionId)
         {
-            if (playerName.Length == 0
-                || playerName.Length > 10)
+            if (!Utils.IsValidName(playerName))
             {
-                return false;
-            }
-
-            foreach (char c in playerName.ToCharArray())
-            {
-                if (!char.IsLetterOrDigit(c))
-                {
-                    return false;
-                }
+                return null;
             }
 
             if (this.Rooms.ContainsKey(roomId))
             {
                 var room = this.Rooms[roomId];
-                if (room.Players.Count >= ROOMCAPACITY)
-                {
-                    return false;
-                }
-
-                if (!room.SigningUp)
-                {
-                    return false;
-                }
-
-                foreach (var roomPlayer in room.Players)
-                {
-                    if (roomPlayer.Name.Equals(playerName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return false;
-                    }
-                }
-
-                var player = new Player(playerName, room);
-                player.ConnectionId = connectionId;
-                room.Players.Add(player);
-                return true;
+                return room.CreatePlayer(playerName, connectionId);
             }
 
-            return false;
+            return null;
         }
 
-        public void Cleanup()
+        public async void Cleanup(Object source, ElapsedEventArgs e)
         {
             const int MAXROOMIDLEMINUTES = 30;
             List<string> roomsToDestroy = new List<string>();
@@ -98,7 +82,7 @@ namespace HonorAmongThieves.Game
 
             foreach (var roomId in roomsToDestroy)
             {
-                this.Rooms[roomId].Destroy();
+                await this.Rooms[roomId].Destroy();
                 this.Rooms[roomId] = null;
             }
         }

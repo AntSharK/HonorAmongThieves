@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using HonorAmongThieves.Game;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,43 +11,40 @@ namespace HonorAmongThieves.Hubs
     {
         public async Task JoinRoom(string roomId, string userName)
         {
-            if (Program.Instance.JoinRoom(userName, roomId, Context.ConnectionId))
+            var createdPlayer = Program.Instance.JoinRoom(userName, roomId, Context.ConnectionId);
+            if (createdPlayer != null)
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
                 await Clients.Group(roomId).SendAsync("JoinRoom", roomId, userName);
-
-                var playerNames = "";
-                foreach (var player in Program.Instance.Rooms[roomId].Players)
-                {
-                    playerNames = player.Name + "|" + playerNames + "|";
-                }
-
-                await Clients.Group(roomId).SendAsync("UpdateRoomList", playerNames.TrimEnd('|'));
+                await JoinRoom_ChangeState(roomId);
+                await JoinRoom_UpdateState(roomId, userName);
             }
+        }
+
+        public async Task JoinRoom_ChangeState(string roomId)
+        {
+            await Clients.Caller.SendAsync("JoinRoom_ChangeState", roomId);
+        }
+
+        public async Task JoinRoom_UpdateState(string roomId, string newUser)
+        {
+            var playerNames = "";
+            foreach (var player in Program.Instance.Rooms[roomId].Players)
+            {
+                playerNames = player.Name + "|" + playerNames + "|";
+            }
+
+            await Clients.Group(roomId).SendAsync("JoinRoom_UpdateState", playerNames.TrimEnd('|'), newUser);
         }
 
         public async Task CreateRoom(string userName)
         {
-            if (userName.Length == 0)
-            {
-                return;
-            }
-
-            foreach (char c in userName.ToCharArray())
-            {
-                if (!char.IsLetterOrDigit(c))
-                {
-                    return;
-                }
-            }
-
-            var roomId = Program.Instance.CreateRoom();
+            var roomId = Program.Instance.CreateRoom(this, userName);
             if (!string.IsNullOrEmpty(roomId))
             {
                 await this.JoinRoom(roomId, userName);
+                await Clients.Caller.SendAsync("JoinRoom_CreateStartButton");
             }
-
-            await Clients.Group(roomId).SendAsync("CreateStartButton", userName);
         }
 
         public async Task StartRoom(string roomId)

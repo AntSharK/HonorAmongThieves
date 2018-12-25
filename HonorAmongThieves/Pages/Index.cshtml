@@ -1,7 +1,10 @@
 ﻿@page
 <div class="container">
-    <h2><u><div id="pageName">JOIN A GAME</div></u></h2>
-    <div id="startLobby" style="display:none">
+    <h2><u>
+        <div id="pageName">JOIN A GAME</div>
+    </u></h2>
+
+    <div class="state" id="startLobby" style="display:none">
         <ul id="lobbyList"></ul>
 
         <div id="startButtonDiv" style="display:none">
@@ -11,7 +14,8 @@
         </div>
     </div>
     <div class="row">&nbsp;</div>
-    <div class="row" id="joinroom">
+
+    <div class="state" id="joinroom">
         <input type="button" id="createroombutton" value="CREATE ROOM" />
         <div class="col-6">&nbsp;</div>
         <div class="col-6">
@@ -28,6 +32,7 @@
             <hr />
         </div>
     </div>
+
     <div class="row">
         <div class="col-6">&nbsp;</div>
         <div class="col-6">
@@ -35,31 +40,6 @@
         </div>
     </div>
 </div>
+
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/heist.js"></script>
-
-<!--<div class="container">
-    <div class="row">&nbsp;</div>
-    <div class="row">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
-            User..........<input type="text" id="userInput" />
-            <br />
-            Message...<input type="text" id="messageInput" />
-            <input type="button" id="sendButton" value="Send Message" />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <hr />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
-    </div>
-</div>
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/chat.js"></script> -->
