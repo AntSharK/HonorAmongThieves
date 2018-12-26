@@ -61,7 +61,7 @@ namespace HonorAmongThieves.Hubs
         {
             // TODO: Put custom parameters into room
 
-            const int MINPLAYERCOUNT = 1;
+            const int MINPLAYERCOUNT = 4;
 
             if (Program.Instance.Rooms.ContainsKey(roomId)
                 && Program.Instance.Rooms[roomId].SigningUp
@@ -85,7 +85,7 @@ namespace HonorAmongThieves.Hubs
             foreach (var player in room.Players)
             {
                 player.CurrentStatus = Player.Status.FindingHeist;
-                await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, room.Years + 2018);
+                await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, room.Years + 2018, player.Name);
             }
 
             room.SigningUp = false;

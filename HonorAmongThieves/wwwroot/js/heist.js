@@ -96,8 +96,8 @@ connection.on("StartRoom_ChangeState", function (roomStarted) {
     gamestartarea.style.display = "block";
 });
 
-connection.on("StartRoom_UpdateState", function (netWorth, years) {
-    document.getElementById("playername").textContent = "NAME: " + userName;
+connection.on("StartRoom_UpdateState", function (netWorth, years, displayName) {
+    document.getElementById("playername").textContent = "NAME: " + displayName;
     document.getElementById("years").textContent = "YEAR: " + years;
     document.getElementById("networth").textContent = "NETWORTH: $" + netWorth + " MILLION";
 });
