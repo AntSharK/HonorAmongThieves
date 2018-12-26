@@ -14,6 +14,13 @@
             Make sure there are no players who are in the lobby but cannot see the game!!.<br />
             <br />
             <input type="button" id="startbutton" value="START GAME" />
+            <br />
+            <br />
+            <h4>Custom room parameters</h4>
+            Betrayal Reward: <input type="number" step="1" min="0" value="60" id="betrayalreward" /><br />
+            Max Game Length: <input type="number" step="1" min="3" value="15" id="maxgamelength" /><br />
+            Maximum Heist Size: <input type="number" step="1" min="2" value="5" id="maxheistsize" /><br />
+            <br />
         </div>
     </div>
     <div class="row">&nbsp;</div>
@@ -32,6 +39,7 @@
     </div>
 
     <div class="state" id="gamestart" style="display:none">
+        <h3><div id="playername"> </div></h3>
         <h3><div id="years"> </div></h3>
         <h3><div id="networth"> </div></h3>
         <br />

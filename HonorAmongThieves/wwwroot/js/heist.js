@@ -73,7 +73,10 @@ connection.on("JoinRoom_CreateStartButton", function () {
 });
 
 document.getElementById("startbutton").addEventListener("click", function (event) {
-    connection.invoke("StartRoom", roomId).catch(function (err) {
+    var betrayalReward = document.getElementById("betrayalreward").value;
+    var maxGameLength = document.getElementById("maxgamelength").value;
+    var maxHeistSize = document.getElementById("maxheistsize").value;
+    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, maxHeistSize).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
@@ -94,6 +97,7 @@ connection.on("StartRoom_ChangeState", function (roomStarted) {
 });
 
 connection.on("StartRoom_UpdateState", function (netWorth, years) {
+    document.getElementById("playername").textContent = "NAME: " + userName;
     document.getElementById("years").textContent = "YEAR: " + years;
     document.getElementById("networth").textContent = "NETWORTH: $" + netWorth + " MILLION";
 });

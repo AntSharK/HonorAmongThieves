@@ -57,8 +57,10 @@ namespace HonorAmongThieves.Hubs
         }
 
         // To start a game
-        public async Task StartRoom(string roomId)
+        public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize)
         {
+            // TODO: Put custom parameters into room
+
             const int MINPLAYERCOUNT = 1;
 
             if (Program.Instance.Rooms.ContainsKey(roomId)
@@ -82,14 +84,11 @@ namespace HonorAmongThieves.Hubs
 
             foreach (var player in room.Players)
             {
+                player.CurrentStatus = Player.Status.FindingHeist;
                 await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, room.Years + 2018);
             }
 
-            foreach (var player in room.Players)
-            {
-                player.CurrentStatus = Player.Status.InHeist;
-            }
-
+            room.SigningUp = false;
             room.SpawnHeists();
             foreach (var heist in room.Heists.Values)
             {
@@ -99,9 +98,17 @@ namespace HonorAmongThieves.Hubs
                 }
             }
 
-            foreach (var heist in room.Heists.Values)
+            if (room.Heists.Count > 0)
             {
-                await this.HeistPrep_ChangeState(heist);
+                foreach (var heist in room.Heists.Values)
+                {
+                    await this.HeistPrep_ChangeState(heist);
+                }
+            }
+            else
+            {
+                // If there aren't enough players to start a heist, resolve it
+                room.TryResolveHeists();
             }
         }
 
@@ -115,14 +122,6 @@ namespace HonorAmongThieves.Hubs
                 playerInfo.Append(player.Name);
                 playerInfo.Append("|");
                 var fudgedNetworth = player.NetWorth * random.Next(50, 150) / 100;
-                playerInfo.Append(fudgedNetworth);
-                playerInfo.Append("|");
-                playerInfo.Append(player.TimeSpentInJail);
-                playerInfo.Append("=");
-
-                // TODO: Remove test stuff
-                playerInfo.Append(player.Name);
-                playerInfo.Append("|");
                 playerInfo.Append(fudgedNetworth);
                 playerInfo.Append("|");
                 playerInfo.Append(player.TimeSpentInJail);
