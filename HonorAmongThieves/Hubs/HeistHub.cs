@@ -13,7 +13,6 @@ namespace HonorAmongThieves.Hubs
             await Clients.Caller.SendAsync("ShowError", errorMessage);
         }
 
-        // To create a room
         public async Task CreateRoom(string userName)
         {
             var roomId = Program.Instance.CreateRoom(this, userName);
@@ -36,7 +35,6 @@ namespace HonorAmongThieves.Hubs
             }
         }
 
-        // To join a room
         public async Task JoinRoom(string roomId, string userName)
         {
             Room room;
@@ -84,7 +82,6 @@ namespace HonorAmongThieves.Hubs
             await Clients.Group(room.Id).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newPlayer.Name);
         }
 
-        // To start a game
         public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize)
         {
             const int MINPLAYERCOUNT = 4;
@@ -122,28 +119,6 @@ namespace HonorAmongThieves.Hubs
                 await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, room.CurrentYear + 2018, player.Name, player.MinJailSentence, player.MaxJailSentence);
             }
 
-            // TODO: Stupid testing stuff
-            var k = 0;
-            foreach (var player in room.Players.Values)
-            {
-                switch(k)
-                {
-                    case 0:
-                        player.CurrentStatus = Player.Status.Dead;
-                        break;
-                    case 1:
-                        player.CurrentStatus = Player.Status.InJail;
-                        player.YearsLeftInJail = 3;
-                        break;
-                    case 2:
-                    case 3:
-                        break;
-                }
-
-                k++;
-            }
-            // End stupid testing stuff
-
             room.SigningUp = false;
             room.SpawnHeists();
             foreach (var heist in room.Heists.Values)
@@ -168,19 +143,21 @@ namespace HonorAmongThieves.Hubs
                 switch (player.CurrentStatus)
                 {
                     case Player.Status.FindingHeist:
-                        await Clients.Client(player.ConnectionId).SendAsync("UpdateHeistStatus", "FINDING HEIST...",
-                            "Your contacts don't seem to be responding. If there is any crime going on, you're not being invited.");
+                        await this.UpdateHeistStatus(player, "FINDING HEIST...", "Your contacts don't seem to be responding. If there is any crime going on, you're not being invited.");
                         break;
                     case Player.Status.Dead:
-                        await Clients.Client(player.ConnectionId).SendAsync("UpdateHeistStatus", "DEAD",
-                            "You're dead. You can't do anything.");
+                        await this.UpdateHeistStatus(player, "DEAD", "You're dead. You can't do anything.");
                         break;
                     case Player.Status.InJail:
-                        await Clients.Client(player.ConnectionId).SendAsync("UpdateHeistStatus", "IN JAIL",
-                            "You're IN JAIL. Years left: " + player.YearsLeftInJail);
+                        await this.UpdateHeistStatus(player, "IN JAIL", "You're IN JAIL. Years left: " + player.YearsLeftInJail);
                         break;
                 }
             }
+        }
+
+        internal async Task UpdateHeistStatus(Player player, string title, string message)
+        {
+            await Clients.Client(player.ConnectionId).SendAsync("UpdateHeistStatus", title, message);
         }
 
         internal async Task HeistPrep_ChangeState(Heist heist)
@@ -205,6 +182,53 @@ namespace HonorAmongThieves.Hubs
             }
 
             await Clients.Group(heist.Id).SendAsync("HeistPrep_ChangeState", playerInfo.ToString(), heist.TotalReward, heist.SnitchReward);
+        }
+
+        public async Task CommitMurder(string roomId, string murdererName, string victimName)
+        {
+            var room = Program.Instance.Rooms[roomId];
+            var murderer = room.Players[murdererName];
+            var victim = room.Players[victimName];
+
+            murderer.MurderDecision(victim);
+            await this.HeistPrep_UpdateDecision(murderer);
+        }
+
+        public async Task MakeDecision(string roomId, string playerName, bool turnUpToHeist, bool snitchToPolice)
+        {
+            var room = Program.Instance.Rooms[roomId];
+            var player = room.Players[playerName];
+
+            player.MakeDecision(turnUpToHeist, snitchToPolice);
+            await this.HeistPrep_UpdateDecision(player);
+        }
+
+        internal async Task HeistPrep_UpdateDecision(Player player)
+        {
+            if (player.Decision.PlayerToKill != null)
+            {
+                await this.UpdateHeistStatus(player, "COMMIT MURDER", "You have decided to kill " + player.Decision.PlayerToKill.Name);
+            }
+            else if (player.Decision.TimeOut)
+            {
+                await this.UpdateHeistStatus(player, "DEFAULT: GO ON HEIST", "You ran out of time deciding and are going on the heist.");
+            }
+            else if (player.Decision.GoOnHeist && !player.Decision.ReportPolice)
+            {
+                await this.UpdateHeistStatus(player, "GO ON HEIST", "You decide to go on the heist.");
+            }
+            else if (!player.Decision.GoOnHeist && !player.Decision.ReportPolice)
+            {
+                await this.UpdateHeistStatus(player, "RUN AWAY", "You have better things to do than risk your life on this. You stay far away.");
+            }
+            else if (player.Decision.GoOnHeist && player.Decision.ReportPolice)
+            {
+                await this.UpdateHeistStatus(player, "GET YOURSELF ARRESTED", "You look at the bunch of criminals around you and figure you're screwed anyway - might as well be a snitch and get some cash.");
+            }
+            else if (!player.Decision.GoOnHeist && player.Decision.ReportPolice)
+            {
+                await this.UpdateHeistStatus(player, "SNITCH", "You decide to tell the police that there's a heist going on. You'll watch your fellow thieves from close by and keep the police informed.");
+            }
         }
     }
 }

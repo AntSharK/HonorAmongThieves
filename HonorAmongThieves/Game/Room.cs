@@ -1,6 +1,7 @@
 ﻿using HonorAmongThieves.Hubs;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Game
 {
@@ -44,13 +45,6 @@ namespace HonorAmongThieves.Game
 
         public void SpawnHeists()
         {
-            if (this.CurrentYear >= this.MaxYears)
-            {
-                // TODO: End the game
-            }
-
-            this.CurrentYear++;
-
             var eligiblePlayers = new List<Player>();
             foreach (var player in this.Players.Values)
             {
@@ -179,7 +173,35 @@ namespace HonorAmongThieves.Game
         public bool TryResolveHeists()
         {
             // TODO: TRY to resolve all heists
+            // If every heist decision is made, then resolve them
+            // Set timer to prepare transitions
             return false;
+        }
+
+        public async void PrepareTransition()
+        {
+            // TODO: Prepare to transition to the next stage
+            // For all heists, transmit the eventual fate
+            // For all non-heists, update new message
+            // Set timer to trigger next year
+        }
+
+        public async Task NextYear()
+        {
+            this.Heists.Clear();
+            if (this.CurrentYear >= this.MaxYears)
+            {
+                // TODO: End the game
+                return;
+            }
+
+            foreach (var player in this.Players.Values)
+            {
+                player.Decision = new Player.HeistDecision();
+            }
+
+            this.CurrentYear++;
+            await this.Hub.StartRoom_UpdateState(this);
         }
     }
 }
