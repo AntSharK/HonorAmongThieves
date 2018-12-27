@@ -92,7 +92,7 @@ namespace HonorAmongThieves.Hubs
             if (!Program.Instance.Rooms.TryGetValue(roomId, out room)
                 && room.SigningUp)
             {
-                await this.ShowError("Error starting room. This should never happen. Restart everything!");
+                await this.ShowError("This room has timed out! Please refresh the page.");
                 return;
             }
 

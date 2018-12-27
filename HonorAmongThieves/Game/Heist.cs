@@ -26,10 +26,11 @@ namespace HonorAmongThieves.Game
             this.Hub = hub;
             this.SnitchReward = snitchReward;
 
-            const int baseReward = 10;
-            const double exponent = 2;
-            var totalReward = baseReward + Math.Pow(heistCapacity, exponent) * heistCapacity;
-            this.TotalReward = (int)totalReward;
+            const int BASEREWARD = 30;
+            const double EXPONENT = 2;
+            const double EXPONENTMULTIPLIER = 3;
+            var totalReward = BASEREWARD + Math.Pow(heistCapacity, EXPONENT) * EXPONENTMULTIPLIER;
+            this.TotalReward = (int) (totalReward * (1 + Utils.Rng.NextDouble()));
 
             const int HEISTTIMEOUTDURATION = 100000;
             this.Timeout = new Timer(HEISTTIMEOUTDURATION)
