@@ -5,7 +5,6 @@
             <div id="pageName">JOIN A GAME</div>
         </u>
     </h2>
-
     <div class="state" id="startLobby" style="display:none">
         <ul id="lobbyList"></ul>
 
@@ -46,9 +45,8 @@
         <h4 id="nextjailtime"></h4>
         <br />
 
-        <div class="state" id="jailnotification" style="display:none">
-            <h2>YOU ARE IN JAIL</h2>
-            <h3 id="jailstatus"></h3>
+        <div class="state" id="heiststatus" style="display:none">
+            <h3 id="heiststatusmessage"></h3>
         </div>
 
         <div class="state" id="heistsetup" style="display:none">
@@ -62,14 +60,12 @@
                     <th>Time Spent In Jail</th>
                 </tr>
             </table>
-        </div>
+            <br />
+            MURDER SOMEONE: 
+            <select id="commitmurder">
 
-        <div class="state" id="heistacted" style="display:none">
-            <h3 id="heistchoice"></h3>
-        </div>
-
-        <div class="state" id="heistresult" style="display:none">
-            <h3 id="heistresolution"></h3>
+            </select>
+            <input type="button" id="commitmurder" value="MURDER" />
         </div>
     </div>
 

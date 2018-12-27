@@ -1,9 +1,8 @@
 ﻿"use strict";
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/heistHub").build();
-var userName = null;
-var roomId = null;
-
+var userName;
+var roomId;
 
 connection.on("ShowError", function (errorMessage) {
     window.alert(errorMessage);
@@ -19,6 +18,21 @@ document.getElementById("createroombutton").addEventListener("click", function (
         return console.error(err.toString());
     });
     event.preventDefault();
+});
+
+connection.on("UpdateHeistStatus", function (statusMessage) {
+    var elements = document.getElementsByClassName("state");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+    }
+
+    document.getElementById("pageName").textContent = "HEIST";
+    var gamestartarea = document.getElementById("gamestart");
+    gamestartarea.style.display = "block";
+
+    var heiststatusarea = document.getElementById("heiststatus");
+    heiststatusarea.style.display = "block";
+    document.getElementById("heiststatusmessage").textContent = statusMessage;
 });
 
 // ---------------------------
@@ -87,9 +101,9 @@ document.getElementById("startbutton").addEventListener("click", function (event
     event.preventDefault();
 });
 
-// -------------------------------
-// ----- STATE: HEIST SIGNUP -----
-// -------------------------------
+// ------------------------------
+// ----- STATE: HEIST START -----
+// ------------------------------
 connection.on("StartRoom_ChangeState", function (roomStarted) {
     var elements = document.getElementsByClassName("state");
     for (var i = 0; i < elements.length; i++) {
@@ -113,9 +127,13 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
     document.getElementById("snitchingreward").textContent = "REWARD FOR SNITCHING: $" + snitchReward + " MILLION";
 
     var heistParticipantInfo = document.getElementsByClassName("heistparticipantinfo");
-    for(var i = heistParticipantInfo.length - 1; i >= 0; i--)
-    {
+    for(var i = heistParticipantInfo.length - 1; i >= 0; i--) {
         heistParticipantInfo[i].parentNode.removeChild(heistParticipantInfo[i]);
+    }
+
+    var murderList = document.getElementById("commitmurder");
+    for (var i = 0; i < murderList.options.length; i++) {
+        murderList.options[i] = null;
     }
 
     var playerList = document.getElementById("heistparticipants");
@@ -127,10 +145,29 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
         newRow.insertCell(0).textContent = playerInfo[0];
         newRow.insertCell(1).textContent = playerInfo[1];
         newRow.insertCell(2).textContent = playerInfo[2];
+
+        if (playerInfo[0] != userName) {
+            var newOption = document.createElement("option");
+            newOption.textContent = playerInfo[0];
+            newOption.textContent = playerInfo[0];
+            murderList.appendChild(newOption);
+        }
     }
 
     var heistsetup = document.getElementById("heistsetup");
     heistsetup.style.display = "block";
+});
+
+// ----------------------------------
+// ----- STATE: HEIST DECISIONS -----
+// ----------------------------------
+
+document.getElementById("commitmurder").addEventListener("click", function (event) {
+    var victim = document.getElementById("commitmurder").value;
+    connection.invoke("CommitMurder", roomId, userName, victim).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
 });
 
 connection.start().catch(function (err) {
