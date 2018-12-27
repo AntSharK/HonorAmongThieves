@@ -44,7 +44,7 @@
         <h4 id="networth"></h4>
         <h4 id="nextjailtime"></h4>
         <br />
-
+        <hr />
         <div class="state" id="heiststatus" style="display:none">
             <h3 id="heiststatusmessage"></h3>
         </div>
@@ -60,12 +60,16 @@
                     <th>Time Spent In Jail</th>
                 </tr>
             </table>
-            <br />
+            <hr />
             MURDER SOMEONE: 
-            <select id="commitmurder">
-
-            </select>
-            <input type="button" id="commitmurder" value="MURDER" />
+            <select id="commitmurderselection" />
+             <input type="button" id="commitmurder" value="MURDER" />
+            <hr />
+            <br />
+            GO ON HEIST: <input type="checkbox" id="goforheistcheck" checked /> <br />
+            SNITCH TO POLICE: <input type="checkbox" id="snitchtopolicecheck" /> <br />
+            <input type="button" id="makedecision" value="MAKE DECISION" />
+            <br />
         </div>
     </div>
 

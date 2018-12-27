@@ -12,7 +12,7 @@ namespace HonorAmongThieves.Game
 
         public string OwnerName { get; set; }
 
-        public List<Player> Players { get; } = new List<Player>();
+        public Dictionary<string, Player> Players { get; } = new Dictionary<string, Player>();
 
         public DateTime StartTime { get; private set; }
 
@@ -22,7 +22,7 @@ namespace HonorAmongThieves.Game
 
         public int CurrentYear { get; set; } = 0;
 
-        public int MaxYears { get; private set; } = Utils.Rng.Next(6, 15);
+        public int MaxYears { get; private set; } = Utils.Rng.Next(6, 12);
 
         public int BetrayalReward { get; private set; } = 60;
 
@@ -44,14 +44,18 @@ namespace HonorAmongThieves.Game
 
         public void SpawnHeists()
         {
-            this.UpdatedTime = DateTime.UtcNow;
+            if (this.CurrentYear >= this.MaxYears)
+            {
+                // TODO: End the game
+            }
+
+            this.CurrentYear++;
 
             var eligiblePlayers = new List<Player>();
-            foreach (var player in this.Players)
+            foreach (var player in this.Players.Values)
             {
                 if (player.CurrentStatus == Player.Status.FindingHeist)
                 {
-                    player.CurrentStatus = Player.Status.InHeist;
                     eligiblePlayers.Add(player);
                 }
             }
@@ -93,8 +97,6 @@ namespace HonorAmongThieves.Game
                     // Do nothing
                     break;
             }
-
-            // Note that this DOES NOT CLEAR THE CURRENT HEIST LIST. That should ALREADY HAVE BEEN DONE.
         }
 
         private Heist CreateHeist(List<Player> eligiblePlayers, int heistCapacity)
@@ -107,6 +109,7 @@ namespace HonorAmongThieves.Game
             for (var i = 0; i < heistCapacity; i++)
             {
                 var playerToInsert = eligiblePlayers[i];
+                playerToInsert.CurrentStatus = Player.Status.InHeist;
                 heist.AddPlayer(playerToInsert);
             }
 
@@ -152,18 +155,14 @@ namespace HonorAmongThieves.Game
                 return null;
             }
 
-            // This is an unordered list, so we have to check every single player
-            foreach (var player in this.Players)
+            if (this.Players.ContainsKey(playerName))
             {
-                if (player.Name.Equals(playerName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return null;
-                }
+                return null;
             }
 
             var playerToAdd = new Player(playerName, this);
             playerToAdd.ConnectionId = connectionId;
-            this.Players.Add(playerToAdd);
+            this.Players[playerName] = playerToAdd;
             this.UpdatedTime = DateTime.UtcNow;
 
             return playerToAdd;
@@ -171,7 +170,7 @@ namespace HonorAmongThieves.Game
 
         public void Destroy()
         {
-            foreach (var player in this.Players)
+            foreach (var player in this.Players.Values)
             {
                 player.CurrentStatus = Player.Status.CleaningUp;
             }

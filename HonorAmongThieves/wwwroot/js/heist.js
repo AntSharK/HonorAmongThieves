@@ -20,13 +20,16 @@ document.getElementById("createroombutton").addEventListener("click", function (
     event.preventDefault();
 });
 
-connection.on("UpdateHeistStatus", function (statusMessage) {
+connection.on("UpdateHeistStatus", function (title, statusMessage) {
     var elements = document.getElementsByClassName("state");
     for (var i = 0; i < elements.length; i++) {
         elements[i].style.display = "none";
     }
 
-    document.getElementById("pageName").textContent = "HEIST";
+    if (title.length >= 1) {
+        document.getElementById("pageName").textContent = title;
+    }
+
     var gamestartarea = document.getElementById("gamestart");
     gamestartarea.style.display = "block";
 
@@ -123,6 +126,7 @@ connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, m
 });
 
 connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitchReward) {
+    document.getElementById("pageName").textContent = "HEIST SETUP";
     document.getElementById("heistnetworth").textContent = "TOTAL REWARD: $" + heistReward + " MILLION";
     document.getElementById("snitchingreward").textContent = "REWARD FOR SNITCHING: $" + snitchReward + " MILLION";
 
@@ -131,7 +135,7 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
         heistParticipantInfo[i].parentNode.removeChild(heistParticipantInfo[i]);
     }
 
-    var murderList = document.getElementById("commitmurder");
+    var murderList = document.getElementById("commitmurderselection");
     for (var i = 0; i < murderList.options.length; i++) {
         murderList.options[i] = null;
     }
@@ -163,8 +167,17 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
 // ----------------------------------
 
 document.getElementById("commitmurder").addEventListener("click", function (event) {
-    var victim = document.getElementById("commitmurder").value;
+    var victim = document.getElementById("commitmurderselection").value;
     connection.invoke("CommitMurder", roomId, userName, victim).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
+});
+
+document.getElementById("makedecision").addEventListener("click", function (event) {
+    var turnUpToHeist = document.getElementById("goforheistcheck").checked;
+    var snitchToPolice = document.getElementById("snitchtopolicecheck").checked;
+    connection.invoke("MakeDecision", roomId, userName, turnUpToHeist, snitchToPolice).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

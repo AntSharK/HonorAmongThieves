@@ -60,11 +60,6 @@ namespace HonorAmongThieves.Game
             this.TryResolve();
         }
 
-        public void MakeDecision(Player player)
-        {
-            // TODO: Change decision made by player
-        }
-
         public bool TryResolve()
         {
             // TODO: Try to resolve the heist
@@ -74,7 +69,7 @@ namespace HonorAmongThieves.Game
         public class HeistDecision
         {
             public bool DecisionMade { get; set; } = false;
-            public bool GoOnHeist { get; set; } = false;
+            public bool GoOnHeist { get; set; } = true;
             public bool ReportPolice { get; set; } = false;
             public Player PlayerToKill { get; set; } = null;
         }
