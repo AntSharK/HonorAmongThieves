@@ -1,8 +1,6 @@
 ﻿using HonorAmongThieves.Game;
 using Microsoft.AspNetCore.SignalR;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +8,11 @@ namespace HonorAmongThieves.Hubs
 {
     public class HeistHub : Hub
     {
+        internal async Task ShowError(string errorMessage)
+        {
+            await Clients.Caller.SendAsync("ShowError", errorMessage);
+        }
+
         // To create a room
         public async Task CreateRoom(string userName)
         {
@@ -19,30 +22,55 @@ namespace HonorAmongThieves.Hubs
                 await this.JoinRoom(roomId, userName);
                 await Clients.Caller.SendAsync("JoinRoom_CreateStartButton");
             }
+            else
+            {
+                if (!Utils.IsValidName(userName))
+                {
+                    await this.ShowError("Invalid UserName. A valid UserName is required to create a room.");
+                }
+                else
+                {
+                    var numRooms = Program.Instance.Rooms.Count;
+                    await this.ShowError("Unable to create room. Number of total rooms: " + numRooms);
+                }
+            }
         }
 
         // To join a room
         public async Task JoinRoom(string roomId, string userName)
         {
-            var createdPlayer = Program.Instance.JoinRoom(userName, roomId, Context.ConnectionId);
+            Room room;
+            if (!Program.Instance.Rooms.TryGetValue(roomId, out room))
+            {
+                // Room does not exist
+                await this.ShowError("Room does not exist.");
+                return;
+            }
+
+            var createdPlayer = Program.Instance.JoinRoom(userName, room, Context.ConnectionId);
             if (createdPlayer != null)
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
                 await Clients.Group(roomId).SendAsync("JoinRoom", roomId, userName);
-                await JoinRoom_ChangeState(roomId);
-                await JoinRoom_UpdateState(roomId, userName);
+                await JoinRoom_ChangeState(room);
+                await JoinRoom_UpdateState(room, createdPlayer);
+            }
+            else
+            {
+                await this.ShowError("Unable to create player in room. Ensure you have a valid and unique UserName.");
+                return;
             }
         }
 
-        public async Task JoinRoom_ChangeState(string roomId)
+        internal async Task JoinRoom_ChangeState(Room room)
         {
-            await Clients.Caller.SendAsync("JoinRoom_ChangeState", roomId);
+            await Clients.Caller.SendAsync("JoinRoom_ChangeState", room.Id);
         }
 
-        public async Task JoinRoom_UpdateState(string roomId, string newUser)
+        internal async Task JoinRoom_UpdateState(Room room, Player newPlayer)
         {
             var playerNames = new StringBuilder();
-            foreach (var player in Program.Instance.Rooms[roomId].Players)
+            foreach (var player in room.Players)
             {
                 playerNames.Append(player.Name);
                 playerNames.Append("|");
@@ -53,39 +81,44 @@ namespace HonorAmongThieves.Hubs
                 playerNames.Length--;
             }
 
-            await Clients.Group(roomId).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newUser);
+            await Clients.Group(room.Id).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newPlayer.Name);
         }
 
         // To start a game
         public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize)
         {
-            // TODO: Put custom parameters into room
-
             const int MINPLAYERCOUNT = 4;
-
-            if (Program.Instance.Rooms.ContainsKey(roomId)
-                && Program.Instance.Rooms[roomId].SigningUp
-                && Program.Instance.Rooms[roomId].Players.Count >= MINPLAYERCOUNT)
+            Room room;
+            if (!Program.Instance.Rooms.TryGetValue(roomId, out room)
+                && room.SigningUp)
             {
-                Program.Instance.Rooms[roomId].SigningUp = false;
-                await this.StartRoom_ChangeState(roomId);
+                await this.ShowError("Error starting room. This should never happen. Restart everything!");
+                return;
             }
+
+            if (room.Players.Count < MINPLAYERCOUNT)
+            {
+                await this.ShowError("Need at least " + MINPLAYERCOUNT + " players!");
+                return;
+            }
+
+            await this.StartRoom_ChangeState(room, betrayalReward, maxGameLength, maxHeistSize);
         }
 
-        public async Task StartRoom_ChangeState(string roomId)
+        internal async Task StartRoom_ChangeState(Room room, int betrayalReward, int maxGameLength, int maxHeistSize)
         {
-            await Clients.Group(roomId).SendAsync("StartRoom_ChangeState", roomId);
-            await this.StartRoom_UpdateState(roomId);
+            room.StartGame(betrayalReward, maxGameLength, maxHeistSize);
+
+            await Clients.Group(room.Id).SendAsync("StartRoom_ChangeState", room.Id);
+            await this.StartRoom_UpdateState(room);
         }
 
-        public async Task StartRoom_UpdateState(string roomId)
+        internal async Task StartRoom_UpdateState(Room room)
         {
-            var room = Program.Instance.Rooms[roomId];
-
             foreach (var player in room.Players)
             {
                 player.CurrentStatus = Player.Status.FindingHeist;
-                await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, room.Years + 2018, player.Name);
+                await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, room.CurrentYear + 2018, player.Name, player.MinJailSentence, player.MaxJailSentence);
             }
 
             room.SigningUp = false;
@@ -112,7 +145,7 @@ namespace HonorAmongThieves.Hubs
             }
         }
 
-        public async Task HeistPrep_ChangeState(Heist heist)
+        internal async Task HeistPrep_ChangeState(Heist heist)
         {
             var random = new Random();
 
@@ -133,10 +166,10 @@ namespace HonorAmongThieves.Hubs
                 playerInfo.Length = playerInfo.Length - 1;
             }
 
-            await Clients.Group(heist.Id).SendAsync("HeistPrep_ChangeState", playerInfo.ToString());
+            await Clients.Group(heist.Id).SendAsync("HeistPrep_ChangeState", playerInfo.ToString(), heist.TotalReward, heist.SnitchReward);
         }
 
-
+        // To make a choice in a heist
         public async Task HeistChoice(int choice)
         {
             // Player makes a choice during a heist

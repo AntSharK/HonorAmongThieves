@@ -4,6 +4,11 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/heistHub").build()
 var userName = null;
 var roomId = null;
 
+
+connection.on("ShowError", function (errorMessage) {
+    window.alert(errorMessage);
+});
+
 // -------------------------
 // ----- STATE: LOBBY ------
 // -------------------------
@@ -96,13 +101,17 @@ connection.on("StartRoom_ChangeState", function (roomStarted) {
     gamestartarea.style.display = "block";
 });
 
-connection.on("StartRoom_UpdateState", function (netWorth, years, displayName) {
+connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, minJailTime, maxJailTime) {
     document.getElementById("playername").textContent = "NAME: " + displayName;
     document.getElementById("years").textContent = "YEAR: " + years;
     document.getElementById("networth").textContent = "NETWORTH: $" + netWorth + " MILLION";
+    document.getElementById("nextjailtime").textContent = "NEXT JAIL SENTENCE: " + minJailTime + " to " + maxJailTime + " YEARS";
 });
 
-connection.on("HeistPrep_ChangeState", function (playerInfos) {
+connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitchReward) {
+    document.getElementById("heistnetworth").textContent = "TOTAL REWARD: $" + heistReward + " MILLION";
+    document.getElementById("snitchingreward").textContent = "REWARD FOR SNITCHING: $" + snitchReward + " MILLION";
+
     var heistParticipantInfo = document.getElementsByClassName("heistparticipantinfo");
     for(var i = heistParticipantInfo.length - 1; i >= 0; i--)
     {

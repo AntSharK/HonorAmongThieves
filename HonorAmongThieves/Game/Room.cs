@@ -20,7 +20,13 @@ namespace HonorAmongThieves.Game
 
         public DateTime UpdatedTime { get; set; }
 
-        public int Years { get; set; } = 0;
+        public int CurrentYear { get; set; } = 0;
+
+        public int MaxYears { get; private set; } = Utils.Rng.Next(6, 15);
+
+        public int BetrayalReward { get; private set; } = 60;
+
+        public int InitialMaxHeistCapacity { get; private set; } = 5;
 
         public Dictionary<string, Heist> Heists { get; } = new Dictionary<string, Heist>();
 
@@ -38,7 +44,8 @@ namespace HonorAmongThieves.Game
 
         public void SpawnHeists()
         {
-            const int INITIALMAXHEISTCAPACITY = 5;
+            this.UpdatedTime = DateTime.UtcNow;
+
             var eligiblePlayers = new List<Player>();
             foreach (var player in this.Players)
             {
@@ -54,7 +61,7 @@ namespace HonorAmongThieves.Game
             // So let's pad it with even more lines
             Utils.Shuffle(eligiblePlayers);
 
-            var maxHeistCapacity = INITIALMAXHEISTCAPACITY;
+            var maxHeistCapacity = this.InitialMaxHeistCapacity;
             while (eligiblePlayers.Count > 5)
             {
                 // Heist capacity should decrease so it can always form 2 groups
@@ -92,20 +99,44 @@ namespace HonorAmongThieves.Game
 
         private Heist CreateHeist(List<Player> eligiblePlayers, int heistCapacity)
         {
-            // TODO: Determine the value of the heist based on the number of people
-
             var heistId = Utils.GenerateId(12, this.Heists);
-            var heist = new Heist(heistId);
+
+            var snitchReward = this.BetrayalReward;
+            var heist = new Heist(heistId, heistCapacity, snitchReward, this.Hub);
 
             for (var i = 0; i < heistCapacity; i++)
             {
                 var playerToInsert = eligiblePlayers[i];
-                heist.Players[playerToInsert.Name] = playerToInsert;
+                heist.AddPlayer(playerToInsert);
             }
 
             eligiblePlayers.RemoveRange(0, heistCapacity);
             this.Heists[heistId] = heist;
             return heist;
+        }
+
+        public void StartGame(int betrayalReward, int maxGameLength, int maxHeistSize)
+        {
+            this.StartTime = DateTime.UtcNow;
+            this.UpdatedTime = DateTime.UtcNow;
+
+            if (betrayalReward >= 0)
+            {
+                this.BetrayalReward = betrayalReward;
+            }
+
+            if (maxHeistSize >= 2)
+            {
+                this.InitialMaxHeistCapacity = maxHeistSize;
+            }
+
+            if (maxGameLength >= 5)
+            {
+                // Game end time is a random number between the max game length and half of it
+                this.MaxYears = Utils.Rng.Next(maxGameLength / 2, maxGameLength);
+            }
+
+            this.SigningUp = false;
         }
 
         public Player CreatePlayer(string playerName, string connectionId)

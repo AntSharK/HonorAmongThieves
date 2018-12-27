@@ -17,6 +17,10 @@ namespace HonorAmongThieves.Game
 
         public int YearsLeftInJail { get; set; } = -1;
 
+        public int MinJailSentence { get; set; } = 1;
+
+        public int MaxJailSentence { get; set; } = 2;
+
         public bool HasBetrayed { get; set; } = false;
 
         public Status CurrentStatus { get; set; }

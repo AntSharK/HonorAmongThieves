@@ -39,13 +39,22 @@
     </div>
 
     <div class="state" id="gamestart" style="display:none">
-        <h3><div id="playername"> </div></h3>
-        <h3><div id="years"> </div></h3>
-        <h3><div id="networth"> </div></h3>
+        <u><h4>Player Information</h4></u>
+        <h4 id="playername"></h4>
+        <h4 id="years"></h4>
+        <h4 id="networth"></h4>
+        <h4 id="nextjailtime"></h4>
         <br />
+
+        <div class="state" id="jailnotification" style="display:none">
+            <h2>YOU ARE IN JAIL</h2>
+            <h3 id="jailstatus"></h3>
+        </div>
 
         <div class="state" id="heistsetup" style="display:none">
             <u><h4>Current Heist</h4></u>
+            <h4 id="heistnetworth"></h4>
+            <h4 id="snitchingreward"></h4>
             <table border="1px solid black" id="heistparticipants">
                 <tr>
                     <th>Thief</th>

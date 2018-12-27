@@ -1,8 +1,6 @@
 ﻿using HonorAmongThieves.Hubs;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace HonorAmongThieves.Game
@@ -47,25 +45,18 @@ namespace HonorAmongThieves.Game
             }
             else
             {
-                Console.WriteLine("MAX LOBBY SIZE REACHED: {0}", MAXLOBBYSIZE);
                 return null;
             }
         }
 
-        public Player JoinRoom(string playerName, string roomId, string connectionId)
+        public Player JoinRoom(string playerName, Room room, string connectionId)
         {
             if (!Utils.IsValidName(playerName))
             {
                 return null;
             }
 
-            if (this.Rooms.ContainsKey(roomId))
-            {
-                var room = this.Rooms[roomId];
-                return room.CreatePlayer(playerName, connectionId);
-            }
-
-            return null;
+            return room.CreatePlayer(playerName, connectionId);
         }
 
         public void Cleanup(Object source, ElapsedEventArgs e)
