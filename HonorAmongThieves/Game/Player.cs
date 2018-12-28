@@ -19,7 +19,7 @@ namespace HonorAmongThieves.Game
 
         public int MaxJailSentence { get; set; } = 2;
 
-        public bool HasBetrayed { get; set; } = false;
+        public int BetrayalCount { get; set; } = 0;
 
         public Status CurrentStatus { get; set; }
 

@@ -47,6 +47,7 @@ connection.on("UpdateHeistStatus", function (title, statusMessage, showOkayButto
 });
 
 document.getElementById("okaybutton").addEventListener("click", function (event) {
+    document.getElementById("okaybutton").style.display = "none";
     connection.invoke("OkayButton", roomId, userName).catch(function (err) {
         return console.error(err.toString());
     });
@@ -84,13 +85,13 @@ connection.on("JoinRoom_UpdateState", function (playersConcat, userJoined) {
         playerList.appendChild(li);
     }
 
-    var li = document.createElement("li");
+    /*var li = document.createElement("li");
     li.textContent = userJoined + " has joined room.";
     var messageList = document.getElementById("messagesList")
 
     if (messageList != null) {
         messageList.appendChild(li);
-    }
+    }*/
 });
 
 document.getElementById("joinroombutton").addEventListener("click", function (event) {
@@ -139,7 +140,7 @@ connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, m
 
 connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitchReward) {
     document.getElementById("pageName").textContent = "HEIST SETUP";
-    document.getElementById("heistnetworth").textContent = "TOTAL REWARD: $" + heistReward + " MILLION";
+    document.getElementById("heistnetworth").textContent = "TOTAL HEIST REWARD: $" + heistReward + " MILLION";
     document.getElementById("snitchingreward").textContent = "REWARD FOR SNITCHING: $" + snitchReward + " MILLION";
 
     var heistParticipantInfo = document.getElementsByClassName("heistparticipantinfo");
@@ -193,6 +194,37 @@ document.getElementById("makedecision").addEventListener("click", function (even
         return console.error(err.toString());
     });
     event.preventDefault();
+});
+
+// ------------------------------
+// ----- STATE: END OF GAME -----
+// ------------------------------
+
+connection.on("EndGame_Broadcast", function (year, leaderboarddata) {
+    var elements = document.getElementsByClassName("state");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+    }
+
+    document.getElementById("pageName").textContent = "RETIREMENT";
+
+    document.getElementById("finalyear").textContent = year;
+
+    var endofgamearea = document.getElementById("endofgame");
+    endofgamearea.style.display = "block";
+
+    var leaderboard = document.getElementById("leaderboard");
+    var players = leaderboarddata.split("=");
+    for (let i = 0; i < players.length; i++) {
+        var playerInfo = players[i].split("|");
+        var newRow = leaderboard.insertRow(leaderboard.rows.length);
+        newRow.className = "leaderboardinfo";
+        newRow.insertCell(0).textContent = playerInfo[0];
+        newRow.insertCell(1).textContent = "$" + playerInfo[1] + " MILLION";
+        newRow.insertCell(2).textContent = playerInfo[2];
+        newRow.insertCell(3).textContent = playerInfo[3];
+    }
+
 });
 
 connection.start().catch(function (err) {

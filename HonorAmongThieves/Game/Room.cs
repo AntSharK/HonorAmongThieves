@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace HonorAmongThieves.Game
 {
@@ -24,7 +23,7 @@ namespace HonorAmongThieves.Game
 
         public int CurrentYear { get; set; } = 0;
 
-        public int MaxYears { get; private set; } = Utils.Rng.Next(6, 12);
+        public int MaxYears { get; private set; } = Utils.Rng.Next(5, 10);
 
         public int BetrayalReward { get; private set; } = 60;
 
@@ -135,7 +134,7 @@ namespace HonorAmongThieves.Game
                 this.InitialMaxHeistCapacity = maxHeistSize;
             }
 
-            if (maxGameLength >= 5)
+            if (maxGameLength >= 2)
             {
                 // Game end time is a random number between the max game length and half of it
                 this.MaxYears = Utils.Rng.Next(maxGameLength / 2, maxGameLength);
@@ -208,6 +207,8 @@ namespace HonorAmongThieves.Game
                     if (this.CurrentYear == this.MaxYears)
                     {
                         // TODO: END GAME
+                        await hub.EndGame_Broadcast(this);
+                        return;
                     }
 
                     this.CurrentStatus = Status.SettingUp;
@@ -240,6 +241,11 @@ namespace HonorAmongThieves.Game
                     case Player.Status.FindingHeist:
                         await hub.UpdateHeistStatus(player, "WAITING", "You wait around, and a year passes you by without anything happening.", true);
                         break;
+
+                    case Player.Status.Dead:
+                        await hub.UpdateHeistStatus(player, "STILL DEAD", "Unfortunately, death seems to be a very difficult to reverse state.", false);
+                        break;
+
                     case Player.Status.HeistDecisionMade:
 
                         // TODO: VERY COMPLICATED LOGIC

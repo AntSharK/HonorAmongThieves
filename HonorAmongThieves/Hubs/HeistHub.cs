@@ -129,30 +129,37 @@ namespace HonorAmongThieves.Hubs
         {
             foreach (var player in room.Players.Values)
             {
-                player.CurrentStatus = Player.Status.FindingHeist;
+                if (player.CurrentStatus == Player.Status.WaitingForGameStart)
+                { 
+                    player.CurrentStatus = Player.Status.FindingHeist;
+                }
+
                 await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, room.CurrentYear + 2018, player.Name, player.MinJailSentence, player.MaxJailSentence);
             }
 
             // TODO: Test temp thing
-            var k = 0;
-            foreach (var p in room.Players.Values)
-            {
-                switch (k)
-                {
-                    case 0:
-                    case 1:
-                        break;
-                    case 2:
-                        p.CurrentStatus = Player.Status.InJail;
-                        p.YearsLeftInJail = 15;
-                        break;
-                    case 3:
-                        p.CurrentStatus = Player.Status.Dead;
-                        break;
-                }
-
-                k++;
-            }
+            // if (room.CurrentYear == 0)
+            // {
+            //     var k = 0;
+            //     foreach (var p in room.Players.Values)
+            //     {
+            //         switch (k)
+            //         {
+            //             case 0:
+            //             case 1:
+            //                 break;
+            //             case 2:
+            //                 p.CurrentStatus = Player.Status.InJail;
+            //                 p.YearsLeftInJail = 15;
+            //                 break;
+            //             case 3:
+            //                 p.CurrentStatus = Player.Status.Dead;
+            //                 break;
+            //         }
+            // 
+            //         k++;
+            //     }
+            // }
 
             room.SigningUp = false;
             room.SpawnHeists();
@@ -267,6 +274,37 @@ namespace HonorAmongThieves.Hubs
             {
                 await this.UpdateHeistStatus(player, "SNITCH", "You decide to tell the police that there's a heist going on. You'll watch your fellow thieves from close by and keep the police informed.");
             }
+        }
+
+        internal async Task EndGame_Broadcast(Room room)
+        {
+            var playerInfo = new StringBuilder();
+            foreach (var player in room.Players.Values)
+            {
+                playerInfo.Append(player.Name);
+                playerInfo.Append("|");
+
+                if (player.CurrentStatus == Player.Status.Dead)
+                {
+                    playerInfo.Append("DEAD");
+                }
+                else
+                {
+                    playerInfo.Append(player.NetWorth);
+                }
+                playerInfo.Append("|");
+                playerInfo.Append(player.BetrayalCount);
+                playerInfo.Append("|");
+                playerInfo.Append(player.TimeSpentInJail);
+                playerInfo.Append("=");
+            }
+
+            if (playerInfo.Length > 0)
+            {
+                playerInfo.Length = playerInfo.Length - 1;
+            }
+
+            await Clients.Group(room.Id).SendAsync("EndGame_Broadcast", room.CurrentYear + 2018, playerInfo.ToString());
         }
     }
 }

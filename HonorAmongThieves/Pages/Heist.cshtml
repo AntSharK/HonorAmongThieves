@@ -17,7 +17,7 @@
             <br />
             <h4>Custom room parameters</h4>
             Betrayal Reward: <input type="number" step="1" min="0" value="60" id="betrayalreward" /><br />
-            Max Game Length: <input type="number" step="1" min="3" value="15" id="maxgamelength" /><br />
+            Max Game Length: <input type="number" step="1" min="3" value="10" id="maxgamelength" /><br />
             Maximum Heist Size: <input type="number" step="1" min="2" value="5" id="maxheistsize" /><br />
             <br />
         </div>
@@ -40,10 +40,10 @@
     <div class="state" id="gamestart" style="display:none">
         <div class="state" id="heiststatus" style="display:none">
             <h3 id="heiststatusmessage"></h3><br />
-            <div class="state" id="heistmembers" style="display:none">                
+            <div class="state" id="heistmembers" style="display:none">
                 <ul id="heistMemberList"></ul>
             </div>
-            <input type="button" id="okaybutton" value="OKAY" style="font-size : 36px"/>
+            <input type="button" id="okaybutton" value="OKAY" style="font-size : 36px" />
         </div>
 
         <div class="state" id="heistsetup" style="display:none">
@@ -58,7 +58,7 @@
             </table>
             <hr />
             MURDER SOMEONE:
-            <select id="commitmurderselection" />
+            <select id="commitmurderselection" /> <br />
             <input type="button" id="commitmurder" value="MURDER" />
             <hr />
             <br />
@@ -66,14 +66,30 @@
             SNITCH TO POLICE: <input type="checkbox" id="snitchtopolicecheck" /> <br />
             <input type="button" id="makedecision" value="MAKE DECISION" />
             <br />
-            <hr />
-            <u><h4>Player Information</h4></u>
-            <h4 id="playername"></h4>
-            <h4 id="years"></h4>
-            <h4 id="networth"></h4>
-            <h4 id="nextjailtime"></h4>
-            <br />
         </div>
+        <hr />
+        <u><h4>Player Information</h4></u>
+        <h4 id="playername"></h4>
+        <h4 id="years"></h4>
+        <h4 id="networth"></h4>
+        <h4 id="nextjailtime"></h4>
+        <br />
+    </div>
+
+
+
+    <div class="state" id="endofgame" style="display:none">
+        <h4 id="finalyear"></h4>
+        <table border="1px solid black" id="leaderboard">
+            <tr>
+                <th>Thief</th>
+                <th>Networth</th>
+                <th>Snitch Count</th>
+                <th>Jail Time</th>
+            </tr>
+        </table>
+        <hr />
+        <a href="/">FINISH</a>
     </div>
 
     <div class="row">
