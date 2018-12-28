@@ -153,7 +153,8 @@ namespace HonorAmongThieves.Game
             {
                 // Compute defensive deaths
                 if (player.Decision.PlayerToKill != null
-                    && player.Decision.PlayerToKill.Decision.NextStatus != Player.Status.Dead)
+                    && player.Decision.PlayerToKill.Decision.NextStatus != Player.Status.Dead
+                    && player.Decision.PlayerToKill.Decision.GoOnHeist)
                 {
                     player.Decision.NextStatus = Player.Status.Dead;
                 }
