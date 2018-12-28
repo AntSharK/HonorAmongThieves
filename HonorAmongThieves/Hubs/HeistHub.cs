@@ -138,29 +138,29 @@ namespace HonorAmongThieves.Hubs
                 await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, room.CurrentYear + 2018, player.Name, player.MinJailSentence, player.MaxJailSentence);
             }
 
-            // TODO: Test temp thing
-            // if (room.CurrentYear == 0)
-            // {
-            //     var k = 0;
-            //     foreach (var p in room.Players.Values)
-            //     {
-            //         switch (k)
-            //         {
-            //             case 0:
-            //             case 1:
-            //                 break;
-            //             case 2:
-            //                 p.CurrentStatus = Player.Status.InJail;
-            //                 p.YearsLeftInJail = 15;
-            //                 break;
-            //             case 3:
-            //                 p.CurrentStatus = Player.Status.Dead;
-            //                 break;
-            //         }
-            // 
-            //         k++;
-            //     }
-            // }
+             //TODO: Test temp thing
+             if (room.CurrentYear == 0)
+             {
+                 var k = 0;
+                 foreach (var p in room.Players.Values)
+                 {
+                     switch (k)
+                     {
+                         case 0:
+                         case 1:
+                             break;
+                         case 2:
+                             p.CurrentStatus = Player.Status.InJail;
+                             p.YearsLeftInJail = 15;
+                             break;
+                         case 3:
+                             p.CurrentStatus = Player.Status.Dead;
+                             break;
+                     }
+             
+                     k++;
+                 }
+             }
 
             room.SigningUp = false;
             room.SpawnHeists();
