@@ -255,12 +255,20 @@ namespace HonorAmongThieves.Game
 
                     case Player.Status.HeistDecisionMade:
                         await hub.UpdateHeistStatus(player, player.Decision.FateTitle, player.Decision.FateDescription, true);
-                        if (player.Decision.GoOnHeist && player.Decision.FellowHeisters != null)
+                        if (player.Decision.GoOnHeist && player.Decision.FellowHeisters != null && player.Decision.FellowHeisters.Count > 0)
                         {
                             await hub.UpdateHeistMeetup(player, player.Decision.FellowHeisters);
                         }
 
-                        player.CurrentStatus = Player.Status.FindingHeist;
+                        if (player.Decision.NextStatus == null)
+                        {
+                            player.CurrentStatus = Player.Status.FindingHeist;
+                        }
+                        else
+                        {
+                            player.CurrentStatus = player.Decision.NextStatus;
+                        }
+
                         break;
                 }
             }

@@ -308,7 +308,7 @@ namespace HonorAmongThieves.Hubs
                 }
                 else
                 {
-                    playerInfo.Append(player.NetWorth);
+                    playerInfo.Append("$" + player.NetWorth + " MILLION");
                 }
                 playerInfo.Append("|");
                 playerInfo.Append(player.BetrayalCount);

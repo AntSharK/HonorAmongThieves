@@ -15,8 +15,6 @@ namespace HonorAmongThieves.Game
 
         public int SnitchReward { get; private set; } = 60;
 
-        public bool Resolved { get; set; } = false;
-
         public Heist(string heistId, int heistCapacity, int snitchReward)
         {
             this.SnitchReward = snitchReward;
@@ -39,9 +37,144 @@ namespace HonorAmongThieves.Game
         public void Resolve()
         {
             // TODO: Generate state changes for each player
+            var heisters = new List<Player>();
+            foreach (var player in this.Players.Values)
+            {
+                var victim = player.Decision.PlayerToKill;
+                if (victim != null)
+                {
+                    if (victim.Decision.Killers == null)
+                    {
+                        victim.Decision.Killers = new List<Player>();
+                    }
+
+                    victim.Decision.Killers.Add(player);
+                }
+
+                if (player.Decision.GoOnHeist)
+                {
+                    heisters.Add(player);
+                }
+            }
+
+            // Calculate death
+            foreach (var player in this.Players.Values)
+            {
+                if (player.Decision.Killers == null)
+                {
+                    continue;
+                }
+
+                if (player.BetrayalCount > 0
+                    && (player.Decision.GoOnHeist || player.Decision.ReportPolice))
+                {
+                    player.Decision.NextStatus = Player.Status.Dead;
+                }
+                else if (player.Decision.ReportPolice)
+                {
+                    player.Decision.NextStatus = Player.Status.Dead;
+                }
+
+                if (player.Decision.NextStatus == Player.Status.Dead)
+                {
+                    var reward = player.NetWorth / player.Decision.Killers.Count;
+                    foreach (var killer in player.Decision.Killers)
+                    {
+                        killer.NetWorth += reward;
+                        killer.Decision.NetworthChange += reward;
+                    }
+
+                    player.Decision.NetworthChange = -player.NetWorth;
+                    player.NetWorth = 0;
+                }
+            }
+
+            var heistHappens = heisters.Count >= (this.Players.Count + 1) / 2;
+            var aliveSnitchers = new List<Player>();
+            foreach (var player in this.Players.Values)
+            {
+                if (player.Decision.ReportPolice
+                    && player.Decision.NextStatus != Player.Status.Dead)
+                {
+                    aliveSnitchers.Add(player);
+                }
+            }
+
+            var policeReported = false;
+            if (aliveSnitchers.Count > 0)
+            {
+                policeReported = true;
+            }
+
+            // Compute rewards and jail time
+            if (heistHappens 
+                && !policeReported 
+                && heisters.Count > 0)
+            {
+                var reward = this.TotalReward / heisters.Count;
+                foreach (var heister in heisters)
+                {
+                    heister.Decision.NetworthChange += reward;
+                    heister.NetWorth += reward;
+                }
+            }
+            else if (heistHappens
+                && policeReported)
+            {
+                var snitchreward = this.SnitchReward / aliveSnitchers.Count;
+                foreach (var heister in heisters)
+                {
+                    heister.Decision.NextStatus = Player.Status.InJail;
+                    heister.YearsLeftInJail = Utils.Rng.Next(heister.MinJailSentence, heister.MaxJailSentence);
+                }
+                foreach (var snitcher in aliveSnitchers)
+                {
+                    snitcher.Decision.NetworthChange += snitchreward;
+                    snitcher.NetWorth += snitchreward;
+                    snitcher.BetrayalCount++;
+                }
+            }
+            else if (!heistHappens
+                && policeReported)
+            {
+                foreach (var snitcher in aliveSnitchers)
+                {
+                    snitcher.Decision.NextStatus = Player.Status.InJail;
+                    snitcher.YearsLeftInJail = snitcher.MinJailSentence;
+                }
+            }
+            else if (!heistHappens
+                && !policeReported)
+            {
+                // Nothing goes on
+            }
 
             foreach (var player in this.Players.Values)
             {
+                // Compute defensive deaths
+                if (player.Decision.PlayerToKill != null
+                    && player.Decision.PlayerToKill.Decision.NextStatus != Player.Status.Dead)
+                {
+                    player.Decision.NextStatus = Player.Status.Dead;
+                }
+
+                // Compute jail times
+                if (player.Decision.NextStatus == Player.Status.InJail)
+                {
+                    var decreasedNetworth = player.NetWorth / 5;
+                    player.Decision.NetworthChange -= decreasedNetworth;
+                    player.NetWorth = player.NetWorth - decreasedNetworth;
+                    player.MinJailSentence *= 2;
+                    player.MaxJailSentence *= 2;
+                }
+            }
+
+            // After generating state, compute the resolution messages
+            foreach (var player in this.Players.Values)
+            {
+                player.Decision.HeistHappens = heistHappens;
+                player.Decision.PoliceReported = policeReported;
+                player.Decision.FellowHeisters = heisters;
                 player.GenerateFateMessage();
             }
         }

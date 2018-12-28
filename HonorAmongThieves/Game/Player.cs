@@ -89,11 +89,14 @@ namespace HonorAmongThieves.Game
             public Player PlayerToKill { get; set; } = null;
 
             // For decision resolution
-            public int NetworthChange { get; set; }
+            public int NetworthChange { get; set; } = 0;
             public string FateTitle { get; set; } = "";
             public string FateDescription { get; set; } = "";
             public List<Player> FellowHeisters { get; set; }
             public List<Player> Killers { get; set; }
+            public bool HeistHappens { get; set; }
+            public bool PoliceReported { get; set; }
+            public Status NextStatus { get; set; }
         }
     }
 }

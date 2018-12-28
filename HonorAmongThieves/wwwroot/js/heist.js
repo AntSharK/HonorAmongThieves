@@ -233,7 +233,7 @@ connection.on("EndGame_Broadcast", function (year, leaderboarddata) {
         var newRow = leaderboard.insertRow(leaderboard.rows.length);
         newRow.className = "leaderboardinfo";
         newRow.insertCell(0).textContent = playerInfo[0];
-        newRow.insertCell(1).textContent = "$" + playerInfo[1] + " MILLION";
+        newRow.insertCell(1).textContent = playerInfo[1];
         newRow.insertCell(2).textContent = playerInfo[2];
         newRow.insertCell(3).textContent = playerInfo[3];
     }
