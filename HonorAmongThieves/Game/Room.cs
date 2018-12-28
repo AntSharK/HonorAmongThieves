@@ -255,7 +255,7 @@ namespace HonorAmongThieves.Game
 
                     case Player.Status.HeistDecisionMade:
                         await hub.UpdateHeistStatus(player, player.Decision.FateTitle, player.Decision.FateDescription, true);
-                        if (player.Decision.GoOnHeist)
+                        if (player.Decision.GoOnHeist && player.Decision.FellowHeisters != null)
                         {
                             await hub.UpdateHeistMeetup(player, player.Decision.FellowHeisters);
                         }
