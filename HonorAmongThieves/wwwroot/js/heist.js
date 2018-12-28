@@ -196,6 +196,19 @@ document.getElementById("makedecision").addEventListener("click", function (even
     event.preventDefault();
 });
 
+connection.on("UpdateHeistMeetup", function (playersConcat) {
+    var playerList = document.getElementById("heistMemberList");
+    playerList.innerHTML = "";
+    var players = playersConcat.split("|");
+    for (let i = 0; i < players.length; i++) {
+        var li = document.createElement("li");
+        li.textContent = players[i];
+        playerList.appendChild(li);
+    }
+
+    document.getElementById("heistmembers").style.display = "block";
+});
+
 // ------------------------------
 // ----- STATE: END OF GAME -----
 // ------------------------------

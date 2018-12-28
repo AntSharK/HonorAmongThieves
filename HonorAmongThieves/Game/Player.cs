@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Game
@@ -62,6 +63,11 @@ namespace HonorAmongThieves.Game
             this.CurrentStatus = Status.HeistDecisionMade;
         }
 
+        public void GenerateFateMessage()
+        {
+            // TODO: Generate Fate Title and Description based on state change
+        }
+
         public enum Status
         {
             WaitingForGameStart,
@@ -81,6 +87,13 @@ namespace HonorAmongThieves.Game
             public bool GoOnHeist { get; set; } = true;
             public bool ReportPolice { get; set; } = false;
             public Player PlayerToKill { get; set; } = null;
+
+            // For decision resolution
+            public int NetworthChange { get; set; }
+            public string FateTitle { get; set; } = "";
+            public string FateDescription { get; set; } = "";
+            public List<Player> FellowHeisters { get; set; }
+            public List<Player> Killers { get; set; }
         }
     }
 }

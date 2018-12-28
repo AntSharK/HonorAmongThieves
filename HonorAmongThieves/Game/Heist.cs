@@ -35,5 +35,15 @@ namespace HonorAmongThieves.Game
             player.Okay = false;
             this.Players[player.Name] = player;
         }
+
+        public void Resolve()
+        {
+            // TODO: Generate state changes for each player
+
+            foreach (var player in this.Players.Values)
+            {
+                player.GenerateFateMessage();
+            }
+        }
     }
 }

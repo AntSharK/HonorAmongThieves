@@ -1,6 +1,7 @@
 ﻿using HonorAmongThieves.Game;
 using Microsoft.AspNetCore.SignalR;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -274,6 +275,23 @@ namespace HonorAmongThieves.Hubs
             {
                 await this.UpdateHeistStatus(player, "SNITCH", "You decide to tell the police that there's a heist going on. You'll watch your fellow thieves from close by and keep the police informed.");
             }
+        }
+
+        internal async Task UpdateHeistMeetup(Player currentPlayer, List<Player> FellowHeisters)
+        {
+            var playerNames = new StringBuilder();
+            foreach (var player in FellowHeisters)
+            {
+                playerNames.Append(player.Name);
+                playerNames.Append("|");
+            }
+
+            if (playerNames.Length > 0)
+            {
+                playerNames.Length--;
+            }
+
+            await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateHeistMeetup", playerNames.ToString());
         }
 
         internal async Task EndGame_Broadcast(Room room)

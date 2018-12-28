@@ -197,16 +197,23 @@ namespace HonorAmongThieves.Game
             switch (this.CurrentStatus)
             {
                 case Status.AwaitingHeistDecisions:
+                    foreach (var heist in this.Heists.Values)
+                    {
+                        heist.Resolve();
+                    }
+
+                    await this.UpdateFate(hub);
+                    this.CurrentStatus = Status.ResolvingHeists;
+                    break;
+
                 case Status.NoHeists:
                     await this.UpdateFate(hub);
                     this.CurrentStatus = Status.ResolvingHeists;
                     break;
                 case Status.ResolvingHeists:
-
                     this.CurrentYear++;
                     if (this.CurrentYear == this.MaxYears)
                     {
-                        // TODO: END GAME
                         await hub.EndGame_Broadcast(this);
                         return;
                     }
@@ -247,9 +254,11 @@ namespace HonorAmongThieves.Game
                         break;
 
                     case Player.Status.HeistDecisionMade:
-
-                        // TODO: VERY COMPLICATED LOGIC
-                        // Must RESOLVE HEISTS, UPDATE PLAYERS TO NEW STATE, and BROADCAST MESSAGES
+                        await hub.UpdateHeistStatus(player, player.Decision.FateTitle, player.Decision.FateDescription, true);
+                        if (player.Decision.GoOnHeist)
+                        {
+                            await hub.UpdateHeistMeetup(player, player.Decision.FellowHeisters);
+                        }
 
                         player.CurrentStatus = Player.Status.FindingHeist;
                         break;
