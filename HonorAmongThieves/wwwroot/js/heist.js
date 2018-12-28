@@ -20,7 +20,7 @@ document.getElementById("createroombutton").addEventListener("click", function (
     event.preventDefault();
 });
 
-connection.on("UpdateHeistStatus", function (title, statusMessage) {
+connection.on("UpdateHeistStatus", function (title, statusMessage, showOkayButton) {
     var elements = document.getElementsByClassName("state");
     for (var i = 0; i < elements.length; i++) {
         elements[i].style.display = "none";
@@ -36,6 +36,21 @@ connection.on("UpdateHeistStatus", function (title, statusMessage) {
     var heiststatusarea = document.getElementById("heiststatus");
     heiststatusarea.style.display = "block";
     document.getElementById("heiststatusmessage").textContent = statusMessage;
+
+    var okayButton = document.getElementById("okaybutton");
+    if (showOkayButton) {
+        okayButton.style.display = "block";
+    }
+    else {
+        okayButton.style.display = "none";
+    }
+});
+
+document.getElementById("okaybutton").addEventListener("click", function (event) {
+    connection.invoke("OkayButton", roomId, userName).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
 });
 
 // ---------------------------
@@ -107,18 +122,15 @@ document.getElementById("startbutton").addEventListener("click", function (event
 // ------------------------------
 // ----- STATE: HEIST START -----
 // ------------------------------
-connection.on("StartRoom_ChangeState", function (roomStarted) {
+connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, minJailTime, maxJailTime) {
     var elements = document.getElementsByClassName("state");
     for (var i = 0; i < elements.length; i++) {
         elements[i].style.display = "none";
     }
 
-    document.getElementById("pageName").textContent = "GAME STARTED: " + roomStarted;
     var gamestartarea = document.getElementById("gamestart");
     gamestartarea.style.display = "block";
-});
 
-connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, minJailTime, maxJailTime) {
     document.getElementById("playername").textContent = "NAME: " + displayName;
     document.getElementById("years").textContent = "YEAR: " + years;
     document.getElementById("networth").textContent = "NETWORTH: $" + netWorth + " MILLION";

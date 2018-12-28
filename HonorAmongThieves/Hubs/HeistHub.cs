@@ -13,6 +13,15 @@ namespace HonorAmongThieves.Hubs
             await Clients.Caller.SendAsync("ShowError", errorMessage);
         }
 
+        public async Task OkayButton(string roomId, string playerName)
+        {
+            var room = Program.Instance.Rooms[roomId];
+            var player = room.Players[playerName];
+
+            player.Okay = true;
+            await room.Okay(this);
+        }
+
         public async Task CreateRoom(string userName)
         {
             var roomId = Program.Instance.CreateRoom(this, userName);
@@ -33,6 +42,12 @@ namespace HonorAmongThieves.Hubs
                     await this.ShowError("Unable to create room. Number of total rooms: " + numRooms);
                 }
             }
+
+            // TODO: Temporary code for testing
+            // var room = Program.Instance.Rooms[roomId];
+            // var p1 = room.CreatePlayer("dummyplayer1", "someconn1");
+            // var p2 = room.CreatePlayer("dummyplayer2", "someconn2");
+            // var p3 = room.CreatePlayer("dummyplayer3", "someconn3");
         }
 
         public async Task JoinRoom(string roomId, string userName)
@@ -107,7 +122,6 @@ namespace HonorAmongThieves.Hubs
             room.StartGame(betrayalReward, maxGameLength, maxHeistSize);
             room.UpdatedTime = DateTime.UtcNow; // Only update the room when the players click something
 
-            await Clients.Group(room.Id).SendAsync("StartRoom_ChangeState", room.Id);
             await this.StartRoom_UpdateState(room);
         }
 
@@ -117,6 +131,27 @@ namespace HonorAmongThieves.Hubs
             {
                 player.CurrentStatus = Player.Status.FindingHeist;
                 await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, room.CurrentYear + 2018, player.Name, player.MinJailSentence, player.MaxJailSentence);
+            }
+
+            // TODO: Test temp thing
+            var k = 0;
+            foreach (var p in room.Players.Values)
+            {
+                switch (k)
+                {
+                    case 0:
+                    case 1:
+                        break;
+                    case 2:
+                        p.CurrentStatus = Player.Status.InJail;
+                        p.YearsLeftInJail = 15;
+                        break;
+                    case 3:
+                        p.CurrentStatus = Player.Status.Dead;
+                        break;
+                }
+
+                k++;
             }
 
             room.SigningUp = false;
@@ -143,21 +178,26 @@ namespace HonorAmongThieves.Hubs
                 switch (player.CurrentStatus)
                 {
                     case Player.Status.FindingHeist:
-                        await this.UpdateHeistStatus(player, "FINDING HEIST...", "Your contacts don't seem to be responding. If there is any crime going on, you're not being invited.");
+                        await this.UpdateHeistStatus(player, "FINDING HEIST...", "Your contacts don't seem to be responding. If there is any crime going on, you're not being invited.", true);
                         break;
                     case Player.Status.Dead:
                         await this.UpdateHeistStatus(player, "DEAD", "You're dead. You can't do anything.");
                         break;
                     case Player.Status.InJail:
-                        await this.UpdateHeistStatus(player, "IN JAIL", "You're IN JAIL. Years left: " + player.YearsLeftInJail);
+                        await this.UpdateHeistStatus(player, "IN JAIL", "You're IN JAIL. Years left: " + player.YearsLeftInJail, true);
                         break;
                 }
             }
         }
 
-        internal async Task UpdateHeistStatus(Player player, string title, string message)
+        internal async Task UpdateHeistStatus(Player player, string title, string message, bool okayButton = false)
         {
-            await Clients.Client(player.ConnectionId).SendAsync("UpdateHeistStatus", title, message);
+            if (okayButton)
+            {
+                player.Okay = false;
+            }
+
+            await Clients.Client(player.ConnectionId).SendAsync("UpdateHeistStatus", title, message, okayButton);
         }
 
         internal async Task HeistPrep_ChangeState(Heist heist)
@@ -192,6 +232,7 @@ namespace HonorAmongThieves.Hubs
 
             murderer.MurderDecision(victim);
             await this.HeistPrep_UpdateDecision(murderer);
+            await this.OkayButton(roomId, murdererName);
         }
 
         public async Task MakeDecision(string roomId, string playerName, bool turnUpToHeist, bool snitchToPolice)
@@ -201,6 +242,7 @@ namespace HonorAmongThieves.Hubs
 
             player.MakeDecision(turnUpToHeist, snitchToPolice);
             await this.HeistPrep_UpdateDecision(player);
+            await this.OkayButton(roomId, playerName);
         }
 
         internal async Task HeistPrep_UpdateDecision(Player player)
@@ -208,10 +250,6 @@ namespace HonorAmongThieves.Hubs
             if (player.Decision.PlayerToKill != null)
             {
                 await this.UpdateHeistStatus(player, "COMMIT MURDER", "You have decided to kill " + player.Decision.PlayerToKill.Name);
-            }
-            else if (player.Decision.TimeOut)
-            {
-                await this.UpdateHeistStatus(player, "DEFAULT: GO ON HEIST", "You ran out of time deciding and are going on the heist.");
             }
             else if (player.Decision.GoOnHeist && !player.Decision.ReportPolice)
             {

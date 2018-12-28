@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace HonorAmongThieves.Game
 {
@@ -31,14 +32,13 @@ namespace HonorAmongThieves.Game
 
         public Dictionary<string, Heist> Heists { get; } = new Dictionary<string, Heist>();
 
-        public HeistHub Hub { get; private set; }
-
         private Random Random = new Random();
+
+        public Status CurrentStatus { get; set; } = Status.SettingUp;
 
         public Room(string id, HeistHub hub)
         {
             this.Id = id;
-            this.Hub = hub;
             this.CreatedTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
         }
@@ -91,6 +91,15 @@ namespace HonorAmongThieves.Game
                     // Do nothing
                     break;
             }
+
+            if (this.Heists.Count > 0)
+            {
+                this.CurrentStatus = Status.AwaitingHeistDecisions;
+            }
+            else
+            {
+                this.CurrentStatus = Status.NoHeists;
+            }
         }
 
         private Heist CreateHeist(List<Player> eligiblePlayers, int heistCapacity)
@@ -98,12 +107,11 @@ namespace HonorAmongThieves.Game
             var heistId = Utils.GenerateId(12, this.Heists);
 
             var snitchReward = this.BetrayalReward;
-            var heist = new Heist(heistId, heistCapacity, snitchReward, this.Hub);
+            var heist = new Heist(heistId, heistCapacity, snitchReward);
 
             for (var i = 0; i < heistCapacity; i++)
             {
                 var playerToInsert = eligiblePlayers[i];
-                playerToInsert.CurrentStatus = Player.Status.InHeist;
                 heist.AddPlayer(playerToInsert);
             }
 
@@ -170,38 +178,85 @@ namespace HonorAmongThieves.Game
             }
         }
 
-        public bool TryResolveHeists()
+        public async Task Okay(HeistHub hub)
         {
-            // TODO: TRY to resolve all heists
-            // If every heist decision is made, then resolve them
-            // Set timer to prepare transitions
-            return false;
-        }
-
-        public async void PrepareTransition()
-        {
-            // TODO: Prepare to transition to the next stage
-            // For all heists, transmit the eventual fate
-            // For all non-heists, update new message
-            // Set timer to trigger next year
-        }
-
-        public async Task NextYear()
-        {
-            this.Heists.Clear();
-            if (this.CurrentYear >= this.MaxYears)
-            {
-                // TODO: End the game
-                return;
-            }
-
+            this.UpdatedTime = DateTime.UtcNow;
             foreach (var player in this.Players.Values)
             {
-                player.Decision = new Player.HeistDecision();
+                if (player.CurrentStatus == Player.Status.FindingHeist 
+                    || player.CurrentStatus == Player.Status.HeistDecisionMade
+                    || player.CurrentStatus == Player.Status.InHeist
+                    || player.CurrentStatus == Player.Status.InJail)
+                {
+                    // If a player isn't okay, do nothing
+                    if (!player.Okay)
+                    {
+                        return;
+                    }
+                }
             }
+            switch (this.CurrentStatus)
+            {
+                case Status.AwaitingHeistDecisions:
+                case Status.NoHeists:
+                    await this.UpdateFate(hub);
+                    this.CurrentStatus = Status.ResolvingHeists;
+                    break;
+                case Status.ResolvingHeists:
 
-            this.CurrentYear++;
-            await this.Hub.StartRoom_UpdateState(this);
+                    this.CurrentYear++;
+                    if (this.CurrentYear == this.MaxYears)
+                    {
+                        // TODO: END GAME
+                    }
+
+                    this.CurrentStatus = Status.SettingUp;
+                    this.Heists.Clear();
+                    await hub.StartRoom_UpdateState(this);
+                    break;
+            }
+        }
+
+        private async Task UpdateFate(HeistHub hub)
+        {
+            foreach (var player in this.Players.Values)
+            {
+                switch (player.CurrentStatus)
+                {
+                    case Player.Status.InJail:
+                        player.YearsLeftInJail--;
+                        player.TimeSpentInJail++;
+                        if (player.YearsLeftInJail <= 0)
+                        {
+                            player.CurrentStatus = Player.Status.FindingHeist;
+                            await hub.UpdateHeistStatus(player, "FREE AT LAST", "You're finally free of jail! A new person! Free from the life of crime!", true);
+                        }
+                        else
+                        {
+                            await hub.UpdateHeistStatus(player, "STILL IN JAIL", "You're still in jail for another " + player.YearsLeftInJail + " year(s).", true);
+                        }
+                        break;
+
+                    case Player.Status.FindingHeist:
+                        await hub.UpdateHeistStatus(player, "WAITING", "You wait around, and a year passes you by without anything happening.", true);
+                        break;
+                    case Player.Status.HeistDecisionMade:
+
+                        // TODO: VERY COMPLICATED LOGIC
+                        // Must RESOLVE HEISTS, UPDATE PLAYERS TO NEW STATE, and BROADCAST MESSAGES
+
+                        player.CurrentStatus = Player.Status.FindingHeist;
+                        break;
+                }
+            }
+        }
+
+        public enum Status
+        {
+            SettingUp,
+            NoHeists,
+            AwaitingHeistDecisions,
+            ResolvingHeists
         }
     }
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Game
@@ -33,6 +31,8 @@ namespace HonorAmongThieves.Game
 
         public HeistDecision Decision { get; set; } = new HeistDecision();
 
+        public bool Okay { get; set; } = true;
+
         public Player(string name, Room room)
         {
             this.Name = name;
@@ -47,6 +47,9 @@ namespace HonorAmongThieves.Game
             this.Decision.GoOnHeist = true;
             this.Decision.ReportPolice = false;
             this.Decision.PlayerToKill = victim;
+
+            this.Okay = true;
+            this.CurrentStatus = Status.HeistDecisionMade;
         }
 
         public void MakeDecision(bool turnUp, bool snitch)
@@ -54,6 +57,9 @@ namespace HonorAmongThieves.Game
             this.Decision.DecisionMade = true;
             this.Decision.GoOnHeist = turnUp;
             this.Decision.ReportPolice = snitch;
+
+            this.Okay = true;
+            this.CurrentStatus = Status.HeistDecisionMade;
         }
 
         public enum Status
@@ -72,7 +78,6 @@ namespace HonorAmongThieves.Game
         public class HeistDecision
         {
             public bool DecisionMade { get; set; } = false;
-            public bool TimeOut { get; set; } = false;
             public bool GoOnHeist { get; set; } = true;
             public bool ReportPolice { get; set; } = false;
             public Player PlayerToKill { get; set; } = null;
