@@ -165,7 +165,10 @@ namespace HonorAmongThieves.Game
                 {
                     var decreasedNetworth = player.NetWorth / 5;
 
-                    if (!player.Decision.ReportPolice)
+                    // Fines are either for players caught in a heist
+                    // Or snitches snitching on non-heists
+                    if (!player.Decision.ReportPolice
+                        || (player.Decision.ReportPolice && !heistHappens))
                     {
                         player.Decision.NetworthChange -= decreasedNetworth;
                         player.NetWorth = player.NetWorth - decreasedNetworth;
