@@ -1,98 +1,103 @@
 ﻿@page
 <div class="container">
-    <div id="pageName" style="font-size:450%; text-decoration:underline; text-align:center">JOIN A GAME</div>
+    <div id="pageName" class="display-2" style="text-decoration:underline; text-align:center">JOIN A GAME</div>
     <div class="state" id="startLobby" style="display:none">
-        <u style="text-align:center; font-size:175%">PLAYERS IN GAME</u>
-        <ul id="lobbyList" style="font-size:150%"></ul>
+        <h3><u style="text-align:center">PLAYERS IN GAME</u></h3>
+        <h4><ul id="lobbyList"></ul></h4>
 
-        <div id="startButtonDiv" style="display:none; font-size:200%">
+        <h4><div id="startButtonDiv" style="display:none">
             At least 4 players are required to start the game.<br />
             Make sure there are no players who are in the lobby but cannot see the game!!.<br />
             <br />
             <div style="text-align:center">
-                <input type="button" id="startbutton" value="START" style="font-size:400%" />
+                <input type="button" id="startbutton" value="START" class="display-1" />
                 <br />
                 <br />
-                <u style="font-size:200%">GAME PARAMETERS</u><br />
-                Betrayal Reward: <input type="number" step="1" min="0" value="60" id="betrayalreward" style="font-size:200%" /><br />
-                Max Game Length: <input type="number" step="1" min="3" value="10" id="maxgamelength" style="font-size:200%" /><br />
-                Maximum Heist Size: <input type="number" step="1" min="2" value="5" id="maxheistsize" style="font-size:200%" /><br />
+                <div class="display-4">
+                    <u>GAME PARAMETERS</u><br />
+                    Betrayal Reward: <input type="number" step="1" min="0" value="60" id="betrayalreward" size="2" /><br />
+                    Max Game Length: <input type="number" step="1" min="3" value="10" id="maxgamelength" size="2" /><br />
+                    Max Heist Size: <input type="number" step="1" min="2" value="5" id="maxheistsize" size="2" /><br />
+                </div>
             </div>
             <br />
-        </div>
+        </div></h4>
     </div>
     <div class="row">&nbsp;</div>
 
     <div class="state" id="joinroom">
-            <div style="text-align:center; font-size:200%">
-                Name: <input type="text" id="username" style="font-size:100%" /><br /><br />
-                Room ID: <input type="text" id="roomid" style="font-size:100%" /><br /><br />
-                <input type="button" id="joinroombutton" style="font-size:225%" value="JOIN" />
-            </div>
+        <div class="display-3" style="text-align:center">
+            Name: <input type="text" id="username" maxlength="10" size="10" /><br />
+            Room ID: <input type="text" id="roomid" maxlength="5" size="5" /><br /><br />
+            <input type="button" class="display-1" id="joinroombutton" value="JOIN" />
+        </div>
+        <h3>
+            <br />
             Names are unique per room.<br />
             Only letters and numbers allowed in username. Username cannot be longer than 10 letters.<br />
             You need a username to create a room.<br />
-            Room ID is automatically generated when you create a room. <br /><br />
+            Room ID is automatically generated when you create a room. <br />
+        </h3>
+    <hr />
+        <div style="text-align:center" class="display-1">
+            <input type="button" id="createroombutton" value="CREATE" />
         </div>
-        <hr />
-    <div style="text-align:center">
-        <input type="button" id="createroombutton" value="CREATE" style="font-size:450%" />
     </div>
 
     <div class="state" id="gamestart" style="display:none">
-        <div class="state" id="heiststatus" style="display:none; font-size:200%">
-
-            <div class="state" id="heistmembers" style="display:none">
+        <div class="state" id="heiststatus" style="display:none">
+            <h3><div class="state" id="heistmembers" style="display:none">
                 <u>Heist Members:</u>
                 <ul id="heistMemberList"></ul>
-            </div>
+            </div></h3>
             <div style="text-align:center">
-                <h3 id="heiststatusmessage"></h3><br />
-                <input type="button" id="okaybutton" value="OKAY" style="font-size:250%" />
+                <h2 id="heiststatusmessage"></h2><br />
+                <input type="button" id="okaybutton" value="OKAY" class="display-1" style="display: block; margin:0 auto;" />
             </div>
         </div>
 
-        <div class="state" id="heistsetup" style="display:none; font-size:200%">
-            <h4 id="heistnetworth"></h4>
-            <h4 id="snitchingreward"></h4>
-            <div style="text-align:center; font-size:100%"></div>
-            <u>HEIST PARTICIPANTS</u>
-            <table border="1px solid black" id="heistparticipants" style="font-size:100%">
-                <tr>
-                    <th>Name</th>
-                    <th>Estimated Networth</th>
-                    <th>Time Spent In Jail</th>
-                </tr>
-            </table>
+        <div class="state" id="heistsetup" style="display:none">
+            <h1 id="heistnetworth"></h1>
+            <h1 id="snitchingreward"></h1>
+            <br />
+            <h3><div style="text-align:center">
+                <u>HEIST PARTICIPANTS</u>
+                <table border="1px solid black" id="heistparticipants" align="center" class="h4">
+                    <tr>
+                        <th>Name</th>
+                        <th>Valuation</th>
+                        <th>Years In Jail</th>
+                    </tr>
+                </table>
+            </div></h3>
             <hr />
-            <div style="font-size:200%; text-align:center">
+            <div class="display-4" style="text-align:center">
                 GO ON HEIST: <input type="checkbox" id="goforheistcheck" style="width:60px; height:60px" checked /> <br />
                 SNITCH TO POLICE: <input type="checkbox" id="snitchtopolicecheck" style="width:60px; height:60px" /> <br />
-                <input type="button" id="makedecision" value="DECIDE" style="font-size:100%" />
+                <input type="button" id="makedecision" value="DECIDE" class="display-3" />
             </div>
             <hr />
             <br />
-            <div style="font-size:200%; text-align:center">
-                MURDER: <select id="commitmurderselection" style="font-size:100%"></select> <br />
-                <input type="button" id="commitmurder" value="MURDER" style="font-size:100%" />
+            <div class="display-4" style="text-align:center">
+                MURDER: <select id="commitmurderselection"></select> <br /><br />
+                <input type="button" id="commitmurder" value="MURDER" class="display-3" />
             </div>
             <br />
         </div>
         <hr />
-        <div style="font-size:200%">
-            <u><h4>Player Information</h4></u>
-            <h4 id="playername"></h4>
-            <h4 id="years"></h4>
-            <h4 id="networth"></h4>
-            <h4 id="nextjailtime"></h4>
+        <div class="h3">
+            <u>Player Information</u>
+            <div id="playername"></div>
+            <div id="years"></div>
+            <div id="networth"></div>
+            <div id="nextjailtime"></div>
         </div>
     </div>
 
-
-
-    <div class="state" id="endofgame" style="display:none; font-size:200%; text-align:center">
-        <h4 id="finalyear"></h4>
-        <table border="1px solid black" id="leaderboard" style="font-size:100%">
+    <div class="state" id="endofgame" style="display:none; text-align:center">
+        <h2>
+        <div id="finalyear"> </div>
+        <table border="1px solid black" id="leaderboard" style="font-size:100%" align="center" class="h2">
             <tr>
                 <th>Thief</th>
                 <th>Networth</th>
@@ -101,7 +106,7 @@
             </tr>
         </table>
         <hr />
-        <a href="/">FINISH</a>
+        <a href="/">FINISH</a></h2>
     </div>
 
     <div class="row">

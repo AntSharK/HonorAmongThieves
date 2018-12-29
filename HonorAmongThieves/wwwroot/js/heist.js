@@ -140,8 +140,8 @@ connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, m
 
 connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitchReward) {
     document.getElementById("pageName").textContent = "HEIST SETUP";
-    document.getElementById("heistnetworth").textContent = "TOTAL HEIST REWARD: $" + heistReward + " MILLION";
-    document.getElementById("snitchingreward").textContent = "REWARD FOR SNITCHING: $" + snitchReward + " MILLION";
+    document.getElementById("heistnetworth").textContent = "HEIST REWARD: $" + heistReward + " MILLION";
+    document.getElementById("snitchingreward").textContent = "SNITCH REWARD: $" + snitchReward + " MILLION";
 
     var heistParticipantInfo = document.getElementsByClassName("heistparticipantinfo");
     for(var i = heistParticipantInfo.length - 1; i >= 0; i--) {
