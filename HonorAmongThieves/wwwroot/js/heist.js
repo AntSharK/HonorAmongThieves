@@ -166,7 +166,6 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
         if (playerInfo[0] != userName) {
             var newOption = document.createElement("option");
             newOption.textContent = playerInfo[0];
-            newOption.textContent = playerInfo[0];
             murderList.appendChild(newOption);
         }
     }
