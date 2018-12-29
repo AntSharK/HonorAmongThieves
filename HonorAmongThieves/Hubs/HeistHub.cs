@@ -178,6 +178,24 @@ namespace HonorAmongThieves.Hubs
                     await this.HeistPrep_ChangeState(heist);
                 }
             }
+            else
+            {
+                // Check if everyone is dead
+                var everyoneIsDead = true;
+                foreach (var player in room.Players.Values)
+                {
+                    if (player.CurrentStatus != Player.Status.Dead)
+                    {
+                        everyoneIsDead = false;
+                    }
+                }
+
+                if (everyoneIsDead)
+                {
+                    await this.EndGame_Broadcast(room);
+                    return;
+                }
+            }
 
             // Update the message for each player who can't act
             foreach (var player in room.Players.Values)
