@@ -192,7 +192,7 @@ namespace HonorAmongThieves.Game
             public List<Player> Killers { get; set; }
             public bool HeistHappens { get; set; }
             public bool PoliceReported { get; set; }
-            public Status NextStatus { get; set; }
+            public Status NextStatus { get; set; } = Status.FindingHeist;
         }
     }
 }

@@ -45,9 +45,9 @@ namespace HonorAmongThieves.Hubs
             }
 
             // TODO: Temporary code for testing
-            var room = Program.Instance.Rooms[roomId];
-            var p1 = room.CreatePlayer("dummyplayer1", "someconn1");
-            var p2 = room.CreatePlayer("dummyplayer2", "someconn2");
+            // var room = Program.Instance.Rooms[roomId];
+            // var p1 = room.CreatePlayer("dummyplayer1", "someconn1");
+            // var p2 = room.CreatePlayer("dummyplayer2", "someconn2");
             //var p3 = room.CreatePlayer("dummyplayer3", "someconn3");
         }
 
@@ -139,28 +139,28 @@ namespace HonorAmongThieves.Hubs
             }
 
              //TODO: Test temp thing
-             if (room.CurrentYear == 0)
-             {
-                 var k = 0;
-                 foreach (var p in room.Players.Values)
-                 {
-                     switch (k)
-                     {
-                         case 0:
-                            break;
-                         case 1:
-                         case 2:
-                            p.CurrentStatus = Player.Status.Dead;
-                            break;
-                         case 3:
-                            //p.CurrentStatus = Player.Status.InJail;
-                            //p.YearsLeftInJail = 15;
-                            break;
-                    }
-             
-                     k++;
-                 }
-             }
+             //if (room.CurrentYear == 0)
+             //{
+             //    var k = 0;
+             //    foreach (var p in room.Players.Values)
+             //    {
+             //        switch (k)
+             //        {
+             //            case 0:
+             //               break;
+             //            case 1:
+             //            case 2:
+             //               p.CurrentStatus = Player.Status.Dead;
+             //               break;
+             //            case 3:
+             //               //p.CurrentStatus = Player.Status.InJail;
+             //               //p.YearsLeftInJail = 15;
+             //               break;
+             //       }
+             //
+             //        k++;
+             //    }
+             //}
 
             room.SigningUp = false;
             room.SpawnHeists();
