@@ -260,14 +260,7 @@ namespace HonorAmongThieves.Game
                             await hub.UpdateHeistMeetup(player, player.Decision.FellowHeisters);
                         }
 
-                        if (player.Decision.NextStatus == null)
-                        {
-                            player.CurrentStatus = Player.Status.FindingHeist;
-                        }
-                        else
-                        {
-                            player.CurrentStatus = player.Decision.NextStatus;
-                        }
+                        player.CurrentStatus = player.Decision.NextStatus;
 
                         break;
                 }

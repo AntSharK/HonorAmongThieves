@@ -30,13 +30,13 @@ namespace HonorAmongThieves.Game
         public void AddPlayer(Player player)
         {
             player.CurrentStatus = Player.Status.InHeist;
+            player.Decision = new Player.HeistDecision();
             player.Okay = false;
             this.Players[player.Name] = player;
         }
 
         public void Resolve()
         {
-            // TODO: Generate state changes for each player
             var heisters = new List<Player>();
             foreach (var player in this.Players.Values)
             {
@@ -107,6 +107,7 @@ namespace HonorAmongThieves.Game
             }
 
             // Compute rewards and jail time
+            // Note that heisters can be dead
             if (heistHappens 
                 && !policeReported 
                 && heisters.Count > 0)
@@ -157,6 +158,7 @@ namespace HonorAmongThieves.Game
                     && player.Decision.PlayerToKill.Decision.GoOnHeist)
                 {
                     player.Decision.NextStatus = Player.Status.Dead;
+                    player.Decision.Killers = new List<Player> { player };
                 }
 
                 // Compute jail times
