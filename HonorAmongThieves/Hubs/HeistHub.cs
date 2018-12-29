@@ -45,10 +45,10 @@ namespace HonorAmongThieves.Hubs
             }
 
             // TODO: Temporary code for testing
-            // var room = Program.Instance.Rooms[roomId];
-            // var p1 = room.CreatePlayer("dummyplayer1", "someconn1");
-            // var p2 = room.CreatePlayer("dummyplayer2", "someconn2");
-            // var p3 = room.CreatePlayer("dummyplayer3", "someconn3");
+            var room = Program.Instance.Rooms[roomId];
+            var p1 = room.CreatePlayer("dummyplayer1", "someconn1");
+            var p2 = room.CreatePlayer("dummyplayer2", "someconn2");
+            //var p3 = room.CreatePlayer("dummyplayer3", "someconn3");
         }
 
         public async Task JoinRoom(string roomId, string userName)
@@ -147,16 +147,16 @@ namespace HonorAmongThieves.Hubs
                      switch (k)
                      {
                          case 0:
+                            break;
                          case 1:
-                             break;
                          case 2:
-                             p.CurrentStatus = Player.Status.InJail;
-                             p.YearsLeftInJail = 15;
-                             break;
+                            p.CurrentStatus = Player.Status.Dead;
+                            break;
                          case 3:
-                             p.CurrentStatus = Player.Status.Dead;
-                             break;
-                     }
+                            //p.CurrentStatus = Player.Status.InJail;
+                            //p.YearsLeftInJail = 15;
+                            break;
+                    }
              
                      k++;
                  }

@@ -1,9 +1,11 @@
 ﻿@page
 @model HonorAmongThieves.Pages.IndexModel
 <br />
-<h1><a href="/Heist">HEIST</a><h1>
+<div style="text-align:center; font-size:300%">
+    <h1><a href="/Heist">HEIST</a></h1>
     <h4><a href="HeistInstructions.html">Instructions</a></h4>
-<br />
+</div>
+<hr />
 <h2><u>Existing Lobbies</u></h2>
 @{
     <h3><u>Heist Lobbies</u></h3>
@@ -13,11 +15,11 @@
         <th>Updated Time</th>
         @foreach (var heistGame in Model.HeistLobbies)
         {
-        <tr>
-            <th>@heistGame.Item1</th>
-            <th>@heistGame.Item2.ToString()</th>
-            <th>@heistGame.Item3.ToString()</th>
-        </tr>
+            <tr>
+                <th>@heistGame.Item1</th>
+                <th>@heistGame.Item2.ToString()</th>
+                <th>@heistGame.Item3.ToString()</th>
+            </tr>
         }
     </table>
 }
