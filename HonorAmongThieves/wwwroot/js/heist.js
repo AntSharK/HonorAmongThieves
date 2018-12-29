@@ -66,6 +66,10 @@ connection.on("JoinRoom_ChangeState", function (roomJoined, userJoined) {
     userName = userJoined;
     roomId = roomJoined;
 
+    // Write to session storage
+    sessionStorage.setItem("username", userName);
+    sessionStorage.setItem("roomid", roomId);
+
     var elements = document.getElementsByClassName("state");
     for (var i = 0; i < elements.length; i++) {
         elements[i].style.display = "none";
@@ -84,14 +88,6 @@ connection.on("JoinRoom_UpdateState", function (playersConcat, userJoined) {
         li.textContent = players[i];
         playerList.appendChild(li);
     }
-
-    /*var li = document.createElement("li");
-    li.textContent = userJoined + " has joined room.";
-    var messageList = document.getElementById("messagesList")
-
-    if (messageList != null) {
-        messageList.appendChild(li);
-    }*/
 });
 
 document.getElementById("joinroombutton").addEventListener("click", function (event) {
@@ -237,6 +233,8 @@ connection.on("EndGame_Broadcast", function (year, leaderboarddata) {
         newRow.insertCell(3).textContent = playerInfo[3];
     }
 
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("roomid");
 });
 
 connection.start().catch(function (err) {
