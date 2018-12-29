@@ -101,7 +101,7 @@ namespace HonorAmongThieves.Hubs
 
         public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize)
         {
-            const int MINPLAYERCOUNT = 2;
+            const int MINPLAYERCOUNT = 4;
             Room room;
             if (!Program.Instance.Rooms.TryGetValue(roomId, out room)
                 && room.SigningUp)
