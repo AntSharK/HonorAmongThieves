@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -314,7 +315,9 @@ namespace HonorAmongThieves.Hubs
         internal async Task EndGame_Broadcast(Room room)
         {
             var playerInfo = new StringBuilder();
-            foreach (var player in room.Players.Values)
+
+            var playerList = room.Players.Values.OrderBy(p => p.NetWorth).ToList();
+            foreach (var player in playerList)
             {
                 playerInfo.Append(player.Name);
                 playerInfo.Append("|");
