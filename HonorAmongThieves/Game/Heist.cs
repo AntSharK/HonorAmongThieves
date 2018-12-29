@@ -148,6 +148,7 @@ namespace HonorAmongThieves.Game
                 // Nothing goes on
             }
 
+            var failedMurderers = new List<Player>();
             foreach (var player in this.Players.Values)
             {
                 // Compute defensive deaths
@@ -155,8 +156,8 @@ namespace HonorAmongThieves.Game
                     && player.Decision.PlayerToKill.Decision.NextStatus != Player.Status.Dead
                     && player.Decision.PlayerToKill.Decision.GoOnHeist)
                 {
-                    player.Decision.NextStatus = Player.Status.Dead;
-                    player.Decision.Killers = new List<Player> { player };
+                    // Mark these players for death - don't resolve one by one as that might result in one player being accidentally left alive
+                    failedMurderers.Add(player);
                 }
 
                 // Compute jail times
@@ -173,6 +174,12 @@ namespace HonorAmongThieves.Game
                     player.MinJailSentence *= 2;
                     player.MaxJailSentence *= 2;
                 }
+            }
+
+            foreach (var player in failedMurderers)
+            {
+                player.Decision.NextStatus = Player.Status.Dead;
+                player.Decision.Killers = new List<Player> { player };
             }
 
             // After generating state, compute the resolution messages
