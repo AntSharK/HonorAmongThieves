@@ -23,11 +23,9 @@
     </div>
     <div class="row">&nbsp;</div>
 
-    <div class="state" id="joinroom" style="font-size:200%">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
+    <div class="state" id="joinroom">
             <div style="text-align:center; font-size:200%">
-                User Name: <input type="text" id="username" style="font-size:100%" /><br /><br />
+                Name: <input type="text" id="username" style="font-size:100%" /><br /><br />
                 Room ID: <input type="text" id="roomid" style="font-size:100%" /><br /><br />
                 <input type="button" id="joinroombutton" style="font-size:225%" value="JOIN" />
             </div>
@@ -37,7 +35,8 @@
             Room ID is automatically generated when you create a room. <br /><br />
         </div>
         <hr />
-        <div style="text-align:center"><input type="button" id="createroombutton" value="CREATE" style="font-size:450%" /></div>
+    <div style="text-align:center">
+        <input type="button" id="createroombutton" value="CREATE" style="font-size:450%" />
     </div>
 
     <div class="state" id="gamestart" style="display:none">
@@ -121,3 +120,6 @@
 
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/heist.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
