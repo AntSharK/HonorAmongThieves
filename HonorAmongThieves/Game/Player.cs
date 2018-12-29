@@ -24,8 +24,6 @@ namespace HonorAmongThieves.Game
 
         public Status CurrentStatus { get; set; }
 
-        public Status NextStatus { get; set; }
-
         public DateTime LastUpdate { get; private set; }
 
         public string ConnectionId { get; set; }
@@ -74,19 +72,19 @@ namespace HonorAmongThieves.Game
                     && this.Decision.Killers.Count == 1
                     && this.Decision.Killers.Contains(this))
                 {
-                    this.Decision.FateDescription += "You confronted " + this.Decision.PlayerToKill.Name + ". Things got heated, and someone lost their head. Unfortunately, that someone was you.";
+                    this.Decision.FateDescription = this.Decision.FateDescription + "You confronted " + this.Decision.PlayerToKill.Name + ". Things got heated, and someone lost their head. Unfortunately, that someone was you.";
                     return;
                 }
 
                 if (this.Decision.GoOnHeist)
                 {
-                    this.Decision.FateDescription += "You were confronted at the heist. Things got heated, and the evidence against you piled up. As you ran away, you went down with an unfortunate case of a bullet in the brain.";
+                    this.Decision.FateDescription = this.Decision.FateDescription + "You were confronted at the heist. Things got heated, and the evidence against you piled up. As you ran away, you went down with an unfortunate case of a bullet in the brain.";
                     return;
 
                 }
                 else
                 {
-                    this.Decision.FateDescription += "You snuck around to snitch on the ongoing heist, and noticed that something wasn't right. But too late. Someone snuck behind you and lobbed off your head.";
+                    this.Decision.FateDescription = this.Decision.FateDescription + "You snuck around to snitch on the ongoing heist, and noticed that something wasn't right. But too late. Someone snuck behind you and lobbed off your head.";
                     return;
                 }
             }
@@ -117,7 +115,7 @@ namespace HonorAmongThieves.Game
             }
 
             if (this.Decision.PlayerToKill != null
-                && this.Decision.PlayerToKill.NextStatus == Status.Dead)
+                && this.Decision.PlayerToKill.Decision.NextStatus == Status.Dead)
             {
                 this.Decision.FateTitle = "KILLED " + this.Decision.PlayerToKill.Name + ", ";
                 if (this.Decision.PlayerToKill.Decision.Killers.Count > 1)
@@ -129,27 +127,34 @@ namespace HonorAmongThieves.Game
                     this.Decision.FateDescription = "You found " + this.Decision.PlayerToKill.Name + " and put a bullet between his eyes. Then you swiftly emptied his bank account into yours. ";
                 }
             }
+            else if (this.Decision.PlayerToKill != null
+                && this.Decision.PlayerToKill.Decision.NextStatus != Status.Dead)
+            {
+                this.Decision.FateTitle = "COULD NOT FIND " + this.Decision.PlayerToKill.Name + ", ";
+                this.Decision.FateDescription = "Your contacts found " + this.Decision.PlayerToKill.Name + " halfway around the world, and you decide murder is too troublesome this time. ";
+            }
 
             if (this.Decision.GoOnHeist)
             {
                 if (!this.Decision.HeistHappens)
                 {
-                    this.Decision.FateTitle += "NOT ENOUGH ATTENDENCE";
-                    this.Decision.FateDescription += "You gather for the heist, but there aren't enough people here to safely complete the job. So you all go home without trying. Your total networth change this year: $" + this.Decision.NetworthChange + " MILLION.";
+                    this.Decision.FateTitle = this.Decision.FateTitle + "NOT ENOUGH ATTENDENCE";
+                    this.Decision.FateDescription = this.Decision.FateDescription + "You gather for the heist, but there aren't enough people here to safely complete the job. So you all go home without trying. Your total networth change this year: $" + this.Decision.NetworthChange + " MILLION.";
                     return;
                 }
                 else
                 {
                     if (this.Decision.PoliceReported)
                     {
-                        this.Decision.FateTitle += "ARRESTED";
-                        this.Decision.FateDescription += "You are arrested during the heist! You are sent to jail and fined! Your total networth change this year: $" + this.Decision.NetworthChange + " MILLION.";
+                        this.Decision.FateTitle = this.Decision.FateTitle + "ARRESTED";
+                        this.Decision.FateDescription = this.Decision.FateDescription + "You are arrested during the heist! You are sent to jail and fined! Your total networth change this year: " 
+                            + (this.Decision.NetworthChange > 0 ? ("$" + this.Decision.NetworthChange) : ("-$" + -this.Decision.NetworthChange)) + " MILLION.";
                         return;
                     }
                     else
                     {
-                        this.Decision.FateTitle += "SUCCESSFUL HEIST";
-                        this.Decision.FateDescription += "Successful heist! Your total networth change this year: $" + this.Decision.NetworthChange + " MILLION.";
+                        this.Decision.FateTitle = this.Decision.FateTitle + "SUCCESSFUL HEIST";
+                        this.Decision.FateDescription = this.Decision.FateDescription + "Successful heist! Your total networth change this year: $" + this.Decision.NetworthChange + " MILLION.";
                         return;
                     }
                 }

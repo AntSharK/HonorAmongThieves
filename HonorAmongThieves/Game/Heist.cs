@@ -1,7 +1,5 @@
-﻿using HonorAmongThieves.Hubs;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Timers;
 
 namespace HonorAmongThieves.Game
 {
@@ -165,8 +163,13 @@ namespace HonorAmongThieves.Game
                 if (player.Decision.NextStatus == Player.Status.InJail)
                 {
                     var decreasedNetworth = player.NetWorth / 5;
-                    player.Decision.NetworthChange -= decreasedNetworth;
-                    player.NetWorth = player.NetWorth - decreasedNetworth;
+
+                    if (!player.Decision.ReportPolice)
+                    {
+                        player.Decision.NetworthChange -= decreasedNetworth;
+                        player.NetWorth = player.NetWorth - decreasedNetworth;
+                    }
+
                     player.MinJailSentence *= 2;
                     player.MaxJailSentence *= 2;
                 }

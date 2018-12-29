@@ -100,7 +100,7 @@ namespace HonorAmongThieves.Hubs
 
         public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize)
         {
-            const int MINPLAYERCOUNT = 4;
+            const int MINPLAYERCOUNT = 2;
             Room room;
             if (!Program.Instance.Rooms.TryGetValue(roomId, out room)
                 && room.SigningUp)
@@ -256,7 +256,7 @@ namespace HonorAmongThieves.Hubs
         {
             if (player.Decision.PlayerToKill != null)
             {
-                await this.UpdateHeistStatus(player, "COMMIT MURDER", "You have decided to kill " + player.Decision.PlayerToKill.Name);
+                await this.UpdateHeistStatus(player, "COMMIT MURDER", "You have decided to kill " + player.Decision.PlayerToKill.Name + " if the opportunity presents itself while on this heist.");
             }
             else if (player.Decision.GoOnHeist && !player.Decision.ReportPolice)
             {
@@ -268,7 +268,7 @@ namespace HonorAmongThieves.Hubs
             }
             else if (player.Decision.GoOnHeist && player.Decision.ReportPolice)
             {
-                await this.UpdateHeistStatus(player, "GET YOURSELF ARRESTED", "You look at the bunch of criminals around you and figure you're screwed anyway - might as well be a snitch and get some cash.");
+                await this.UpdateHeistStatus(player, "GET YOURSELF ARRESTED", "You look at the bunch of criminals around you and figure you're screwed anyway - might as well be a snitch and get some cash. But you want to spend some time in jail to avoid suspicion.");
             }
             else if (!player.Decision.GoOnHeist && player.Decision.ReportPolice)
             {
