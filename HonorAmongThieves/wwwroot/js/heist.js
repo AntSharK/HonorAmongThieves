@@ -215,7 +215,6 @@ connection.on("EndGame_Broadcast", function (year, leaderboarddata) {
     }
 
     document.getElementById("pageName").textContent = "RETIREMENT";
-
     document.getElementById("finalyear").textContent = "YEAR: " + year;
 
     var endofgamearea = document.getElementById("endofgame");

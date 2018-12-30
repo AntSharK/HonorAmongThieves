@@ -38,13 +38,7 @@ namespace HonorAmongThieves.Hubs
             player.ConnectionId = Context.ConnectionId;
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
 
-            // If the game isn't started
-            if (room.CurrentStatus == Room.Status.SettingUp 
-                && room.CurrentYear == 0)
-            {
-                await this.JoinRoom_UpdateView(room, player);
-                return;
-            }
+            await player.ResumePlayerSession(this);
         }
 
         internal async Task ShowError(string errorMessage)
@@ -132,7 +126,7 @@ namespace HonorAmongThieves.Hubs
 
         public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize)
         {
-            const int MINPLAYERCOUNT = 4;
+            const int MINPLAYERCOUNT = 2;
             Room room;
             if (!Program.Instance.Rooms.TryGetValue(roomId, out room)
                 && room.SigningUp)
@@ -158,6 +152,11 @@ namespace HonorAmongThieves.Hubs
             await this.StartRoom_UpdateState(room);
         }
 
+        internal async Task StartRoom_UpdatePlayer(Player player)
+        {
+            await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, player.Room.CurrentYear + 2018, player.Name, player.MinJailSentence, player.MaxJailSentence);
+        }
+
         internal async Task StartRoom_UpdateState(Room room)
         {
             foreach (var player in room.Players.Values)
@@ -167,7 +166,7 @@ namespace HonorAmongThieves.Hubs
                     player.CurrentStatus = Player.Status.FindingHeist;
                 }
 
-                await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, room.CurrentYear + 2018, player.Name, player.MinJailSentence, player.MaxJailSentence);
+                await this.StartRoom_UpdatePlayer(player);
             }
 
             room.SigningUp = false;
@@ -209,18 +208,23 @@ namespace HonorAmongThieves.Hubs
             // Update the message for each player who can't act
             foreach (var player in room.Players.Values)
             {
-                switch (player.CurrentStatus)
-                {
-                    case Player.Status.FindingHeist:
-                        await this.UpdateHeistStatus(player, "FINDING HEIST...", "Your contacts don't seem to be responding. If there is any crime going on, you're not being invited.", true);
-                        break;
-                    case Player.Status.Dead:
-                        await this.UpdateHeistStatus(player, "DEAD", "You're dead. You can't do anything.");
-                        break;
-                    case Player.Status.InJail:
-                        await this.UpdateHeistStatus(player, "IN JAIL", "You're IN JAIL. Years left: " + player.YearsLeftInJail, true);
-                        break;
-                }
+                await this.UpdateIdleStatus(player);
+            }
+        }
+
+        internal async Task UpdateIdleStatus(Player player)
+        {
+            switch (player.CurrentStatus)
+            {
+                case Player.Status.FindingHeist:
+                    await this.UpdateHeistStatus(player, "FINDING HEIST...", "Your contacts don't seem to be responding. If there is any crime going on, you're not being invited.", true);
+                    break;
+                case Player.Status.Dead:
+                    await this.UpdateHeistStatus(player, "DEAD", "You're dead. You can't do anything.");
+                    break;
+                case Player.Status.InJail:
+                    await this.UpdateHeistStatus(player, "IN JAIL", "You're IN JAIL. Years left: " + player.YearsLeftInJail, true);
+                    break;
             }
         }
 
@@ -320,7 +324,7 @@ namespace HonorAmongThieves.Hubs
             await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateHeistMeetup", playerNames.ToString());
         }
 
-        internal async Task EndGame_Broadcast(Room room)
+        internal async Task EndGame_Broadcast(Room room, Player broadcastedPlayer = null)
         {
             var playerInfo = new StringBuilder();
 
@@ -350,7 +354,14 @@ namespace HonorAmongThieves.Hubs
                 playerInfo.Length = playerInfo.Length - 1;
             }
 
-            await Clients.Group(room.Id).SendAsync("EndGame_Broadcast", room.CurrentYear + 2018, playerInfo.ToString());
+            if (broadcastedPlayer != null)
+            {
+                await Clients.Client(broadcastedPlayer.ConnectionId).SendAsync("EndGame_Broadcast", room.CurrentYear + 2018, playerInfo.ToString());
+            }
+            else
+            {
+                await Clients.Group(room.Id).SendAsync("EndGame_Broadcast", room.CurrentYear + 2018, playerInfo.ToString());
+            }
         }
     }
 }
