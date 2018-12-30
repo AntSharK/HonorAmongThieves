@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace HonorAmongThieves
 {
@@ -26,15 +28,17 @@ namespace HonorAmongThieves
             return true;
         }
 
-        public static string GenerateId<T>(int trimmedLength, Dictionary<string, T> existingEntries)
+        public static string GenerateId<T>(int totalLength, Dictionary<string, T> existingEntries)
         {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             string id = null;
             int tries = 0;
             while (tries < 300 &&
                 (id == null || existingEntries.ContainsKey(id)))
             {
-                id = Guid.NewGuid().ToString().Substring(0, trimmedLength);
                 tries++;
+                id = new string(Enumerable.Repeat(chars, totalLength).Select(
+                    s => s[Rng.Next(s.Length)]).ToArray());
             }
 
             return id;

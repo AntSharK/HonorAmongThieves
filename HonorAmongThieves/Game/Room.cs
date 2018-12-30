@@ -103,7 +103,7 @@ namespace HonorAmongThieves.Game
 
         private Heist CreateHeist(List<Player> eligiblePlayers, int heistCapacity)
         {
-            var heistId = Utils.GenerateId(12, this.Heists);
+            var heistId = Utils.GenerateId(10, this.Heists);
 
             var snitchReward = this.BetrayalReward;
             var heist = new Heist(heistId, heistCapacity, snitchReward);
