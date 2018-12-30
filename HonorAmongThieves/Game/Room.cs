@@ -193,6 +193,17 @@ namespace HonorAmongThieves.Game
                         return;
                     }
                 }
+
+                // OKAY button is still valid for players who are newly dead
+                if (player.CurrentStatus == Player.Status.Dead)
+                {
+                    if (player.PreviousStatus != Player.Status.Dead
+                        && !player.Okay)
+                    {
+                        return;
+                    }
+                }
+
             }
             switch (this.CurrentStatus)
             {
