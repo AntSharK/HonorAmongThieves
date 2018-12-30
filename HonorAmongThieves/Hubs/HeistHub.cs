@@ -16,6 +16,14 @@ namespace HonorAmongThieves.Hubs
             await base.OnConnectedAsync();
         }
 
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            // TODO: This requires keeping track of players on a global level
+            // That's not hard - but screwing up means leaking players in memory
+            // Which is highly resource-intensive for a moderate reward
+            await base.OnDisconnectedAsync(exception);
+        }
+
         public async Task ResumeSession(string roomId, string userName)
         {
             Room room;
