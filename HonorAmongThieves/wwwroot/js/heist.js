@@ -246,7 +246,10 @@ connection.on("FreshConnection", function () {
 
     if (sessionUserName != null && sessionRoomId != null) {
         // Resume the session
-        connection.invoke("ResumeSession", sessionRoomId, sessionUserName).catch(function (err) {
+        userName = sessionUserName;
+        roomId = sessionRoomId;
+
+        connection.invoke("ResumeSession", roomId, userName).catch(function (err) {
             return console.error(err.toString());
         });
     }
