@@ -152,7 +152,7 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
     var playerList = document.getElementById("heistparticipants");
     var players = playerInfos.split("=");
     for (let i = 0; i < players.length; i++) {
-        var playerInfo = players[i].split("|");
+        var playerInfo = players[i].split(",");
         var newRow = playerList.insertRow(playerList.rows.length);
         newRow.className = "heistparticipantinfo";
         newRow.insertCell(0).textContent = playerInfo[0];

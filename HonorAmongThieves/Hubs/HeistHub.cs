@@ -249,13 +249,19 @@ namespace HonorAmongThieves.Hubs
 
         internal async Task HeistPrep_ChangeState(Heist heist, bool sendToCaller = false)
         {
+            var totalNetworth = heist.Players.Values.Sum(n => n.ProjectedNetworth);
+            var totalBarsTimesNetworth = 20 * heist.Players.Count * totalNetworth;
+
             var playerInfo = new StringBuilder();
             foreach (var player in heist.Players.Values)
             {
                 playerInfo.Append(player.Name);
-                playerInfo.Append("|");
-                playerInfo.Append(player.ProjectedNetworth);
-                playerInfo.Append("|");
+                playerInfo.Append(",");
+
+                var barLength = totalBarsTimesNetworth / (player.ProjectedNetworth + 1);
+                var networthBar = new string('|', barLength);
+                playerInfo.Append(networthBar);
+                playerInfo.Append(",");
                 playerInfo.Append(player.TimeSpentInJail);
                 playerInfo.Append("=");
             }
