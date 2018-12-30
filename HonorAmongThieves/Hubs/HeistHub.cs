@@ -250,7 +250,7 @@ namespace HonorAmongThieves.Hubs
         internal async Task HeistPrep_ChangeState(Heist heist, bool sendToCaller = false)
         {
             var totalNetworth = heist.Players.Values.Sum(n => n.ProjectedNetworth);
-            var totalBarsTimesNetworth = 20 * heist.Players.Count * totalNetworth;
+            var totalBarsOverNetworth = 20f * heist.Players.Count / (totalNetworth + 1);
 
             var playerInfo = new StringBuilder();
             foreach (var player in heist.Players.Values)
@@ -258,8 +258,8 @@ namespace HonorAmongThieves.Hubs
                 playerInfo.Append(player.Name);
                 playerInfo.Append(",");
 
-                var barLength = totalBarsTimesNetworth / (player.ProjectedNetworth + 1);
-                var networthBar = new string('|', barLength);
+                var barLength = totalBarsOverNetworth * player.ProjectedNetworth;
+                var networthBar = new string('|', (int)barLength);
                 playerInfo.Append(networthBar);
                 playerInfo.Append(",");
                 playerInfo.Append(player.TimeSpentInJail);

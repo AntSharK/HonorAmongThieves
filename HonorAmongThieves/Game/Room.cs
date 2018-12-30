@@ -38,7 +38,6 @@ namespace HonorAmongThieves.Game
         // TODO: Make a mod for murdering being less harsh.
         // Murdering only works if snitching was within last few rounds
         // Failing to murder results in jail term not death
-        // Make networth a bar, not a number
 
         public Room(string id, HeistHub hub)
         {

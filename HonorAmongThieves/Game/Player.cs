@@ -97,7 +97,7 @@ namespace HonorAmongThieves.Game
             }
 
             if (this.Decision.NextStatus != Status.Dead
-                && this.Decision.Killers.Count > 0)
+                && this.Decision.Killers?.Count > 0)
             {
                 this.Decision.FateTitle = "DEFENDED YOURSELF, ";
                 this.Decision.FateDescription = "You were accused of being a snitch. But your friends came to your aid. They left the accuser lying on the floor for the police to deal with. ";
