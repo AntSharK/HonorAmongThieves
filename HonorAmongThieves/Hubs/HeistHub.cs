@@ -189,16 +189,17 @@ namespace HonorAmongThieves.Hubs
             else
             {
                 // Check if everyone is dead
-                var everyoneIsDead = true;
+                // Or everyone but one is dead
+                var alivePlayers = 0;
                 foreach (var player in room.Players.Values)
                 {
                     if (player.CurrentStatus != Player.Status.Dead)
                     {
-                        everyoneIsDead = false;
+                        alivePlayers++;
                     }
                 }
 
-                if (everyoneIsDead)
+                if (alivePlayers <= 1)
                 {
                     await this.EndGame_Broadcast(room);
                     return;
