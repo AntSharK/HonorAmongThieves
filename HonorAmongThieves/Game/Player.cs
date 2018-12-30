@@ -25,6 +25,8 @@ namespace HonorAmongThieves.Game
 
         public Status CurrentStatus { get; set; }
 
+        public Status PreviousStatus { get; set; }
+
         public DateTime LastUpdate { get; private set; }
 
         public string ConnectionId { get; set; }
@@ -178,6 +180,7 @@ namespace HonorAmongThieves.Game
                 return;
             }
 
+            // This doesn't actually happen since the endgame_broadcast deletes the session state
             if (this.Room.CurrentYear == this.Room.MaxYears)
             {
                 await hub.EndGame_Broadcast(this.Room, this);
@@ -202,12 +205,12 @@ namespace HonorAmongThieves.Game
         public async Task UpdateFateLogic(HeistHub hub)
         {
             // Make sure that views are updated BEFORE changing state
+            this.PreviousStatus = this.CurrentStatus;
             switch (this.CurrentStatus)
             {
                 case Player.Status.InJail:
                     this.YearsLeftInJail--;
                     this.TimeSpentInJail++;
-                    await this.UpdateFateView(hub);
                     if (this.YearsLeftInJail <= 0)
                     {
                         this.CurrentStatus = Player.Status.FindingHeist;
@@ -216,19 +219,19 @@ namespace HonorAmongThieves.Game
 
                 case Player.Status.FindingHeist:
                 case Player.Status.Dead:
-                    await this.UpdateFateView(hub);
                     break;
 
                 case Player.Status.HeistDecisionMade:
-                    await this.UpdateFateView(hub);
                     this.CurrentStatus = this.Decision.NextStatus;
                     break;
             }
+
+            await this.UpdateFateView(hub);
         }
 
         private async Task UpdateFateView(HeistHub hub, bool setOkayButton = true)
         {
-            switch (this.CurrentStatus)
+            switch (this.PreviousStatus)
             {
                 case Player.Status.InJail:
                     if (this.YearsLeftInJail <= 0)
@@ -250,7 +253,7 @@ namespace HonorAmongThieves.Game
                     break;
 
                 case Player.Status.HeistDecisionMade:
-                    await hub.UpdateHeistStatus(this, this.Decision.FateTitle, this.Decision.FateDescription, true);
+                    await hub.UpdateHeistStatus(this, this.Decision.FateTitle, this.Decision.FateDescription, setOkayButton);
                     if (this.Decision.GoOnHeist && this.Decision.FellowHeisters != null && this.Decision.FellowHeisters.Count > 0)
                     {
                         await hub.UpdateHeistMeetup(this, this.Decision.FellowHeisters);
