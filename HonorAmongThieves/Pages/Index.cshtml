@@ -13,12 +13,15 @@
         <th>Room ID</th>
         <th>Start Time</th>
         <th>Updated Time</th>
+        <th>Player Count</th>
         @foreach (var heistGame in Model.HeistLobbies)
         {
             <tr>
                 <th>@heistGame.Item1</th>
                 <th>@heistGame.Item2.ToString()</th>
                 <th>@heistGame.Item3.ToString()</th>
+                <th>@heistGame.Item4.ToString()</th>
+                <th>@heistGame.Item5.ToString()</th>
             </tr>
         }
     </table>
