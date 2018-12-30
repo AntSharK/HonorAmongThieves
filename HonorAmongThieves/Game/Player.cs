@@ -13,6 +13,8 @@ namespace HonorAmongThieves.Game
 
         public int NetWorth { get; set; } = 10;
 
+        public int ProjectedNetworth { get; set; } = 10;
+
         public int TimeSpentInJail { get; set; } = 0;
 
         public int YearsLeftInJail { get; set; } = -1;
@@ -34,6 +36,8 @@ namespace HonorAmongThieves.Game
         public HeistDecision Decision { get; set; } = new HeistDecision();
 
         public bool Okay { get; set; } = true;
+
+        public Heist CurrentHeist;
 
         public Player(string name, Room room)
         {
@@ -183,11 +187,12 @@ namespace HonorAmongThieves.Game
             // This doesn't actually happen since the endgame_broadcast deletes the session state
             if (this.Room.CurrentYear == this.Room.MaxYears)
             {
-                await hub.EndGame_Broadcast(this.Room, this);
+                await hub.EndGame_Broadcast(this.Room, true);
                 return;
             }
 
             await hub.StartRoom_UpdatePlayer(this);
+
             if (this.Room.CurrentStatus == Room.Status.ResolvingHeists)
             {
                 await this.UpdateFateView(hub, !this.Okay /*Don't set the OKAY button if it has already been pressed*/);
@@ -197,14 +202,30 @@ namespace HonorAmongThieves.Game
             if (this.Room.CurrentStatus == Room.Status.AwaitingHeistDecisions
                 || this.Room.CurrentStatus == Room.Status.NoHeists)
             {
-                // TODO: Broadcast the updatefate
-                return;
+                switch (this.CurrentStatus)
+                {
+                    // Idle statuses
+                    case Status.FindingHeist:
+                    case Status.Dead:
+                    case Status.InJail:
+                        await hub.UpdateIdleStatus(this, !this.Okay /*Don't set the OKAY button if it has already been pressed*/);
+                        return;
+                    case Status.InHeist:
+                        await hub.HeistPrep_ChangeState(this.CurrentHeist, true);
+                        return;
+                    case Status.HeistDecisionMade:
+                        // TODO: Update view for current decision
+                        return;
+                    default:
+                        // This should not happen
+                        await hub.ShowError("ERROR RESUMING CURRENT STATE");
+                        return;
+                }
             }
         }
 
         public async Task UpdateFateLogic(HeistHub hub)
         {
-            // Make sure that views are updated BEFORE changing state
             this.PreviousStatus = this.CurrentStatus;
             switch (this.CurrentStatus)
             {

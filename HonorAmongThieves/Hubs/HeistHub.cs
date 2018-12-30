@@ -212,18 +212,18 @@ namespace HonorAmongThieves.Hubs
             }
         }
 
-        internal async Task UpdateIdleStatus(Player player)
+        internal async Task UpdateIdleStatus(Player player, bool setOkayButton = true)
         {
             switch (player.CurrentStatus)
             {
                 case Player.Status.FindingHeist:
-                    await this.UpdateHeistStatus(player, "FINDING HEIST...", "Your contacts don't seem to be responding. If there is any crime going on, you're not being invited.", true);
+                    await this.UpdateHeistStatus(player, "FINDING HEIST...", "Your contacts don't seem to be responding. If there is any crime going on, you're not being invited.", setOkayButton);
                     break;
                 case Player.Status.Dead:
                     await this.UpdateHeistStatus(player, "DEAD", "You're dead. You can't do anything.");
                     break;
                 case Player.Status.InJail:
-                    await this.UpdateHeistStatus(player, "IN JAIL", "You're IN JAIL. Years left: " + player.YearsLeftInJail, true);
+                    await this.UpdateHeistStatus(player, "IN JAIL", "You're IN JAIL. Years left: " + player.YearsLeftInJail, setOkayButton);
                     break;
             }
         }
@@ -238,17 +238,14 @@ namespace HonorAmongThieves.Hubs
             await Clients.Client(player.ConnectionId).SendAsync("UpdateHeistStatus", title, message, okayButton);
         }
 
-        internal async Task HeistPrep_ChangeState(Heist heist)
+        internal async Task HeistPrep_ChangeState(Heist heist, bool sendToCaller = false)
         {
-            var random = new Random();
-
             var playerInfo = new StringBuilder();
             foreach (var player in heist.Players.Values)
             {
                 playerInfo.Append(player.Name);
                 playerInfo.Append("|");
-                var fudgedNetworth = player.NetWorth * random.Next(50, 150) / 100;
-                playerInfo.Append(fudgedNetworth);
+                playerInfo.Append(player.ProjectedNetworth);
                 playerInfo.Append("|");
                 playerInfo.Append(player.TimeSpentInJail);
                 playerInfo.Append("=");
@@ -259,7 +256,14 @@ namespace HonorAmongThieves.Hubs
                 playerInfo.Length = playerInfo.Length - 1;
             }
 
-            await Clients.Group(heist.Id).SendAsync("HeistPrep_ChangeState", playerInfo.ToString(), heist.TotalReward, heist.SnitchReward);
+            if (sendToCaller)
+            {
+                await Clients.Caller.SendAsync("HeistPrep_ChangeState", playerInfo.ToString(), heist.TotalReward, heist.SnitchReward);
+            }
+            else
+            {
+                await Clients.Group(heist.Id).SendAsync("HeistPrep_ChangeState", playerInfo.ToString(), heist.TotalReward, heist.SnitchReward);
+            }
         }
 
         public async Task CommitMurder(string roomId, string murdererName, string victimName)
@@ -324,7 +328,7 @@ namespace HonorAmongThieves.Hubs
             await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateHeistMeetup", playerNames.ToString());
         }
 
-        internal async Task EndGame_Broadcast(Room room, Player broadcastedPlayer = null)
+        internal async Task EndGame_Broadcast(Room room, bool sendToCaller = false)
         {
             var playerInfo = new StringBuilder();
 
@@ -354,9 +358,9 @@ namespace HonorAmongThieves.Hubs
                 playerInfo.Length = playerInfo.Length - 1;
             }
 
-            if (broadcastedPlayer != null)
+            if (sendToCaller)
             {
-                await Clients.Client(broadcastedPlayer.ConnectionId).SendAsync("EndGame_Broadcast", room.CurrentYear + 2018, playerInfo.ToString());
+                await Clients.Caller.SendAsync("EndGame_Broadcast", room.CurrentYear + 2018, playerInfo.ToString());
             }
             else
             {
