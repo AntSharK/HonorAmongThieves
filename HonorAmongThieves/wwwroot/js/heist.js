@@ -240,3 +240,20 @@ connection.on("EndGame_Broadcast", function (year, leaderboarddata) {
 connection.start().catch(function (err) {
     return console.error(err.toString());
 });
+
+connection.on("FreshConnection", function () {
+    var sessionUserName = sessionStorage.getItem("username");
+    var sessionRoomId = sessionStorage.getItem("roomid");
+
+    if (sessionUserName != null && sessionRoomId != null) {
+        // Resume the session
+        connection.invoke("ResumeSession", sessionRoomId, sessionUserName).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+});
+
+connection.on("ClearState", function () {
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("roomid");
+})
