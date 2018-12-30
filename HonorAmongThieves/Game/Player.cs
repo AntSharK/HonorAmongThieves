@@ -96,26 +96,33 @@ namespace HonorAmongThieves.Game
                 }
             }
 
+            if (this.Decision.NextStatus != Status.Dead
+                && this.Decision.Killers.Count > 0)
+            {
+                this.Decision.FateTitle = "DEFENDED YOURSELF, ";
+                this.Decision.FateDescription = "You were accused of being a snitch. But your friends came to your aid. They left the accuser lying on the floor for the police to deal with. ";
+            }
+
             if (this.Decision.ReportPolice)
             {
                 if (!this.Decision.HeistHappens)
                 {
-                    this.Decision.FateTitle = "ARRESTED FOR MISLEADING POLICE";
-                    this.Decision.FateDescription = "You reported a heist to the police, but the heist didn't happen. So you got arrested for wasting their time. You also got fined for $" + -this.Decision.NetworthChange + " MILLION.";
+                    this.Decision.FateTitle = this.Decision.FateTitle + "ARRESTED FOR MISLEADING POLICE";
+                    this.Decision.FateDescription = this.Decision.FateDescription + "You reported a heist to the police, but the heist didn't happen. So you got arrested for wasting their time. You also got fined for $" + -this.Decision.NetworthChange + " MILLION.";
                     return;
                 }
                 else
                 {
                     if (this.Decision.GoOnHeist)
                     {
-                        this.Decision.FateTitle = "ARRESTED WITH REDUCED PENALTY";
-                        this.Decision.FateDescription = "You went on the heist, but also reported the details to the police. They threw you and your heistmates in jail, and rewarded you with $" + this.Decision.NetworthChange + " MILLION.";
+                        this.Decision.FateTitle = this.Decision.FateTitle + "ARRESTED WITH REDUCED PENALTY";
+                        this.Decision.FateDescription = this.Decision.FateDescription + "You went on the heist, but also reported the details to the police. They threw you and your heistmates in jail, and rewarded you with $" + this.Decision.NetworthChange + " MILLION.";
                         return;
                     }
                     else
                     {
-                        this.Decision.FateTitle = "SUCCESSFULLY SNITCHED";
-                        this.Decision.FateDescription = "You stalked your heistmates as they committing the heist, and reported the details to the police. They threw your heistmates in jail, and rewarded you for $" + this.Decision.NetworthChange + " MILLION.";
+                        this.Decision.FateTitle = this.Decision.FateTitle + "SUCCESSFULLY SNITCHED";
+                        this.Decision.FateDescription = this.Decision.FateDescription + "You stalked your heistmates as they committing the heist, and reported the details to the police. They threw your heistmates in jail, and rewarded you for $" + this.Decision.NetworthChange + " MILLION.";
                         return;
                     }
                 }
@@ -124,21 +131,21 @@ namespace HonorAmongThieves.Game
             if (this.Decision.PlayerToKill != null
                 && this.Decision.PlayerToKill.Decision.NextStatus == Status.Dead)
             {
-                this.Decision.FateTitle = "KILLED " + this.Decision.PlayerToKill.Name + ", ";
+                this.Decision.FateTitle = this.Decision.FateTitle + "KILLED " + this.Decision.PlayerToKill.Name + ", ";
                 if (this.Decision.PlayerToKill.Decision.Killers.Count > 1)
                 {
-                    this.Decision.FateDescription = "You found " + this.Decision.PlayerToKill.Name + " and snuck up behind him. But before you could kill him, a shot rang out and he fell to the floor. You swung by later to check that he was really date, and stole some of his credit cards. ";
+                    this.Decision.FateDescription = this.Decision.FateDescription + "You found " + this.Decision.PlayerToKill.Name + " and snuck up behind him. But before you could kill him, a shot rang out and he fell to the floor. You swung by later to check that he was really date, and stole some of his credit cards. ";
                 }
                 else
                 {
-                    this.Decision.FateDescription = "You found " + this.Decision.PlayerToKill.Name + " and put a bullet between his eyes. Then you swiftly emptied his bank account into yours. ";
+                    this.Decision.FateDescription = this.Decision.FateDescription + "You found " + this.Decision.PlayerToKill.Name + " and put a bullet between his eyes. Then you swiftly emptied his bank account into yours. ";
                 }
             }
             else if (this.Decision.PlayerToKill != null
                 && this.Decision.PlayerToKill.Decision.NextStatus != Status.Dead)
             {
-                this.Decision.FateTitle = "COULD NOT FIND " + this.Decision.PlayerToKill.Name + ", ";
-                this.Decision.FateDescription = "Your contacts found " + this.Decision.PlayerToKill.Name + " halfway around the world, and you decide murder is too troublesome this time. ";
+                this.Decision.FateTitle = this.Decision.FateTitle + "COULD NOT FIND " + this.Decision.PlayerToKill.Name + ", ";
+                this.Decision.FateDescription = this.Decision.FateDescription + "Your contacts found " + this.Decision.PlayerToKill.Name + " halfway around the world, and you decide murder is too troublesome this time. ";
             }
 
             if (this.Decision.GoOnHeist)
