@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HonorAmongThieves.Hubs;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,6 +13,8 @@ namespace HonorAmongThieves.Game
 
         public int NetWorth { get; set; } = 10;
 
+        public int ProjectedNetworth { get; set; } = 10;
+
         public int TimeSpentInJail { get; set; } = 0;
 
         public int YearsLeftInJail { get; set; } = -1;
@@ -24,6 +27,8 @@ namespace HonorAmongThieves.Game
 
         public Status CurrentStatus { get; set; }
 
+        public Status PreviousStatus { get; set; }
+
         public DateTime LastUpdate { get; private set; }
 
         public string ConnectionId { get; set; }
@@ -31,6 +36,8 @@ namespace HonorAmongThieves.Game
         public HeistDecision Decision { get; set; } = new HeistDecision();
 
         public bool Okay { get; set; } = true;
+
+        public Heist CurrentHeist;
 
         public Player(string name, Room room)
         {
@@ -166,6 +173,114 @@ namespace HonorAmongThieves.Game
                 this.Decision.FateTitle = "TAKING A VACATION";
                 this.Decision.FateDescription = "You spend the year doing other fun exciting things. Much like crime, but without the downside of getting arrested.";
                 return;
+            }
+        }
+
+        public async Task ResumePlayerSession(HeistHub hub)
+        {
+            if (this.Room.SigningUp)
+            {
+                await hub.JoinRoom_UpdateView(this.Room, this);
+                return;
+            }
+
+            // This doesn't actually happen since the endgame_broadcast deletes the session state
+            if (this.Room.CurrentYear == this.Room.MaxYears)
+            {
+                await hub.EndGame_Broadcast(this.Room, true);
+                return;
+            }
+
+            await hub.StartRoom_UpdatePlayer(this);
+
+            if (this.Room.CurrentStatus == Room.Status.ResolvingHeists)
+            {
+                await this.UpdateFateView(hub, !this.Okay /*Don't set the OKAY button if it has already been pressed*/);
+                return;
+            }
+
+            if (this.Room.CurrentStatus == Room.Status.AwaitingHeistDecisions
+                || this.Room.CurrentStatus == Room.Status.NoHeists)
+            {
+                switch (this.CurrentStatus)
+                {
+                    // Idle statuses
+                    case Status.FindingHeist:
+                    case Status.Dead:
+                    case Status.InJail:
+                        await hub.UpdateIdleStatus(this, !this.Okay /*Don't set the OKAY button if it has already been pressed*/);
+                        return;
+                    case Status.InHeist:
+                        await hub.HeistPrep_ChangeState(this.CurrentHeist, true);
+                        return;
+                    case Status.HeistDecisionMade:
+                        await hub.HeistPrep_UpdateDecision(this);
+                        return;
+                    default:
+                        // This should not happen
+                        await hub.ShowError("ERROR RESUMING CURRENT STATE");
+                        return;
+                }
+            }
+        }
+
+        public async Task UpdateFateLogic(HeistHub hub)
+        {
+            this.PreviousStatus = this.CurrentStatus;
+            switch (this.CurrentStatus)
+            {
+                case Player.Status.InJail:
+                    this.YearsLeftInJail--;
+                    this.TimeSpentInJail++;
+                    if (this.YearsLeftInJail <= 0)
+                    {
+                        this.CurrentStatus = Player.Status.FindingHeist;
+                    }
+                    break;
+
+                case Player.Status.FindingHeist:
+                case Player.Status.Dead:
+                    break;
+
+                case Player.Status.HeistDecisionMade:
+                    this.CurrentStatus = this.Decision.NextStatus;
+                    break;
+            }
+
+            await this.UpdateFateView(hub);
+        }
+
+        private async Task UpdateFateView(HeistHub hub, bool setOkayButton = true)
+        {
+            switch (this.PreviousStatus)
+            {
+                case Player.Status.InJail:
+                    if (this.YearsLeftInJail <= 0)
+                    {
+                        await hub.UpdateHeistStatus(this, "FREE AT LAST", "You're finally free of jail! A new person! Free from the life of crime!", setOkayButton);
+                    }
+                    else
+                    {
+                        await hub.UpdateHeistStatus(this, "STILL IN JAIL", "You're still in jail for another " + this.YearsLeftInJail + " year(s).", setOkayButton);
+                    }
+                    break;
+
+                case Player.Status.FindingHeist:
+                    await hub.UpdateHeistStatus(this, "WAITING", "You wait around, and a year passes you by without anything happening.", setOkayButton);
+                    break;
+
+                case Player.Status.Dead:
+                    await hub.UpdateHeistStatus(this, "STILL DEAD", "Unfortunately, death seems to be a very difficult to reverse state.", false);
+                    break;
+
+                case Player.Status.HeistDecisionMade:
+                    await hub.UpdateHeistStatus(this, this.Decision.FateTitle, this.Decision.FateDescription, setOkayButton);
+                    if (this.Decision.GoOnHeist && this.Decision.FellowHeisters != null && this.Decision.FellowHeisters.Count > 0)
+                    {
+                        await hub.UpdateHeistMeetup(this, this.Decision.FellowHeisters);
+                    }
+
+                    break;
             }
         }
 

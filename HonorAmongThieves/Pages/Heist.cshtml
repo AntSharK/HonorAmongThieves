@@ -6,7 +6,7 @@
         <ul id="lobbyList" class="h4"></ul>
 
         <div id="startButtonDiv" style="display:none" class="h4">
-            At least 4 players are required to start the game.<br />
+            At least 2 players are required to start the game.<br />
             Make sure there are no players who are in the lobby but cannot see the game!!.<br />
             <br />
             <div style="text-align:center">
@@ -27,8 +27,8 @@
 
     <div class="state" id="joinroom">
         <div class="display-3" style="text-align:center">
-            Name: <input type="text" id="username" maxlength="10" size="10" /><br />
-            Room ID: <input type="text" id="roomid" maxlength="5" size="5" /><br /><br />
+            Name: <input type="text" id="username" maxlength="10" size="10" oninput="this.value = this.value.toUpperCase()" /><br />
+            Room ID: <input type="text" id="roomid" maxlength="5" size="5" oninput="this.value = this.value.toUpperCase()" /><br /><br />
             <input type="button" class="display-1" id="joinroombutton" value="JOIN" />
         </div>
         <h3>
@@ -106,19 +106,6 @@
         </table>
         <hr />
         <a href="/">FINISH</a>
-    </div>
-
-    <div class="row">
-        <div class="col-12">
-            <hr />
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
     </div>
 </div>
 

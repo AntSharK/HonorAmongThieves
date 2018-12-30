@@ -103,7 +103,7 @@ namespace HonorAmongThieves.Game
 
         private Heist CreateHeist(List<Player> eligiblePlayers, int heistCapacity)
         {
-            var heistId = Utils.GenerateId(12, this.Heists);
+            var heistId = Utils.GenerateId(10, this.Heists);
 
             var snitchReward = this.BetrayalReward;
             var heist = new Heist(heistId, heistCapacity, snitchReward);
@@ -193,6 +193,17 @@ namespace HonorAmongThieves.Game
                         return;
                     }
                 }
+
+                // OKAY button is still valid for players who are newly dead
+                if (player.CurrentStatus == Player.Status.Dead)
+                {
+                    if (player.PreviousStatus != Player.Status.Dead
+                        && !player.Okay)
+                    {
+                        return;
+                    }
+                }
+
             }
             switch (this.CurrentStatus)
             {
@@ -229,41 +240,7 @@ namespace HonorAmongThieves.Game
         {
             foreach (var player in this.Players.Values)
             {
-                switch (player.CurrentStatus)
-                {
-                    case Player.Status.InJail:
-                        player.YearsLeftInJail--;
-                        player.TimeSpentInJail++;
-                        if (player.YearsLeftInJail <= 0)
-                        {
-                            player.CurrentStatus = Player.Status.FindingHeist;
-                            await hub.UpdateHeistStatus(player, "FREE AT LAST", "You're finally free of jail! A new person! Free from the life of crime!", true);
-                        }
-                        else
-                        {
-                            await hub.UpdateHeistStatus(player, "STILL IN JAIL", "You're still in jail for another " + player.YearsLeftInJail + " year(s).", true);
-                        }
-                        break;
-
-                    case Player.Status.FindingHeist:
-                        await hub.UpdateHeistStatus(player, "WAITING", "You wait around, and a year passes you by without anything happening.", true);
-                        break;
-
-                    case Player.Status.Dead:
-                        await hub.UpdateHeistStatus(player, "STILL DEAD", "Unfortunately, death seems to be a very difficult to reverse state.", false);
-                        break;
-
-                    case Player.Status.HeistDecisionMade:
-                        await hub.UpdateHeistStatus(player, player.Decision.FateTitle, player.Decision.FateDescription, true);
-                        if (player.Decision.GoOnHeist && player.Decision.FellowHeisters != null && player.Decision.FellowHeisters.Count > 0)
-                        {
-                            await hub.UpdateHeistMeetup(player, player.Decision.FellowHeisters);
-                        }
-
-                        player.CurrentStatus = player.Decision.NextStatus;
-
-                        break;
-                }
+                await player.UpdateFateLogic(hub);
             }
         }
 

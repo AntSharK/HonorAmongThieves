@@ -28,8 +28,10 @@ namespace HonorAmongThieves.Game
         public void AddPlayer(Player player)
         {
             player.CurrentStatus = Player.Status.InHeist;
+            player.CurrentHeist = this;
             player.Decision = new Player.HeistDecision();
             player.Okay = false;
+            player.ProjectedNetworth = player.NetWorth * Utils.Rng.Next(50, 150) / 100;
             this.Players[player.Name] = player;
         }
 
