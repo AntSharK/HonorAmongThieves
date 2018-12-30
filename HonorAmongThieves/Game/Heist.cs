@@ -13,9 +13,12 @@ namespace HonorAmongThieves.Game
 
         public int SnitchReward { get; private set; } = 60;
 
-        public Heist(string heistId, int heistCapacity, int snitchReward)
+        private int Year;
+
+        public Heist(string heistId, int heistCapacity, int snitchReward, int year)
         {
             this.SnitchReward = snitchReward;
+            this.Year = year;
 
             const int BASEREWARD = 30;
             const double EXPONENT = 2;
@@ -133,6 +136,7 @@ namespace HonorAmongThieves.Game
                     snitcher.Decision.NetworthChange += snitchreward;
                     snitcher.NetWorth += snitchreward;
                     snitcher.BetrayalCount++;
+                    snitcher.LastBetrayedYear = this.Year;
                 }
             }
             else if (!heistHappens

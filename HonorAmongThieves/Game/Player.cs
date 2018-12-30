@@ -25,6 +25,8 @@ namespace HonorAmongThieves.Game
 
         public int BetrayalCount { get; set; } = 0;
 
+        public int LastBetrayedYear { get; set; } = 0;
+
         public Status CurrentStatus { get; set; }
 
         public Status PreviousStatus { get; set; }

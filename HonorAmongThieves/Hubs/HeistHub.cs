@@ -132,7 +132,7 @@ namespace HonorAmongThieves.Hubs
             await Clients.Group(room.Id).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newPlayer.Name);
         }
 
-        public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize)
+        public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize, int snitchMurderWindow)
         {
             const int MINPLAYERCOUNT = 2;
             Room room;
@@ -149,12 +149,12 @@ namespace HonorAmongThieves.Hubs
                 return;
             }
 
-            await this.StartRoom_ChangeState(room, betrayalReward, maxGameLength, maxHeistSize);
+            await this.StartRoom_ChangeState(room, betrayalReward, maxGameLength, maxHeistSize, snitchMurderWindow);
         }
 
-        internal async Task StartRoom_ChangeState(Room room, int betrayalReward, int maxGameLength, int maxHeistSize)
+        internal async Task StartRoom_ChangeState(Room room, int betrayalReward, int maxGameLength, int maxHeistSize, int snitchMurderWindow)
         {
-            room.StartGame(betrayalReward, maxGameLength, maxHeistSize);
+            room.StartGame(betrayalReward, maxGameLength, maxHeistSize, snitchMurderWindow);
             room.UpdatedTime = DateTime.UtcNow; // Only update the room when the players click something
 
             await this.StartRoom_UpdateState(room);

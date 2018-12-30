@@ -29,6 +29,8 @@ namespace HonorAmongThieves.Game
 
         public int InitialMaxHeistCapacity { get; private set; } = 5;
 
+        public int SnitchMurderWindow { get; private set; } = -1;
+
         public Dictionary<string, Heist> Heists { get; } = new Dictionary<string, Heist>();
 
         private Random Random = new Random();
@@ -110,7 +112,7 @@ namespace HonorAmongThieves.Game
             var heistId = Utils.GenerateId(10, this.Heists);
 
             var snitchReward = this.BetrayalReward;
-            var heist = new Heist(heistId, heistCapacity, snitchReward);
+            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear);
 
             for (var i = 0; i < heistCapacity; i++)
             {
@@ -123,7 +125,7 @@ namespace HonorAmongThieves.Game
             return heist;
         }
 
-        public void StartGame(int betrayalReward, int maxGameLength, int maxHeistSize)
+        public void StartGame(int betrayalReward, int maxGameLength, int maxHeistSize, int snitchMurderWindow)
         {
             this.StartTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
@@ -144,6 +146,7 @@ namespace HonorAmongThieves.Game
                 this.MaxYears = Utils.Rng.Next(maxGameLength / 2, maxGameLength);
             }
 
+            this.SnitchMurderWindow = snitchMurderWindow;
             this.SigningUp = false;
         }
 

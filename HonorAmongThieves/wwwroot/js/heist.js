@@ -110,7 +110,8 @@ document.getElementById("startbutton").addEventListener("click", function (event
     var betrayalReward = document.getElementById("betrayalreward").value;
     var maxGameLength = document.getElementById("maxgamelength").value;
     var maxHeistSize = document.getElementById("maxheistsize").value;
-    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, maxHeistSize).catch(function (err) {
+    var snitchMurderWindow = document.getElementById("snitchMurderWindow").value;
+    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, maxHeistSize, snitchMurderWindow).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
