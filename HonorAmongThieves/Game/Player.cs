@@ -214,7 +214,7 @@ namespace HonorAmongThieves.Game
                         await hub.HeistPrep_ChangeState(this.CurrentHeist, true);
                         return;
                     case Status.HeistDecisionMade:
-                        // TODO: Update view for current decision
+                        await hub.HeistPrep_UpdateDecision(this);
                         return;
                     default:
                         // This should not happen
