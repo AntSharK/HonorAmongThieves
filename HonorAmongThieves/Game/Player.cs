@@ -39,6 +39,8 @@ namespace HonorAmongThieves.Game
 
         public bool Okay { get; set; } = true;
 
+        public bool IsBot { get; set; } = false;
+
         public Heist CurrentHeist;
 
         public Player(string name, Room room)
@@ -317,6 +319,12 @@ namespace HonorAmongThieves.Game
 
                     break;
             }
+        }
+
+        public void BotUpdateState()
+        {
+            // TODO: Actual intelligence
+            this.Okay = true;
         }
 
         public enum Status

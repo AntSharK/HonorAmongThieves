@@ -84,6 +84,28 @@ namespace HonorAmongThieves.Hubs
             }
         }
 
+        public async Task AddBot(string roomId)
+        {
+            Room room;
+            if (!Program.Instance.Rooms.TryGetValue(roomId, out room))
+            {
+                // Room does not exist
+                await this.ShowError("Room does not exist.");
+                return;
+            }
+
+            var createdBot = room.CreateBot();
+            if (createdBot != null)
+            {
+                await this.JoinRoom_UpdateView(room, createdBot);
+            }
+            else
+            {
+                await this.ShowError("Bot creation failed.");
+                return;
+            }
+        }
+
         public async Task JoinRoom(string roomId, string userName)
         {
             Room room;
@@ -110,7 +132,11 @@ namespace HonorAmongThieves.Hubs
         internal async Task JoinRoom_UpdateView(Room room, Player newPlayer)
         {
             await Clients.Group(room.Id).SendAsync("JoinRoom", room.Id, newPlayer.Name);
-            await Clients.Caller.SendAsync("JoinRoom_ChangeState", room.Id, newPlayer.Name);
+
+            if (!newPlayer.IsBot)
+            {
+                await Clients.Caller.SendAsync("JoinRoom_ChangeState", room.Id, newPlayer.Name);
+            }
 
             if (room.OwnerName == newPlayer.Name)
             {
@@ -202,10 +228,15 @@ namespace HonorAmongThieves.Hubs
             room.SpawnHeists();
             foreach (var heist in room.Heists.Values)
             {
-                foreach (var player in heist.Players.Values)
+                foreach (var player in heist.Players.Values.Where(p => !p.IsBot))
                 {
                     await Groups.AddToGroupAsync(player.ConnectionId, heist.Id);
                 }
+            }
+
+            foreach (var bot in room.Players.Values.Where(p => p.IsBot))
+            {
+                bot.BotUpdateState();
             }
 
             if (room.Heists.Count > 0)
@@ -236,7 +267,7 @@ namespace HonorAmongThieves.Hubs
             }
 
             // Update the message for each player who can't act
-            foreach (var player in room.Players.Values)
+            foreach (var player in room.Players.Values.Where(p => !p.IsBot))
             {
                 await this.UpdateIdleStatus(player);
             }
