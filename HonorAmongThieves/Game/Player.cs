@@ -81,7 +81,6 @@ namespace HonorAmongThieves.Game
                     && this.Decision.Killers.Count == 1
                     && this.Decision.Killers.Contains(this))
                 {
-                    // TODO: Also do this message for innocent accusation
                     this.Decision.FateDescription = this.Decision.FateDescription + "You confronted " + this.Decision.PlayerToKill.Name + ". Things got heated, and someone lost their head. Unfortunately, that someone was you.";
                     return;
                 }
