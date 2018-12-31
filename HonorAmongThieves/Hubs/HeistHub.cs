@@ -221,7 +221,10 @@ namespace HonorAmongThieves.Hubs
                     player.CurrentStatus = Player.Status.FindingHeist;
                 }
 
-                await this.StartRoom_UpdatePlayer(player);
+                if (!player.IsBot)
+                {
+                    await this.StartRoom_UpdatePlayer(player);
+                }
             }
 
             room.SigningUp = false;
