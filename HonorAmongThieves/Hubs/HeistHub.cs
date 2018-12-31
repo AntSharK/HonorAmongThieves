@@ -162,7 +162,28 @@ namespace HonorAmongThieves.Hubs
 
         internal async Task StartRoom_UpdatePlayer(Player player)
         {
-            await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, player.Room.CurrentYear + 2018, player.Name, player.MinJailSentence, player.MaxJailSentence);
+            var snitchingEvidence = "NOT A SNITCH";
+            if (player.LastBetrayedYear >= 0)
+            {
+                if (player.Room.SnitchMurderWindow < 0)
+                {
+                    snitchingEvidence = " NEVER";
+                }
+                else
+                {
+                    var yearsLeft = player.LastBetrayedYear + player.Room.SnitchMurderWindow - player.Room.CurrentYear + 1;
+                    if (yearsLeft > 0)
+                    {
+                        snitchingEvidence = yearsLeft + " YEARS.";
+                    }
+                    else
+                    {
+                        snitchingEvidence = "PURGED";
+                    }
+                }
+            }
+
+            await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, player.Room.CurrentYear + 2018, player.Name, player.MinJailSentence, player.MaxJailSentence, snitchingEvidence);
         }
 
         internal async Task StartRoom_UpdateState(Room room)

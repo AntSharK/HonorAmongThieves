@@ -37,10 +37,6 @@ namespace HonorAmongThieves.Game
 
         public Status CurrentStatus { get; set; } = Status.SettingUp;
 
-        // TODO: Make a mod for murdering being less harsh.
-        // Murdering only works if snitching was within last few rounds
-        // Failing to murder results in jail term not death
-
         public Room(string id, HeistHub hub)
         {
             this.Id = id;
@@ -112,7 +108,7 @@ namespace HonorAmongThieves.Game
             var heistId = Utils.GenerateId(10, this.Heists);
 
             var snitchReward = this.BetrayalReward;
-            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear);
+            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear, this.SnitchMurderWindow);
 
             for (var i = 0; i < heistCapacity; i++)
             {

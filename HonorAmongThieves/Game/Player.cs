@@ -25,7 +25,7 @@ namespace HonorAmongThieves.Game
 
         public int BetrayalCount { get; set; } = 0;
 
-        public int LastBetrayedYear { get; set; } = 0;
+        public int LastBetrayedYear { get; set; } = -1;
 
         public Status CurrentStatus { get; set; }
 
@@ -81,6 +81,7 @@ namespace HonorAmongThieves.Game
                     && this.Decision.Killers.Count == 1
                     && this.Decision.Killers.Contains(this))
                 {
+                    // TODO: Also do this message for innocent accusation
                     this.Decision.FateDescription = this.Decision.FateDescription + "You confronted " + this.Decision.PlayerToKill.Name + ". Things got heated, and someone lost their head. Unfortunately, that someone was you.";
                     return;
                 }
@@ -101,8 +102,16 @@ namespace HonorAmongThieves.Game
             if (this.Decision.NextStatus != Status.Dead
                 && this.Decision.Killers?.Count > 0)
             {
-                this.Decision.FateTitle = "DEFENDED YOURSELF, ";
-                this.Decision.FateDescription = "You were accused of being a snitch. But your friends came to your aid. They left the accuser lying on the floor for the police to deal with. ";
+                this.Decision.FateTitle = this.Decision.FateTitle + "DEFENDED YOURSELF, ";
+
+                if (this.Room.SnitchMurderWindow >= 0)
+                {
+                    this.Decision.FateDescription = this.Decision.FateDescription + "You were accused of being a snitch. But your friends came to your aid. They left the accuser lying on the floor for the police to deal with. ";
+                }
+                else
+                {
+                    this.Decision.FateDescription = this.Decision.FateDescription + "You were accused of being a snitch. But your friends came to your aid, leaving your accuser dead. ";
+                }
             }
 
             if (this.Decision.ReportPolice)
@@ -144,7 +153,8 @@ namespace HonorAmongThieves.Game
                 }
             }
             else if (this.Decision.PlayerToKill != null
-                && this.Decision.PlayerToKill.Decision.NextStatus != Status.Dead)
+                && this.Decision.PlayerToKill.Decision.NextStatus != Status.Dead
+                && !this.Decision.PlayerToKill.Decision.GoOnHeist)
             {
                 this.Decision.FateTitle = this.Decision.FateTitle + "COULD NOT FIND " + this.Decision.PlayerToKill.Name + ", ";
                 this.Decision.FateDescription = this.Decision.FateDescription + "Your contacts found " + this.Decision.PlayerToKill.Name + " halfway around the world, and you decide murder is too troublesome this time. ";
@@ -156,7 +166,6 @@ namespace HonorAmongThieves.Game
                 {
                     this.Decision.FateTitle = this.Decision.FateTitle + "NOT ENOUGH ATTENDENCE";
                     this.Decision.FateDescription = this.Decision.FateDescription + "You gather for the heist, but there aren't enough people here to safely complete the job. So you all go home without trying. Your total networth change this year: $" + this.Decision.NetworthChange + " MILLION.";
-                    return;
                 }
                 else
                 {
@@ -165,15 +174,33 @@ namespace HonorAmongThieves.Game
                         this.Decision.FateTitle = this.Decision.FateTitle + "ARRESTED";
                         this.Decision.FateDescription = this.Decision.FateDescription + "You are arrested during the heist! You are sent to jail and fined! Your total networth change this year: " 
                             + (this.Decision.NetworthChange > 0 ? ("$" + this.Decision.NetworthChange) : ("-$" + -this.Decision.NetworthChange)) + " MILLION.";
-                        return;
                     }
                     else
                     {
                         this.Decision.FateTitle = this.Decision.FateTitle + "SUCCESSFUL HEIST";
                         this.Decision.FateDescription = this.Decision.FateDescription + "Successful heist! Your total networth change this year: $" + this.Decision.NetworthChange + " MILLION.";
-                        return;
                     }
                 }
+            }
+
+            if (this.Decision.KillFailure
+                && this.Room.SnitchMurderWindow >= 0
+                && !this.Decision.PoliceReported)
+            {
+                // If we reach this point, that means that failure to kill results in jail, not death
+                this.Decision.FateTitle = this.Decision.FateTitle + " AND LEFT OUT TO DRY";
+                this.Decision.FateDescription = this.Decision.FateDescription + " You confronted " + this.Decision.PlayerToKill.Name + ". Things got heated, you were left on the floor bleeding, for the cops to arrest.";
+                return;
+            }
+
+            else if (this.Decision.KillFailure
+                && this.Room.SnitchMurderWindow >= 0
+                && !this.Decision.PoliceReported)
+            {
+                // If we reach this point, that means that failure to kill results in jail, not death
+                this.Decision.FateTitle = this.Decision.FateTitle + " AND FAILED TO KILL";
+                this.Decision.FateDescription = this.Decision.FateDescription + " You confronted " + this.Decision.PlayerToKill.Name + " as you were being arrested, but your accusations were refuted.";
+                return;
             }
 
             if (!this.Decision.GoOnHeist
@@ -322,6 +349,7 @@ namespace HonorAmongThieves.Game
             public bool HeistHappens { get; set; }
             public bool PoliceReported { get; set; }
             public Status NextStatus { get; set; } = Status.FindingHeist;
+            public bool KillFailure { get; set; } = false;
         }
     }
 }
