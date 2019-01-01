@@ -29,6 +29,8 @@ namespace HonorAmongThieves.Game
 
         public int InitialMaxHeistCapacity { get; private set; } = 5;
 
+        public int SnitchMurderWindow { get; private set; } = -1;
+
         public Dictionary<string, Heist> Heists { get; } = new Dictionary<string, Heist>();
 
         private Random Random = new Random();
@@ -106,7 +108,7 @@ namespace HonorAmongThieves.Game
             var heistId = Utils.GenerateId(10, this.Heists);
 
             var snitchReward = this.BetrayalReward;
-            var heist = new Heist(heistId, heistCapacity, snitchReward);
+            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear, this.SnitchMurderWindow);
 
             for (var i = 0; i < heistCapacity; i++)
             {
@@ -119,7 +121,7 @@ namespace HonorAmongThieves.Game
             return heist;
         }
 
-        public void StartGame(int betrayalReward, int maxGameLength, int maxHeistSize)
+        public void StartGame(int betrayalReward, int maxGameLength, int maxHeistSize, int snitchMurderWindow)
         {
             this.StartTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
@@ -140,12 +142,13 @@ namespace HonorAmongThieves.Game
                 this.MaxYears = Utils.Rng.Next(maxGameLength / 2, maxGameLength);
             }
 
+            this.SnitchMurderWindow = snitchMurderWindow;
             this.SigningUp = false;
         }
 
         public Player CreatePlayer(string playerName, string connectionId)
         {
-            const int ROOMCAPACITY = 10;
+            const int ROOMCAPACITY = 20;
             if (this.Players.Count >= ROOMCAPACITY)
             {
                 return null;
@@ -167,6 +170,21 @@ namespace HonorAmongThieves.Game
             this.UpdatedTime = DateTime.UtcNow;
 
             return playerToAdd;
+        }
+
+        public Player CreateBot()
+        {
+            string[] BOTNAMES = { "SAMBOT", "ANNBOT", "RONBOT", "TIMBOT", "GEORGEBOT", "SARABOT", "GEORGEBOT" };
+            var botName = BOTNAMES[Utils.Rng.Next(0, BOTNAMES.Length)];
+            var bot = this.CreatePlayer(botName, null);
+
+            if (bot != null)
+            {
+                bot.ConnectionId = null;
+                bot.IsBot = true;
+            }
+
+            return bot;
         }
 
         public void Destroy()

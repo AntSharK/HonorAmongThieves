@@ -16,6 +16,14 @@ namespace HonorAmongThieves.Hubs
             await base.OnConnectedAsync();
         }
 
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            // TODO: This requires keeping track of players on a global level
+            // That's not hard - but screwing up means leaking players in memory
+            // Which is highly resource-intensive for a moderate reward
+            await base.OnDisconnectedAsync(exception);
+        }
+
         public async Task ResumeSession(string roomId, string userName)
         {
             Room room;
@@ -76,6 +84,28 @@ namespace HonorAmongThieves.Hubs
             }
         }
 
+        public async Task AddBot(string roomId)
+        {
+            Room room;
+            if (!Program.Instance.Rooms.TryGetValue(roomId, out room))
+            {
+                // Room does not exist
+                await this.ShowError("Room does not exist.");
+                return;
+            }
+
+            var createdBot = room.CreateBot();
+            if (createdBot != null)
+            {
+                await this.JoinRoom_UpdateView(room, createdBot);
+            }
+            else
+            {
+                await this.ShowError("Bot creation failed.");
+                return;
+            }
+        }
+
         public async Task JoinRoom(string roomId, string userName)
         {
             Room room;
@@ -102,7 +132,11 @@ namespace HonorAmongThieves.Hubs
         internal async Task JoinRoom_UpdateView(Room room, Player newPlayer)
         {
             await Clients.Group(room.Id).SendAsync("JoinRoom", room.Id, newPlayer.Name);
-            await Clients.Caller.SendAsync("JoinRoom_ChangeState", room.Id, newPlayer.Name);
+
+            if (!newPlayer.IsBot)
+            {
+                await Clients.Caller.SendAsync("JoinRoom_ChangeState", room.Id, newPlayer.Name);
+            }
 
             if (room.OwnerName == newPlayer.Name)
             {
@@ -124,7 +158,7 @@ namespace HonorAmongThieves.Hubs
             await Clients.Group(room.Id).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newPlayer.Name);
         }
 
-        public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize)
+        public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize, int snitchMurderWindow)
         {
             const int MINPLAYERCOUNT = 2;
             Room room;
@@ -141,12 +175,12 @@ namespace HonorAmongThieves.Hubs
                 return;
             }
 
-            await this.StartRoom_ChangeState(room, betrayalReward, maxGameLength, maxHeistSize);
+            await this.StartRoom_ChangeState(room, betrayalReward, maxGameLength, maxHeistSize, snitchMurderWindow);
         }
 
-        internal async Task StartRoom_ChangeState(Room room, int betrayalReward, int maxGameLength, int maxHeistSize)
+        internal async Task StartRoom_ChangeState(Room room, int betrayalReward, int maxGameLength, int maxHeistSize, int snitchMurderWindow)
         {
-            room.StartGame(betrayalReward, maxGameLength, maxHeistSize);
+            room.StartGame(betrayalReward, maxGameLength, maxHeistSize, snitchMurderWindow);
             room.UpdatedTime = DateTime.UtcNow; // Only update the room when the players click something
 
             await this.StartRoom_UpdateState(room);
@@ -154,7 +188,28 @@ namespace HonorAmongThieves.Hubs
 
         internal async Task StartRoom_UpdatePlayer(Player player)
         {
-            await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, player.Room.CurrentYear + 2018, player.Name, player.MinJailSentence, player.MaxJailSentence);
+            var snitchingEvidence = "NOT A SNITCH";
+            if (player.LastBetrayedYear >= 0)
+            {
+                if (player.Room.SnitchMurderWindow < 0)
+                {
+                    snitchingEvidence = " NEVER";
+                }
+                else
+                {
+                    var yearsLeft = player.LastBetrayedYear + player.Room.SnitchMurderWindow - player.Room.CurrentYear + 1;
+                    if (yearsLeft > 0)
+                    {
+                        snitchingEvidence = yearsLeft + " YEARS.";
+                    }
+                    else
+                    {
+                        snitchingEvidence = "PURGED";
+                    }
+                }
+            }
+
+            await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, player.Room.CurrentYear + 2018, player.Name, player.MinJailSentence, player.MaxJailSentence, snitchingEvidence);
         }
 
         internal async Task StartRoom_UpdateState(Room room)
@@ -166,17 +221,25 @@ namespace HonorAmongThieves.Hubs
                     player.CurrentStatus = Player.Status.FindingHeist;
                 }
 
-                await this.StartRoom_UpdatePlayer(player);
+                if (!player.IsBot)
+                {
+                    await this.StartRoom_UpdatePlayer(player);
+                }
             }
 
             room.SigningUp = false;
             room.SpawnHeists();
             foreach (var heist in room.Heists.Values)
             {
-                foreach (var player in heist.Players.Values)
+                foreach (var player in heist.Players.Values.Where(p => !p.IsBot))
                 {
                     await Groups.AddToGroupAsync(player.ConnectionId, heist.Id);
                 }
+            }
+
+            foreach (var bot in room.Players.Values.Where(p => p.IsBot))
+            {
+                bot.BotUpdateState();
             }
 
             if (room.Heists.Count > 0)
@@ -207,7 +270,7 @@ namespace HonorAmongThieves.Hubs
             }
 
             // Update the message for each player who can't act
-            foreach (var player in room.Players.Values)
+            foreach (var player in room.Players.Values.Where(p => !p.IsBot))
             {
                 await this.UpdateIdleStatus(player);
             }
@@ -241,13 +304,19 @@ namespace HonorAmongThieves.Hubs
 
         internal async Task HeistPrep_ChangeState(Heist heist, bool sendToCaller = false)
         {
+            var totalNetworth = heist.Players.Values.Sum(n => n.ProjectedNetworth);
+            var totalBarsOverNetworth = 20f * heist.Players.Count / (totalNetworth + 1);
+
             var playerInfo = new StringBuilder();
             foreach (var player in heist.Players.Values)
             {
                 playerInfo.Append(player.Name);
-                playerInfo.Append("|");
-                playerInfo.Append(player.ProjectedNetworth);
-                playerInfo.Append("|");
+                playerInfo.Append(",");
+
+                var barLength = totalBarsOverNetworth * player.ProjectedNetworth;
+                var networthBar = new string('|', (int)barLength);
+                playerInfo.Append(networthBar);
+                playerInfo.Append(",");
                 playerInfo.Append(player.TimeSpentInJail);
                 playerInfo.Append("=");
             }

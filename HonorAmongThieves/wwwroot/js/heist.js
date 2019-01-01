@@ -110,7 +110,15 @@ document.getElementById("startbutton").addEventListener("click", function (event
     var betrayalReward = document.getElementById("betrayalreward").value;
     var maxGameLength = document.getElementById("maxgamelength").value;
     var maxHeistSize = document.getElementById("maxheistsize").value;
-    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, maxHeistSize).catch(function (err) {
+    var snitchMurderWindow = document.getElementById("snitchmurderwindow").value;
+    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, maxHeistSize, snitchMurderWindow).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
+});
+
+document.getElementById("addbotbutton").addEventListener("click", function (event) {
+    connection.invoke("AddBot", roomId).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
@@ -119,7 +127,7 @@ document.getElementById("startbutton").addEventListener("click", function (event
 // ------------------------------
 // ----- STATE: HEIST START -----
 // ------------------------------
-connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, minJailTime, maxJailTime) {
+connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, minJailTime, maxJailTime, snitchingEvidence) {
     var elements = document.getElementsByClassName("state");
     for (var i = 0; i < elements.length; i++) {
         elements[i].style.display = "none";
@@ -132,6 +140,7 @@ connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, m
     document.getElementById("years").textContent = "YEAR: " + years;
     document.getElementById("networth").textContent = "NETWORTH: $" + netWorth + " MILLION";
     document.getElementById("nextjailtime").textContent = "NEXT JAIL SENTENCE: " + minJailTime + " to " + maxJailTime + " YEARS";
+    document.getElementById("yearstillsnitchingpurge").textContent = "SNITCHING EVIDENCE PURGED: " + snitchingEvidence;
 });
 
 connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitchReward) {
@@ -152,7 +161,7 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
     var playerList = document.getElementById("heistparticipants");
     var players = playerInfos.split("=");
     for (let i = 0; i < players.length; i++) {
-        var playerInfo = players[i].split("|");
+        var playerInfo = players[i].split(",");
         var newRow = playerList.insertRow(playerList.rows.length);
         newRow.className = "heistparticipantinfo";
         newRow.insertCell(0).textContent = playerInfo[0];

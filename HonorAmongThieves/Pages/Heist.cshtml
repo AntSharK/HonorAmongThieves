@@ -10,7 +10,8 @@
             Make sure there are no players who are in the lobby but cannot see the game!!.<br />
             <br />
             <div style="text-align:center">
-                <input type="button" id="startbutton" value="START" class="display-1" />
+                <input type="button" id="startbutton" value="START" class="display-1" /><br /><br />
+                <input type="button" id="addbotbutton" value="ADD BOT" class="display-4" />
                 <br />
                 <br />
                 <div class="display-4">
@@ -18,6 +19,7 @@
                     Betrayal Reward: <input type="number" step="1" min="0" value="60" id="betrayalreward" size="2" /><br />
                     Max Game Length: <input type="number" step="1" min="3" value="10" id="maxgamelength" size="2" /><br />
                     Max Heist Size: <input type="number" step="1" min="2" value="5" id="maxheistsize" size="2" /><br />
+                    Murder Window: <input type="number" step="1" min="-1" value="4" id="snitchmurderwindow" size="2" /><br />
                 </div>
             </div>
             <br />
@@ -91,6 +93,7 @@
             <div id="years"></div>
             <div id="networth"></div>
             <div id="nextjailtime"></div>
+            <div id="yearstillsnitchingpurge"></div>
         </div>
     </div>
 

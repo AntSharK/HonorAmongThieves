@@ -13,9 +13,15 @@ namespace HonorAmongThieves.Game
 
         public int SnitchReward { get; private set; } = 60;
 
-        public Heist(string heistId, int heistCapacity, int snitchReward)
+        public int SnitchMurderWindow { get; private set; } = -1;
+
+        private int Year;
+
+        public Heist(string heistId, int heistCapacity, int snitchReward, int year, int snitchMurderWindow)
         {
             this.SnitchReward = snitchReward;
+            this.Year = year;
+            this.SnitchMurderWindow = snitchMurderWindow;
 
             const int BASEREWARD = 30;
             const double EXPONENT = 2;
@@ -65,7 +71,9 @@ namespace HonorAmongThieves.Game
                     continue;
                 }
 
+                // Calculate snitch-killing failure
                 if (player.BetrayalCount > 0
+                    && (this.SnitchMurderWindow < 0 || player.LastBetrayedYear + this.SnitchMurderWindow >= this.Year)
                     && (player.Decision.GoOnHeist || player.Decision.ReportPolice))
                 {
                     player.Decision.NextStatus = Player.Status.Dead;
@@ -133,6 +141,7 @@ namespace HonorAmongThieves.Game
                     snitcher.Decision.NetworthChange += snitchreward;
                     snitcher.NetWorth += snitchreward;
                     snitcher.BetrayalCount++;
+                    snitcher.LastBetrayedYear = this.Year;
                 }
             }
             else if (!heistHappens
@@ -153,13 +162,23 @@ namespace HonorAmongThieves.Game
             var failedMurderers = new List<Player>();
             foreach (var player in this.Players.Values)
             {
-                // Compute defensive deaths
+                // Compute trying to kill an innocent
                 if (player.Decision.PlayerToKill != null
                     && player.Decision.PlayerToKill.Decision.NextStatus != Player.Status.Dead
                     && player.Decision.PlayerToKill.Decision.GoOnHeist)
                 {
-                    // Mark these players for death - don't resolve one by one as that might result in one player being accidentally left alive
-                    failedMurderers.Add(player);
+                    player.Decision.KillFailure = true;
+                    if (this.SnitchMurderWindow >= 0)
+                    {
+                        player.Decision.NextStatus = Player.Status.InJail;
+                        player.YearsLeftInJail = Utils.Rng.Next(player.MinJailSentence, player.MaxJailSentence);
+                    }
+                    else
+                    {
+                        // Mark these players for death - don't resolve one by one as that might result in one player being accidentally left alive
+                        failedMurderers.Add(player);
+                        player.Decision.Killers = new List<Player> { player };
+                    }
                 }
 
                 // Compute jail times
@@ -184,7 +203,6 @@ namespace HonorAmongThieves.Game
             foreach (var player in failedMurderers)
             {
                 player.Decision.NextStatus = Player.Status.Dead;
-                player.Decision.Killers = new List<Player> { player };
             }
 
             // After generating state, compute the resolution messages
