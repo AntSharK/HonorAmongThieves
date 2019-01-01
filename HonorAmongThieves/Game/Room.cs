@@ -148,7 +148,7 @@ namespace HonorAmongThieves.Game
 
         public Player CreatePlayer(string playerName, string connectionId)
         {
-            const int ROOMCAPACITY = 10;
+            const int ROOMCAPACITY = 20;
             if (this.Players.Count >= ROOMCAPACITY)
             {
                 return null;
@@ -170,6 +170,21 @@ namespace HonorAmongThieves.Game
             this.UpdatedTime = DateTime.UtcNow;
 
             return playerToAdd;
+        }
+
+        public Player CreateBot()
+        {
+            string[] BOTNAMES = { "SAMBOT", "ANNBOT", "RONBOT", "TIMBOT", "GEORGEBOT", "SARABOT", "GEORGEBOT" };
+            var botName = BOTNAMES[Utils.Rng.Next(0, BOTNAMES.Length)];
+            var bot = this.CreatePlayer(botName, null);
+
+            if (bot != null)
+            {
+                bot.ConnectionId = null;
+                bot.IsBot = true;
+            }
+
+            return bot;
         }
 
         public void Destroy()

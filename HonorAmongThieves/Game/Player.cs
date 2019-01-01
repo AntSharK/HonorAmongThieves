@@ -39,6 +39,8 @@ namespace HonorAmongThieves.Game
 
         public bool Okay { get; set; } = true;
 
+        public bool IsBot { get; set; } = false;
+
         public Heist CurrentHeist;
 
         public Player(string name, Room room)
@@ -282,7 +284,10 @@ namespace HonorAmongThieves.Game
                     break;
             }
 
-            await this.UpdateFateView(hub);
+            if (!this.IsBot)
+            {
+                await this.UpdateFateView(hub);
+            }
         }
 
         private async Task UpdateFateView(HeistHub hub, bool setOkayButton = true)
@@ -316,6 +321,18 @@ namespace HonorAmongThieves.Game
                     }
 
                     break;
+            }
+        }
+
+        public void BotUpdateState()
+        {
+            this.Okay = true;
+
+            if (this.CurrentStatus == Status.InHeist)
+            {
+                // TODO: Actual intelligence
+                this.Decision.DecisionMade = true;
+                this.CurrentStatus = Status.HeistDecisionMade;
             }
         }
 

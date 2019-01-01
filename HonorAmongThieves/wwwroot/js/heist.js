@@ -117,6 +117,13 @@ document.getElementById("startbutton").addEventListener("click", function (event
     event.preventDefault();
 });
 
+document.getElementById("addbotbutton").addEventListener("click", function (event) {
+    connection.invoke("AddBot", roomId).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
+});
+
 // ------------------------------
 // ----- STATE: HEIST START -----
 // ------------------------------
