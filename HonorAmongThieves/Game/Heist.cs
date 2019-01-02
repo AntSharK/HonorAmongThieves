@@ -205,6 +205,7 @@ namespace HonorAmongThieves.Game
                     player.MaxJailSentence *= 2;
                 }
 
+                player.Decision.FellowHeisters = heisters;
                 player.GenerateFateMessage(heistHappens, policeReported, heisters);
             }
         }

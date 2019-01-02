@@ -262,10 +262,12 @@ namespace HonorAmongThieves.Hubs
             switch (player.CurrentStatus)
             {
                 case Player.Status.FindingHeist:
-                    await this.UpdateHeistStatus(player, "FINDING HEIST...", "Your contacts don't seem to be responding. If there is any crime going on, you're not being invited.", setOkayButton);
+                    var noResponseMessage = TextGenerator.NoHeists;
+                    await this.UpdateHeistStatus(player, noResponseMessage.Item1, noResponseMessage.Item2, setOkayButton);
                     break;
                 case Player.Status.InJail:
-                    await this.UpdateHeistStatus(player, "IN JAIL", "You're IN JAIL. Years left: " + player.YearsLeftInJail, setOkayButton);
+                    var inJailMessage = TextGenerator.InJail;
+                    await this.UpdateHeistStatus(player, inJailMessage.Item1, string.Format(inJailMessage.Item2, player.YearsLeftInJail), setOkayButton);
                     break;
             }
         }
@@ -337,26 +339,8 @@ namespace HonorAmongThieves.Hubs
 
         internal async Task HeistPrep_UpdateDecision(Player player)
         {
-            if (player.Decision.PlayerToBlackmail != null)
-            {
-                await this.UpdateHeistStatus(player, "COMMIT BLACKMAIL", "You have decided to kill " + player.Decision.PlayerToBlackmail.Name + " if the opportunity presents itself while on this heist.");
-            }
-            else if (player.Decision.GoOnHeist && !player.Decision.ReportPolice)
-            {
-                await this.UpdateHeistStatus(player, "GO ON HEIST", "You decide to go on the heist.");
-            }
-            else if (!player.Decision.GoOnHeist && !player.Decision.ReportPolice)
-            {
-                await this.UpdateHeistStatus(player, "RUN AWAY", "You have better things to do than risk your life on this. You stay far away.");
-            }
-            else if (player.Decision.GoOnHeist && player.Decision.ReportPolice)
-            {
-                await this.UpdateHeistStatus(player, "GET YOURSELF ARRESTED", "You look at the bunch of criminals around you and figure you're screwed anyway - might as well be a snitch and get some cash. But you want to spend some time in jail to avoid suspicion.");
-            }
-            else if (!player.Decision.GoOnHeist && player.Decision.ReportPolice)
-            {
-                await this.UpdateHeistStatus(player, "SNITCH", "You decide to tell the police that there's a heist going on. You'll watch your fellow thieves from close by and keep the police informed.");
-            }
+            var heistDecisionMessage = TextGenerator.DecisionMessage(player.Decision);
+            await this.UpdateHeistStatus(player, heistDecisionMessage.Item1, heistDecisionMessage.Item2);
         }
 
         internal async Task UpdateHeistMeetup(Player currentPlayer, List<Player> FellowHeisters)
