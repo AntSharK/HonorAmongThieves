@@ -29,7 +29,7 @@ namespace HonorAmongThieves.Game
 
         public int InitialMaxHeistCapacity { get; private set; } = 5;
 
-        public int SnitchMurderWindow { get; private set; } = -1;
+        public int SnitchBlackmailWindow { get; private set; } = -1;
 
         public Dictionary<string, Heist> Heists { get; } = new Dictionary<string, Heist>();
 
@@ -108,7 +108,7 @@ namespace HonorAmongThieves.Game
             var heistId = Utils.GenerateId(10, this.Heists);
 
             var snitchReward = this.BetrayalReward;
-            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear, this.SnitchMurderWindow);
+            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear, this.SnitchBlackmailWindow);
 
             for (var i = 0; i < heistCapacity; i++)
             {
@@ -121,7 +121,7 @@ namespace HonorAmongThieves.Game
             return heist;
         }
 
-        public void StartGame(int betrayalReward, int maxGameLength, int maxHeistSize, int snitchMurderWindow)
+        public void StartGame(int betrayalReward, int maxGameLength, int maxHeistSize, int snitchBlackmailWindow)
         {
             this.StartTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
@@ -142,7 +142,7 @@ namespace HonorAmongThieves.Game
                 this.MaxYears = Utils.Rng.Next(maxGameLength / 2, maxGameLength);
             }
 
-            this.SnitchMurderWindow = snitchMurderWindow;
+            this.SnitchBlackmailWindow = snitchBlackmailWindow;
             this.SigningUp = false;
         }
 
@@ -211,17 +211,6 @@ namespace HonorAmongThieves.Game
                         return;
                     }
                 }
-
-                // OKAY button is still valid for players who are newly dead
-                if (player.CurrentStatus == Player.Status.Dead)
-                {
-                    if (player.PreviousStatus != Player.Status.Dead
-                        && !player.Okay)
-                    {
-                        return;
-                    }
-                }
-
             }
             switch (this.CurrentStatus)
             {

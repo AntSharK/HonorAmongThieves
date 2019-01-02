@@ -158,7 +158,7 @@ namespace HonorAmongThieves.Hubs
             await Clients.Group(room.Id).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newPlayer.Name);
         }
 
-        public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize, int snitchMurderWindow)
+        public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int maxHeistSize, int snitchBlackmailWindow)
         {
             const int MINPLAYERCOUNT = 2;
             Room room;
@@ -175,12 +175,12 @@ namespace HonorAmongThieves.Hubs
                 return;
             }
 
-            await this.StartRoom_ChangeState(room, betrayalReward, maxGameLength, maxHeistSize, snitchMurderWindow);
+            await this.StartRoom_ChangeState(room, betrayalReward, maxGameLength, maxHeistSize, snitchBlackmailWindow);
         }
 
-        internal async Task StartRoom_ChangeState(Room room, int betrayalReward, int maxGameLength, int maxHeistSize, int snitchMurderWindow)
+        internal async Task StartRoom_ChangeState(Room room, int betrayalReward, int maxGameLength, int maxHeistSize, int snitchBlackmailWindow)
         {
-            room.StartGame(betrayalReward, maxGameLength, maxHeistSize, snitchMurderWindow);
+            room.StartGame(betrayalReward, maxGameLength, maxHeistSize, snitchBlackmailWindow);
             room.UpdatedTime = DateTime.UtcNow; // Only update the room when the players click something
 
             await this.StartRoom_UpdateState(room);
@@ -191,13 +191,13 @@ namespace HonorAmongThieves.Hubs
             var snitchingEvidence = "NOT A SNITCH";
             if (player.LastBetrayedYear >= 0)
             {
-                if (player.Room.SnitchMurderWindow < 0)
+                if (player.Room.SnitchBlackmailWindow < 0)
                 {
                     snitchingEvidence = " NEVER";
                 }
                 else
                 {
-                    var yearsLeft = player.LastBetrayedYear + player.Room.SnitchMurderWindow - player.Room.CurrentYear + 1;
+                    var yearsLeft = player.LastBetrayedYear + player.Room.SnitchBlackmailWindow - player.Room.CurrentYear + 1;
                     if (yearsLeft > 0)
                     {
                         snitchingEvidence = yearsLeft + " YEARS.";
@@ -249,25 +249,6 @@ namespace HonorAmongThieves.Hubs
                     await this.HeistPrep_ChangeState(heist);
                 }
             }
-            else
-            {
-                // Check if everyone is dead
-                // Or everyone but one is dead
-                var alivePlayers = 0;
-                foreach (var player in room.Players.Values)
-                {
-                    if (player.CurrentStatus != Player.Status.Dead)
-                    {
-                        alivePlayers++;
-                    }
-                }
-
-                if (alivePlayers <= 1)
-                {
-                    await this.EndGame_Broadcast(room);
-                    return;
-                }
-            }
 
             // Update the message for each player who can't act
             foreach (var player in room.Players.Values.Where(p => !p.IsBot))
@@ -282,9 +263,6 @@ namespace HonorAmongThieves.Hubs
             {
                 case Player.Status.FindingHeist:
                     await this.UpdateHeistStatus(player, "FINDING HEIST...", "Your contacts don't seem to be responding. If there is any crime going on, you're not being invited.", setOkayButton);
-                    break;
-                case Player.Status.Dead:
-                    await this.UpdateHeistStatus(player, "DEAD", "You're dead. You can't do anything.");
                     break;
                 case Player.Status.InJail:
                     await this.UpdateHeistStatus(player, "IN JAIL", "You're IN JAIL. Years left: " + player.YearsLeftInJail, setOkayButton);
@@ -336,15 +314,15 @@ namespace HonorAmongThieves.Hubs
             }
         }
 
-        public async Task CommitMurder(string roomId, string murdererName, string victimName)
+        public async Task CommitBlackmail(string roomId, string blackmailerName, string victimName)
         {
             var room = Program.Instance.Rooms[roomId];
-            var murderer = room.Players[murdererName];
+            var blackmailer = room.Players[blackmailerName];
             var victim = room.Players[victimName];
 
-            murderer.MurderDecision(victim);
-            await this.HeistPrep_UpdateDecision(murderer);
-            await this.OkayButton(roomId, murdererName);
+            blackmailer.BlackmailDecision(victim);
+            await this.HeistPrep_UpdateDecision(blackmailer);
+            await this.OkayButton(roomId, blackmailerName);
         }
 
         public async Task MakeDecision(string roomId, string playerName, bool turnUpToHeist, bool snitchToPolice)
@@ -359,9 +337,9 @@ namespace HonorAmongThieves.Hubs
 
         internal async Task HeistPrep_UpdateDecision(Player player)
         {
-            if (player.Decision.PlayerToKill != null)
+            if (player.Decision.PlayerToBlackmail != null)
             {
-                await this.UpdateHeistStatus(player, "COMMIT MURDER", "You have decided to kill " + player.Decision.PlayerToKill.Name + " if the opportunity presents itself while on this heist.");
+                await this.UpdateHeistStatus(player, "COMMIT BLACKMAIL", "You have decided to kill " + player.Decision.PlayerToBlackmail.Name + " if the opportunity presents itself while on this heist.");
             }
             else if (player.Decision.GoOnHeist && !player.Decision.ReportPolice)
             {
@@ -407,15 +385,7 @@ namespace HonorAmongThieves.Hubs
             {
                 playerInfo.Append(player.Name);
                 playerInfo.Append("|");
-
-                if (player.CurrentStatus == Player.Status.Dead)
-                {
-                    playerInfo.Append("DEAD");
-                }
-                else
-                {
-                    playerInfo.Append("$" + player.NetWorth + " MILLION");
-                }
+                playerInfo.Append("$" + player.NetWorth + " MILLION");
                 playerInfo.Append("|");
                 playerInfo.Append(player.BetrayalCount);
                 playerInfo.Append("|");

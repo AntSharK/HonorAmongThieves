@@ -51,12 +51,12 @@ namespace HonorAmongThieves.Game
             this.LastUpdate = DateTime.UtcNow;
         }
 
-        public void MurderDecision(Player victim)
+        public void BlackmailDecision(Player victim)
         {
             this.Decision.DecisionMade = true;
             this.Decision.GoOnHeist = true;
             this.Decision.ReportPolice = false;
-            this.Decision.PlayerToKill = victim;
+            this.Decision.PlayerToBlackmail = victim;
 
             this.Okay = true;
             this.CurrentStatus = Status.HeistDecisionMade;
@@ -218,7 +218,6 @@ namespace HonorAmongThieves.Game
                 {
                     // Idle statuses
                     case Status.FindingHeist:
-                    case Status.Dead:
                     case Status.InJail:
                         await hub.UpdateIdleStatus(this, !this.Okay /*Don't set the OKAY button if it has already been pressed*/);
                         return;
@@ -251,7 +250,6 @@ namespace HonorAmongThieves.Game
                     break;
 
                 case Player.Status.FindingHeist:
-                case Player.Status.Dead:
                     break;
 
                 case Player.Status.HeistDecisionMade:
@@ -287,11 +285,6 @@ namespace HonorAmongThieves.Game
                     await hub.UpdateHeistStatus(this, vacationMessage.Item1, vacationMessage.Item2, setOkayButton);
                     break;
 
-                case Player.Status.Dead:
-                    var deadMessage = TextGenerator.StillInJail;
-                    await hub.UpdateHeistStatus(this, deadMessage.Item1, deadMessage.Item2, false);
-                    break;
-
                 case Player.Status.HeistDecisionMade:
                     await hub.UpdateHeistStatus(this, this.Decision.FateTitle, this.Decision.FateDescription, setOkayButton);
                     if (this.Decision.GoOnHeist && this.Decision.FellowHeisters != null && this.Decision.FellowHeisters.Count > 0)
@@ -324,7 +317,6 @@ namespace HonorAmongThieves.Game
 
             // Non-action states
             InJail,
-            Dead,
             CleaningUp
         }
 
@@ -333,18 +325,19 @@ namespace HonorAmongThieves.Game
             public bool DecisionMade { get; set; } = false;
             public bool GoOnHeist { get; set; } = true;
             public bool ReportPolice { get; set; } = false;
-            public Player PlayerToKill { get; set; } = null;
+            public Player PlayerToBlackmail { get; set; } = null;
 
             // For decision resolution
-            public int NetworthChange { get; set; } = 0;
+            public List<Tuple<Player, int>> NetworthChange { get; set; } = new List<Tuple<Player, int>>();
             public string FateTitle { get; set; } = "";
             public string FateDescription { get; set; } = "";
             public List<Player> FellowHeisters { get; set; }
-            public List<Player> Killers { get; set; }
+            public List<Player> Blackmailers { get; set; }
             public bool HeistHappens { get; set; }
             public bool PoliceReported { get; set; }
             public Status NextStatus { get; set; } = Status.FindingHeist;
-            public bool KillFailure { get; set; } = false;
+
+            public bool BlackmailFailure { get; set; } = false;
         }
     }
 }
