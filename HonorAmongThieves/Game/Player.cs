@@ -11,7 +11,7 @@ namespace HonorAmongThieves.Game
 
         public string Name { get; private set; }
 
-        public int NetWorth { get; set; } = 10;
+        public int NetWorth { get; set; } = 50;
 
         public int ProjectedNetworth { get; set; } = 10;
 
