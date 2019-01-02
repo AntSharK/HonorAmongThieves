@@ -153,10 +153,8 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
         heistParticipantInfo[i].parentNode.removeChild(heistParticipantInfo[i]);
     }
 
-    var blackmailList = document.getElementById("commitblackmailselection");
-    for (var i = 0; i < blackmailList.options.length; i++) {
-        blackmailList.options[i] = null;
-    }
+    var blackmailList = document.createElement("select");
+    blackmailList.id = "commitblackmailselection";
 
     var playerList = document.getElementById("heistparticipants");
     var players = playerInfos.split("=");
@@ -174,6 +172,9 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
             blackmailList.appendChild(newOption);
         }
     }
+
+    document.getElementById("blackmailselection").innerHTML = "";
+    document.getElementById("blackmailselection").appendChild(blackmailList);
 
     var heistsetup = document.getElementById("heistsetup");
     heistsetup.style.display = "block";

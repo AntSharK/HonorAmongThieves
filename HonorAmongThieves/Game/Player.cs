@@ -73,7 +73,24 @@ namespace HonorAmongThieves.Game
         }
 
         public void GenerateFateMessage(bool heistHappens, bool policeReported, List<Player> heisters)
-        {            
+        {
+            // Resolve not going on the heist but getting blackmailed while snitching
+            if (this.Decision.WasExtortedFrom.HasValue
+                && this.Decision.GoOnHeist
+                && this.Decision.WasExtortedFrom.Value)
+            {
+                // TODO: MESSAGE FOR GETTING BLACKMAILED WHILE SNITCHING BUT NOT ON HEIST
+                return;
+            }
+
+            // Resolve doing nothing
+            if (!this.Decision.GoOnHeist
+                && !this.Decision.ReportPolice)
+            {
+                // TODO: MESSAGE FOR BAILING
+                return;
+            }
+
             // Resolve blackmail not finding the target
             if (this.Decision.ExtortionSuccessful == null
                 && this.Decision.PlayerToBlackmail != null)
@@ -213,21 +230,6 @@ namespace HonorAmongThieves.Game
                         // TODO: MESSAGE FOR DEFENDING SELF AFTER DISBANDING
                     }
                 }
-            }
-
-            // Resolve not going on the heist but getting blackmailed while snitching
-            if (this.Decision.WasExtortedFrom.HasValue
-                && this.Decision.GoOnHeist
-                && this.Decision.WasExtortedFrom.Value)
-            {
-                // TODO: MESSAGE FOR GETTING BLACKMAILED WHILE SNITCHING BUT NOT ON HEIST
-            }
-
-            // Resolve doing nothing
-            if (!this.Decision.GoOnHeist
-                && !this.Decision.ReportPolice)
-            {
-                // TODO: MESSAGE FOR BAILING
             }
         }
 
