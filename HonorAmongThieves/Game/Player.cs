@@ -72,8 +72,9 @@ namespace HonorAmongThieves.Game
             this.CurrentStatus = Status.HeistDecisionMade;
         }
 
-        public void GenerateFateMessage()
+        public void GenerateFateMessage(bool heistHappens, bool policeReported, List<Player> heisters)
         {
+            // TODO: Resolve blackmailing.
             if (this.Decision.NextStatus == Status.Dead)
             {
                 var message = TextGenerator.DeathMessage(this);
@@ -328,16 +329,16 @@ namespace HonorAmongThieves.Game
             public Player PlayerToBlackmail { get; set; } = null;
 
             // For decision resolution
-            public List<Tuple<Player, int>> NetworthChange { get; set; } = new List<Tuple<Player, int>>();
             public string FateTitle { get; set; } = "";
             public string FateDescription { get; set; } = "";
-            public List<Player> FellowHeisters { get; set; }
             public List<Player> Blackmailers { get; set; }
-            public bool HeistHappens { get; set; }
-            public bool PoliceReported { get; set; }
             public Status NextStatus { get; set; } = Status.FindingHeist;
 
-            public bool BlackmailFailure { get; set; } = false;
+            public bool? ExtortionSuccessful { get; set; } = null;
+            public bool? WasExtortedFrom { get; set; } = null;
+            public int HeistReward = 0;
+            public int BlackmailReward = 0;
+            public int JailTerm = 0;
         }
     }
 }
