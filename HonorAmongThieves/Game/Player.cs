@@ -76,43 +76,18 @@ namespace HonorAmongThieves.Game
         {
             if (this.Decision.NextStatus == Status.Dead)
             {
-                this.Decision.FateTitle = "DEAD";
-                this.Decision.FateDescription = "You got killed! ";
-
-                if (this.Decision.PlayerToKill != null
-                    && this.Decision.Killers.Count == 1
-                    && this.Decision.Killers.Contains(this))
-                {
-                    this.Decision.FateDescription = this.Decision.FateDescription + "You confronted " + this.Decision.PlayerToKill.Name + ". Things got heated, and someone lost their head. Unfortunately, that someone was you.";
-                    return;
-                }
-
-                if (this.Decision.GoOnHeist)
-                {
-                    this.Decision.FateDescription = this.Decision.FateDescription + "You were confronted at the heist. Things got heated, and the evidence against you piled up. As you ran away, you went down with an unfortunate case of a bullet in the brain.";
-                    return;
-
-                }
-                else
-                {
-                    this.Decision.FateDescription = this.Decision.FateDescription + "You snuck around to snitch on the ongoing heist, and noticed that something wasn't right. But too late. Someone snuck behind you and lobbed off your head.";
-                    return;
-                }
+                var message = TextGenerator.DeathMessage(this);
+                this.Decision.FateTitle = this.Decision.FateTitle + message.Item1;
+                this.Decision.FateDescription = this.Decision.FateDescription + message.Item2;
             }
 
+            // TODO: Handle case where successful murder doesn't leave 
             if (this.Decision.NextStatus != Status.Dead
                 && this.Decision.Killers?.Count > 0)
             {
-                this.Decision.FateTitle = this.Decision.FateTitle + "DEFENDED YOURSELF, ";
-
-                if (this.Room.SnitchMurderWindow >= 0)
-                {
-                    this.Decision.FateDescription = this.Decision.FateDescription + "You were accused of being a snitch. But your friends came to your aid. They left the accuser lying on the floor for the police to deal with. ";
-                }
-                else
-                {
-                    this.Decision.FateDescription = this.Decision.FateDescription + "You were accused of being a snitch. But your friends came to your aid, leaving your accuser dead. ";
-                }
+                var message = TextGenerator.DeathMessage(this);
+                this.Decision.FateTitle = this.Decision.FateTitle + message.Item1;
+                this.Decision.FateDescription = this.Decision.FateDescription + message.Item2;
             }
 
             if (this.Decision.ReportPolice)
@@ -297,20 +272,24 @@ namespace HonorAmongThieves.Game
                 case Player.Status.InJail:
                     if (this.YearsLeftInJail <= 0)
                     {
-                        await hub.UpdateHeistStatus(this, "FREE AT LAST", "You're finally free of jail! A new person! Free from the life of crime!", setOkayButton);
+                        var message = TextGenerator.FreeFromJail;
+                        await hub.UpdateHeistStatus(this, message.Item1, message.Item2, setOkayButton);
                     }
                     else
                     {
-                        await hub.UpdateHeistStatus(this, "STILL IN JAIL", "You're still in jail for another " + this.YearsLeftInJail + " year(s).", setOkayButton);
+                        var message = TextGenerator.StillInJail;
+                        await hub.UpdateHeistStatus(this, message.Item1, string.Format(message.Item2, this.YearsLeftInJail));
                     }
                     break;
 
                 case Player.Status.FindingHeist:
-                    await hub.UpdateHeistStatus(this, "WAITING", "You wait around, and a year passes you by without anything happening.", setOkayButton);
+                    var vacationMessage = TextGenerator.VacationEnded;
+                    await hub.UpdateHeistStatus(this, vacationMessage.Item1, vacationMessage.Item2, setOkayButton);
                     break;
 
                 case Player.Status.Dead:
-                    await hub.UpdateHeistStatus(this, "STILL DEAD", "Unfortunately, death seems to be a very difficult to reverse state.", false);
+                    var deadMessage = TextGenerator.StillInJail;
+                    await hub.UpdateHeistStatus(this, deadMessage.Item1, deadMessage.Item2, false);
                     break;
 
                 case Player.Status.HeistDecisionMade:
