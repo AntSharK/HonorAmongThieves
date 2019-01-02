@@ -281,7 +281,7 @@ namespace HonorAmongThieves.Game
                     else
                     {
                         var message = TextGenerator.StillInJail;
-                        await hub.UpdateHeistStatus(this, message.Item1, string.Format(message.Item2, this.YearsLeftInJail));
+                        await hub.UpdateHeistStatus(this, message.Item1, string.Format(message.Item2, this.YearsLeftInJail), setOkayButton);
                     }
                     break;
 
@@ -342,6 +342,7 @@ namespace HonorAmongThieves.Game
             public bool? ExtortionSuccessful { get; set; } = null;
             public bool? WasExtortedFrom { get; set; } = null;
             public int HeistReward = 0;
+            public int JailFine = 0;
             public int BlackmailReward = 0;
             public int JailTerm = 0;
         }

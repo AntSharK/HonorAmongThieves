@@ -154,8 +154,8 @@ namespace HonorAmongThieves.Game
                         heister.Decision.JailTerm = heister.Decision.JailTerm + Utils.Rng.Next(heister.MinJailSentence, heister.MaxJailSentence);
 
                         var jailFine = (int) (heister.NetWorth * this.JailFine);
+                        heister.Decision.JailFine = jailFine;
                         heister.NetWorth = heister.NetWorth - jailFine;
-                        heister.Decision.HeistReward = -jailFine;
                     }
                 }
 
@@ -175,8 +175,8 @@ namespace HonorAmongThieves.Game
                     snitcher.Decision.JailTerm = snitcher.Decision.JailTerm + snitcher.MinJailSentence;
 
                     var jailFine = (int)(snitcher.NetWorth * this.JailFine);
+                    snitcher.Decision.JailFine = jailFine;
                     snitcher.NetWorth = snitcher.NetWorth - jailFine;
-                    snitcher.Decision.HeistReward = -jailFine;
                 }
             }
             else if (!heistHappens
@@ -215,16 +215,16 @@ namespace HonorAmongThieves.Game
                         player.Decision.JailTerm = player.Decision.JailTerm + Utils.Rng.Next(player.MinJailSentence, player.MaxJailSentence);
                     }
 
-                    if (player.Decision.HeistReward < 0)
+                    if (player.Decision.JailFine > 0)
                     {
                         // Do nothing if the player has already been fined
                     }
-                    else if (player.Decision.HeistReward > 0)
+                    else
                     {
                         // If the player has been on a successful heist, or nothing happened to his networth
                         var jailFine = (int)(player.NetWorth * this.JailFine);
+                        player.Decision.JailFine = jailFine;
                         player.NetWorth = player.NetWorth - jailFine;
-                        player.Decision.HeistReward = player.Decision.HeistReward - jailFine;
                     }
                 }
             }
