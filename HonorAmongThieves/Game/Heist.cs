@@ -13,15 +13,19 @@ namespace HonorAmongThieves.Game
 
         public int SnitchReward { get; private set; } = 60;
 
-        public int SnitchMurderWindow { get; private set; } = -1;
+        public int SnitchBlackmailWindow { get; private set; } = -1;
 
         private int Year;
 
-        public Heist(string heistId, int heistCapacity, int snitchReward, int year, int snitchMurderWindow)
+        public float JailFine = 0.25f;
+
+        public float ExtortionAmount = 0.8f;
+
+        public Heist(string heistId, int heistCapacity, int snitchReward, int year, int snitchBlackmailWindow)
         {
             this.SnitchReward = snitchReward;
             this.Year = year;
-            this.SnitchMurderWindow = snitchMurderWindow;
+            this.SnitchBlackmailWindow = snitchBlackmailWindow;
 
             const int BASEREWARD = 30;
             const double EXPONENT = 2;
@@ -73,7 +77,7 @@ namespace HonorAmongThieves.Game
                         player.Decision.ExtortionSuccessful = true;
                     }
                     else if (victim.Decision.GoOnHeist
-                        && this.SnitchMurderWindow == 0
+                        && this.SnitchBlackmailWindow == 0
                         && victim.BetrayalCount > 0)
                     {
                         // Victim is a snitch within an infinite window. Blackmail is successful
@@ -81,8 +85,9 @@ namespace HonorAmongThieves.Game
                         player.Decision.ExtortionSuccessful = true;
                     }
                     else if (victim.Decision.GoOnHeist
-                        && this.SnitchMurderWindow > 0
-                        && victim.LastBetrayedYear + this.SnitchMurderWindow >= this.Year)
+                        && this.SnitchBlackmailWindow > 0
+                        && victim.BetrayalCount > 0
+                        && victim.LastBetrayedYear + this.SnitchBlackmailWindow >= this.Year)
                     {
                         // Victim is a snitch within the window. Blackmail is successful
                         victim.Decision.WasExtortedFrom = true;
@@ -91,7 +96,7 @@ namespace HonorAmongThieves.Game
                     else
                     {
                         victim.Decision.WasExtortedFrom = false;
-                        victim.Decision.ExtortionSuccessful = false;
+                        player.Decision.ExtortionSuccessful = false;
                     }
                 }
 
@@ -148,7 +153,7 @@ namespace HonorAmongThieves.Game
                     {
                         heister.Decision.JailTerm = heister.Decision.JailTerm + Utils.Rng.Next(heister.MinJailSentence, heister.MaxJailSentence);
 
-                        var jailFine = -heister.NetWorth / 4;
+                        var jailFine = (int) (heister.NetWorth * this.JailFine);
                         heister.NetWorth = heister.NetWorth - jailFine;
                         heister.Decision.HeistReward = -jailFine;
                     }
@@ -169,7 +174,7 @@ namespace HonorAmongThieves.Game
                 {
                     snitcher.Decision.JailTerm = snitcher.Decision.JailTerm + snitcher.MinJailSentence;
 
-                    var jailFine = -snitcher.NetWorth / 4;
+                    var jailFine = (int)(snitcher.NetWorth * this.JailFine);
                     snitcher.NetWorth = snitcher.NetWorth - jailFine;
                     snitcher.Decision.HeistReward = -jailFine;
                 }
@@ -180,17 +185,47 @@ namespace HonorAmongThieves.Game
                 // Nothing goes on
             }
 
-            // PASS 3: TODO: Compute networth transfers and Jail sentencing from Heists
+            // PASS 3: Compute networth transfers and Jail sentencing from Heists
             foreach (var player in this.Players.Values)
             {
                 if (player.Decision.WasExtortedFrom.HasValue && player.Decision.WasExtortedFrom.Value)
                 {
-                    // Distribute networth to extorters
+                    var extortedMoney = (int)(player.NetWorth * this.ExtortionAmount);
+                    var extortedMoneyPerBlackmailer = extortedMoney / player.Decision.Blackmailers.Count;
+                    foreach (var blackmailer in player.Decision.Blackmailers)
+                    {
+                        blackmailer.Decision.BlackmailReward = extortedMoneyPerBlackmailer;
+                        blackmailer.NetWorth = blackmailer.NetWorth + extortedMoneyPerBlackmailer;
+                    }
+
+                    player.NetWorth = player.NetWorth - extortedMoney;
                 }
 
+                // Calculate jail punishment after distributing to extorters
                 if (player.Decision.ExtortionSuccessful.HasValue && !player.Decision.ExtortionSuccessful.Value)
                 {
                     // Failed to extort. Increase jail term and decrease networth
+                    // If this player is already in jail, only increase his jail sentence by the minimum amount
+                    if (player.Decision.JailTerm > 0)
+                    {
+                        player.Decision.JailTerm = player.Decision.JailTerm + player.MinJailSentence;
+                    }
+                    else
+                    {
+                        player.Decision.JailTerm = player.Decision.JailTerm + Utils.Rng.Next(player.MinJailSentence, player.MaxJailSentence);
+                    }
+
+                    if (player.Decision.HeistReward < 0)
+                    {
+                        // Do nothing if the player has already been fined
+                    }
+                    else if (player.Decision.HeistReward > 0)
+                    {
+                        // If the player has been on a successful heist, or nothing happened to his networth
+                        var jailFine = (int)(player.NetWorth * this.JailFine);
+                        player.NetWorth = player.NetWorth - jailFine;
+                        player.Decision.HeistReward = player.Decision.HeistReward - jailFine;
+                    }
                 }
             }
 
@@ -201,6 +236,7 @@ namespace HonorAmongThieves.Game
                 if (player.Decision.JailTerm > 0)
                 {
                     player.Decision.NextStatus = Player.Status.InJail;
+                    player.YearsLeftInJail = player.Decision.JailTerm;
                     player.MinJailSentence *= 2;
                     player.MaxJailSentence *= 2;
                 }
