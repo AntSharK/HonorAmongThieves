@@ -276,11 +276,117 @@ namespace HeistTests
             Assert.AreEqual(harv.Decision.JailTerm, harv.YearsLeftInJail);
         }
 
-        // public void HeistAbandonBlackmailFail()
+        [TestMethod]
+        public void HeistAbandonBlackmailFail()
+        {
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            heist.AddPlayer(chee);
+            heist.AddPlayer(harv);
+            heist.AddPlayer(sara);
+            heist.AddPlayer(ron);
+            heist.AddPlayer(yc);
 
-        // public void HeistAbandonBlackmailSuccess()
+            chee.Decision.GoOnHeist = true;
+            chee.Decision.PlayerToBlackmail = yc;
+            harv.Decision.GoOnHeist = false;
+            sara.Decision.GoOnHeist = false;
+            ron.Decision.GoOnHeist = false;
+            yc.Decision.GoOnHeist = true;
+            yc.Decision.ReportPolice = false;
 
-        // public void HeistArrestedBlackmailFail()
+            // This should result in a FAILED blackmail
+            heist.Resolve();
+            this.VerifyNonBlankFate(heist);
+
+            var startingGold = sara.NetWorth;
+            Assert.AreEqual(startingGold, harv.NetWorth);
+            Assert.AreEqual(startingGold, sara.NetWorth);
+            Assert.AreEqual(startingGold, ron.NetWorth);
+            Assert.AreEqual(startingGold, yc.NetWorth);
+
+            // Everyone else is normal - Chee is in jail
+            Assert.IsTrue(chee.Decision.JailFine > 0);
+            Assert.IsTrue(chee.Decision.JailTerm > 0);
+            Assert.AreEqual(chee.Decision.JailTerm, chee.YearsLeftInJail);
+            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(startingGold - chee.Decision.JailFine, chee.NetWorth);
+
+            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.FindingHeist);
+        }
+
+        [TestMethod]
+        public void HeistAbandonBlackmailSuccess()
+        {
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            heist.AddPlayer(chee);
+            heist.AddPlayer(harv);
+            heist.AddPlayer(sara);
+            heist.AddPlayer(ron);
+            heist.AddPlayer(yc);
+
+            chee.Decision.GoOnHeist = true;
+            chee.Decision.PlayerToBlackmail = yc;
+            harv.Decision.GoOnHeist = false;
+            sara.Decision.GoOnHeist = false;
+            ron.Decision.GoOnHeist = false;
+            yc.Decision.GoOnHeist = true;
+            yc.Decision.ReportPolice = false;
+            yc.LastBetrayedYear = 9;
+            yc.BetrayalCount = 1;
+
+            // This should result in a SUCCESSFUL blackmail
+            heist.Resolve();
+            this.VerifyNonBlankFate(heist);
+
+            var startingGold = sara.NetWorth;
+            Assert.AreEqual(startingGold, harv.NetWorth);
+            Assert.AreEqual(startingGold, sara.NetWorth);
+            Assert.AreEqual(startingGold, ron.NetWorth);
+
+            Assert.IsTrue(chee.Decision.BlackmailReward > 0);
+            Assert.AreEqual(startingGold + chee.Decision.BlackmailReward, chee.NetWorth);
+            Assert.AreEqual(startingGold - chee.Decision.BlackmailReward, yc.NetWorth);
+
+            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.FindingHeist);
+        }
+
+        [TestMethod]
+        public void HeistArrestedBlackmailFail()
+        {
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            heist.AddPlayer(ron);
+            heist.AddPlayer(yc);
+
+            ron.Decision.GoOnHeist = true;
+            ron.Decision.ReportPolice = true;
+            ron.Decision.PlayerToBlackmail = yc;
+            ron.MinJailSentence = 2;
+            ron.MaxJailSentence = 3;
+            yc.Decision.GoOnHeist = true;
+            yc.Decision.ReportPolice = false;
+            yc.LastBetrayedYear = 4; // Before the snitch window
+            yc.BetrayalCount = 1;
+
+            var startingNetworth = yc.NetWorth;
+            heist.Resolve();
+            this.VerifyNonBlankFate(heist);
+
+            // Assert that ron has been sentenced twice
+            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.InJail);
+            Assert.IsTrue(ron.Decision.JailTerm >= 4);
+            Assert.IsTrue(ron.Decision.JailFine > 0);
+            Assert.AreEqual(startingNetworth - ron.Decision.JailFine + 10 /*Snitch reward*/, ron.NetWorth);
+
+            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(startingNetworth - yc.Decision.JailFine, yc.NetWorth);
+        }
 
         // public void HeistArrestedBlackmailSuccess()
 
