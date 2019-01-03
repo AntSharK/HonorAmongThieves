@@ -26,7 +26,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistSuccess()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*MaxYears*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
             heist.AddPlayer(ron);
@@ -55,7 +55,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistAbandon()
         {
-            var heist = new Heist("12345", 2 /*Capacity*/, 10 /*SnitchReward*/, 10 /*MaxYears*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 2 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
 
@@ -74,6 +74,155 @@ namespace HeistTests
             Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
             Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
         }
+
+        [TestMethod]
+        public void HeistSnitchBailsAndBlackmailed()
+        {
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            heist.AddPlayer(chee);
+            heist.AddPlayer(harv);
+            heist.AddPlayer(sara);
+
+            chee.Decision.GoOnHeist = true;
+            chee.Decision.PlayerToBlackmail = harv;
+            sara.Decision.GoOnHeist = true;
+            sara.Decision.PlayerToBlackmail = harv;
+            harv.Decision.GoOnHeist = false;
+            harv.Decision.ReportPolice = true;
+
+            var cheeStarting = chee.NetWorth;
+            var saraStarting = sara.NetWorth;
+            var harvStarting = harv.NetWorth;
+
+            heist.Resolve();
+            this.VerifyNonBlankFate(heist);
+
+            Assert.IsTrue(chee.Decision.BlackmailReward > 0);
+            Assert.AreEqual(cheeStarting + heist.TotalReward/2 + chee.Decision.BlackmailReward, chee.NetWorth);
+            Assert.AreEqual(saraStarting + heist.TotalReward/2 + sara.Decision.BlackmailReward, sara.NetWorth);
+            Assert.AreEqual(harvStarting - chee.Decision.BlackmailReward * 2, harv.NetWorth);
+
+            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+        }
+
+        [TestMethod]
+        public void HeistSnitchGoesOnHeistAndBlackmailed()
+        {
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            heist.AddPlayer(chee);
+            heist.AddPlayer(harv);
+            heist.AddPlayer(sara);
+
+            chee.Decision.GoOnHeist = true;
+            chee.Decision.PlayerToBlackmail = harv;
+            sara.Decision.GoOnHeist = true;
+            sara.Decision.PlayerToBlackmail = harv;
+            harv.Decision.GoOnHeist = true;
+            harv.Decision.ReportPolice = true;
+
+            var cheeStarting = chee.NetWorth;
+            var saraStarting = sara.NetWorth;
+            var harvStarting = harv.NetWorth;
+
+            heist.Resolve();
+            this.VerifyNonBlankFate(heist);
+
+            Assert.IsTrue(chee.Decision.BlackmailReward > 0);
+            Assert.AreEqual(cheeStarting + heist.TotalReward / 3 + chee.Decision.BlackmailReward, chee.NetWorth);
+            Assert.AreEqual(saraStarting + heist.TotalReward / 3 + sara.Decision.BlackmailReward, sara.NetWorth);
+            Assert.AreEqual(harvStarting + heist.TotalReward / 3 - chee.Decision.BlackmailReward * 2, harv.NetWorth);
+
+            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+        }
+
+        [TestMethod]
+        public void BlackmailMissHeistAbandon()
+        {
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            heist.AddPlayer(chee);
+            heist.AddPlayer(harv);
+            heist.AddPlayer(sara);
+
+            chee.Decision.GoOnHeist = true;
+            chee.Decision.PlayerToBlackmail = harv;
+            sara.Decision.GoOnHeist = false;
+            harv.Decision.GoOnHeist = false;
+
+            var cheeStarting = chee.NetWorth;
+            var saraStarting = sara.NetWorth;
+            var harvStarting = harv.NetWorth;
+            harv.BetrayalCount = 1;
+            harv.LastBetrayedYear = 9;
+
+            heist.Resolve();
+            this.VerifyNonBlankFate(heist);
+
+            Assert.AreEqual(cheeStarting, chee.NetWorth);
+            Assert.AreEqual(saraStarting, sara.NetWorth);
+            Assert.AreEqual(harvStarting, harv.NetWorth);
+
+            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+        }
+
+        [TestMethod]
+        public void BlackmailMissHeistSuccess()
+        {
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            heist.AddPlayer(chee);
+            heist.AddPlayer(harv);
+            heist.AddPlayer(sara);
+
+            chee.Decision.GoOnHeist = true;
+            chee.Decision.PlayerToBlackmail = harv;
+            sara.Decision.GoOnHeist = true;
+            harv.Decision.GoOnHeist = false;
+
+            var cheeStarting = chee.NetWorth;
+            var saraStarting = sara.NetWorth;
+            var harvStarting = harv.NetWorth;
+            harv.BetrayalCount = 1;
+            harv.LastBetrayedYear = 9;
+
+            heist.Resolve();
+            this.VerifyNonBlankFate(heist);
+            var reward = heist.TotalReward / 2;
+
+            Assert.AreEqual(cheeStarting + reward, chee.NetWorth);
+            Assert.AreEqual(saraStarting + reward, sara.NetWorth);
+            Assert.AreEqual(harvStarting, harv.NetWorth);
+
+            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+        }
+
+        // public void HeistSnitchSuccessAndSelfJail()
+
+        // public void HeistSnitchFail
+
+        // public void HeistAbandonBlackmailFail()
+
+        // public void HeistAbandonBlackmailSuccess()
+
+        // public void HeistArrestedBlackmailFail()
+
+        // public void HeistArrestedBlackmailSuccess()
+
+        // public void HeistSuccessBlackmailFail()
+
+        // public void HeistSuccessBlackmailSuccess()
+
+        // public void ChainBlackmailSuccess()
+
+        // public void DefenseAndSuccessfulBlackmail()
+
+        // public void DefenseAndFailedBlackmail()
 
         private void VerifyNonBlankFate(Heist heist)
         {
