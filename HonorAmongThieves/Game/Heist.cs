@@ -241,7 +241,7 @@ namespace HonorAmongThieves.Game
                 }
 
                 player.Decision.FellowHeisters = heisters;
-                player.GenerateFateMessage(heistHappens, policeReported, heisters);
+                player.GenerateFateMessage(heistHappens, policeReported);
             }
         }
     }
