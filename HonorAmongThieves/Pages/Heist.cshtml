@@ -10,7 +10,7 @@
             Make sure there are no players who are in the lobby but cannot see the game!!.<br />
             <br />
             <div style="text-align:center">
-                <input type="button" id="startbutton" value="START" class="display-1" /><br /><br />
+                <input type="button" id="startbutton" value="BEGIN GAME" class="display-2" /><br /><br />
                 <input type="button" id="addbotbutton" value="ADD BOT" class="display-4" />
                 <br />
                 <br />
@@ -19,7 +19,7 @@
                     Betrayal Reward: <input type="number" step="1" min="0" value="60" id="betrayalreward" size="2" /><br />
                     Max Game Length: <input type="number" step="1" min="3" value="10" id="maxgamelength" size="2" /><br />
                     Max Heist Size: <input type="number" step="1" min="2" value="5" id="maxheistsize" size="2" /><br />
-                    Murder Window: <input type="number" step="1" min="-1" value="4" id="snitchmurderwindow" size="2" /><br />
+                    Blackmail Window: <input type="number" step="1" min="-1" value="4" id="snitchblackmailwindow" size="2" /><br />
                 </div>
             </div>
             <br />
@@ -81,8 +81,8 @@
             <hr />
             <br />
             <div class="display-4" style="text-align:center">
-                MURDER: <select id="commitmurderselection"></select> <br /><br />
-                <input type="button" id="commitmurder" value="MURDER" class="display-3" />
+                BLACKMAIL: <div id="blackmailselection"></div>
+                <input type="button" id="commitblackmail" value="BLACKMAIL" class="display-3" />
             </div>
             <br />
         </div>
@@ -99,7 +99,7 @@
 
     <div class="state h2" id="endofgame" style="display:none; text-align:center">
         <div id="finalyear"> </div>
-        <table border="1px solid black" id="leaderboard" style="font-size:100%" align="center" class="h2">
+        <table border="1" id="leaderboard" style="font-size:100%" align="center" class="h2">
             <tr>
                 <th>Thief</th>
                 <th>Networth</th>

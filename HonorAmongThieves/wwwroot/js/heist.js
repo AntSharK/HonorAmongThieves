@@ -110,8 +110,8 @@ document.getElementById("startbutton").addEventListener("click", function (event
     var betrayalReward = document.getElementById("betrayalreward").value;
     var maxGameLength = document.getElementById("maxgamelength").value;
     var maxHeistSize = document.getElementById("maxheistsize").value;
-    var snitchMurderWindow = document.getElementById("snitchmurderwindow").value;
-    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, maxHeistSize, snitchMurderWindow).catch(function (err) {
+    var snitchBlackmailWindow = document.getElementById("snitchblackmailwindow").value;
+    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, maxHeistSize, snitchBlackmailWindow).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
@@ -153,10 +153,8 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
         heistParticipantInfo[i].parentNode.removeChild(heistParticipantInfo[i]);
     }
 
-    var murderList = document.getElementById("commitmurderselection");
-    for (var i = 0; i < murderList.options.length; i++) {
-        murderList.options[i] = null;
-    }
+    var blackmailList = document.createElement("select");
+    blackmailList.id = "commitblackmailselection";
 
     var playerList = document.getElementById("heistparticipants");
     var players = playerInfos.split("=");
@@ -171,9 +169,12 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
         if (playerInfo[0] != userName) {
             var newOption = document.createElement("option");
             newOption.textContent = playerInfo[0];
-            murderList.appendChild(newOption);
+            blackmailList.appendChild(newOption);
         }
     }
+
+    document.getElementById("blackmailselection").innerHTML = "";
+    document.getElementById("blackmailselection").appendChild(blackmailList);
 
     var heistsetup = document.getElementById("heistsetup");
     heistsetup.style.display = "block";
@@ -183,9 +184,9 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
 // ----- STATE: HEIST DECISIONS -----
 // ----------------------------------
 
-document.getElementById("commitmurder").addEventListener("click", function (event) {
-    var victim = document.getElementById("commitmurderselection").value;
-    connection.invoke("CommitMurder", roomId, userName, victim).catch(function (err) {
+document.getElementById("commitblackmail").addEventListener("click", function (event) {
+    var victim = document.getElementById("commitblackmailselection").value;
+    connection.invoke("CommitBlackmail", roomId, userName, victim).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
