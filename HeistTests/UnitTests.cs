@@ -202,9 +202,79 @@ namespace HeistTests
             Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
         }
 
-        // public void HeistSnitchSuccessAndSelfJail()
+        [TestMethod]
+        public void HeistSnitchSuccessAndSelfJail()
+        {
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            heist.AddPlayer(chee);
+            heist.AddPlayer(harv);
+            heist.AddPlayer(sara);
 
-        // public void HeistSnitchFail
+            chee.Decision.GoOnHeist = true;
+            sara.Decision.GoOnHeist = true;
+            sara.Decision.ReportPolice = true;
+            harv.Decision.GoOnHeist = false;
+            harv.Decision.ReportPolice = true;
+
+            var cheeStarting = chee.NetWorth;
+            var saraStarting = sara.NetWorth;
+            var harvStarting = harv.NetWorth;
+
+            heist.Resolve();
+            this.VerifyNonBlankFate(heist);
+
+            Assert.AreEqual(0, sara.Decision.JailFine);
+            Assert.IsTrue(chee.Decision.JailTerm > 0);
+            Assert.IsTrue(chee.Decision.JailFine > 0);
+            Assert.IsTrue(sara.Decision.JailTerm > 0);
+            Assert.AreEqual(0, harv.Decision.JailTerm);
+            Assert.AreEqual(cheeStarting - chee.Decision.JailFine, chee.NetWorth);
+            Assert.AreEqual(saraStarting + 5 /*SnitchReward / 2*/, sara.NetWorth);
+            Assert.AreEqual(harvStarting + 5 /*SnitchReward / 2*/, harv.NetWorth);
+
+            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(chee.Decision.JailTerm, chee.YearsLeftInJail);
+            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(sara.Decision.JailTerm, sara.YearsLeftInJail);
+            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+        }
+
+        [TestMethod]
+        public void HeistAbandonSnitchFail()
+        {
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            heist.AddPlayer(chee);
+            heist.AddPlayer(harv);
+            heist.AddPlayer(sara);
+
+            chee.Decision.GoOnHeist = false;
+            sara.Decision.GoOnHeist = true;
+            sara.Decision.ReportPolice = true;
+            harv.Decision.GoOnHeist = false;
+            harv.Decision.ReportPolice = true;
+
+            var cheeStarting = chee.NetWorth;
+            var saraStarting = sara.NetWorth;
+            var harvStarting = harv.NetWorth;
+
+            heist.Resolve();
+            this.VerifyNonBlankFate(heist);
+
+            Assert.AreEqual(0, chee.Decision.JailTerm);
+            Assert.IsTrue(sara.Decision.JailTerm > 0);
+            Assert.IsTrue(harv.Decision.JailTerm > 0);
+            Assert.IsTrue(sara.Decision.JailFine > 0);
+            Assert.IsTrue(harv.Decision.JailFine > 0);
+            Assert.AreEqual(cheeStarting, chee.NetWorth);
+            Assert.AreEqual(saraStarting - sara.Decision.JailFine, sara.NetWorth);
+            Assert.AreEqual(harvStarting - harv.Decision.JailFine, harv.NetWorth);
+
+            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(sara.Decision.JailTerm, sara.YearsLeftInJail);
+            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(harv.Decision.JailTerm, harv.YearsLeftInJail);
+        }
 
         // public void HeistAbandonBlackmailFail()
 
