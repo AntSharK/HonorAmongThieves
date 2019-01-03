@@ -234,7 +234,7 @@ namespace HonorAmongThieves.Game
                 }
             }
 
-            // Resolve summary of everything
+            // TODO: Summary of everything, not just jail, can be clearer
             if (decision.JailTerm > 0)
             {
                 fateMessage = fateMessage + SentencedToJail(decision);
