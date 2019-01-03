@@ -91,10 +91,17 @@ namespace HonorAmongThieves.Game
                     fateMessage = fateMessage + HeistAbandoned(decision.FellowHeisters);
                 }
                 else if (heistHappens
-                    && policeReported)
+                    && policeReported
+                    && !decision.ReportPolice)
                 {
                     fateTitle = fateTitle + "ARRESTED. ";
                     fateMessage = fateMessage + HeistArrested;
+                }
+                else if (heistHappens
+                    && !policeReported)
+                {
+                    fateTitle = fateTitle + "SUCCESSFUL HEIST. ";
+                    fateMessage = fateMessage + HeistSuccess(decision);
                 }
             }
 
@@ -318,6 +325,12 @@ namespace HonorAmongThieves.Game
         {
             return $"You are sentenced to {decision.JailTerm} years in jail. Without parole. " +
                 (decision.JailFine > 0 ? $"Your lawyer fees and fines also incur you a loss of ${decision.JailFine} MILLION. " : "");
+        }
+
+        public static string HeistSuccess(Player.HeistDecision decision)
+        {
+            return $"{GetPlayerNames(decision.FellowHeisters)} successfully {decision.HeistSuccessMessage}! " +
+                $"At the end of the day, you earn ${decision.HeistReward} MILLION for your troubles. ";
         }
 
         public static string FalseReportNoHeistYouGo

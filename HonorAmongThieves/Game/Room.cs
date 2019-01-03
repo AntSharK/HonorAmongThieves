@@ -200,18 +200,13 @@ namespace HonorAmongThieves.Game
             this.UpdatedTime = DateTime.UtcNow;
             foreach (var player in this.Players.Values)
             {
-                if (player.CurrentStatus == Player.Status.FindingHeist 
-                    || player.CurrentStatus == Player.Status.HeistDecisionMade
-                    || player.CurrentStatus == Player.Status.InHeist
-                    || player.CurrentStatus == Player.Status.InJail)
+                // If a player isn't okay, do nothing
+                if (!player.Okay)
                 {
-                    // If a player isn't okay, do nothing
-                    if (!player.Okay)
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
+
             switch (this.CurrentStatus)
             {
                 case Status.AwaitingHeistDecisions:

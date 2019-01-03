@@ -224,6 +224,7 @@ namespace HonorAmongThieves.Game
             public List<Player> Blackmailers { get; set; }
             public List<Player> FellowHeisters { get; set; }
             public Status NextStatus { get; set; } = Status.FindingHeist;
+            public string HeistSuccessMessage { get; set; }
 
             public bool? ExtortionSuccessful { get; set; } = null;
             public bool? WasExtortedFrom { get; set; } = null;

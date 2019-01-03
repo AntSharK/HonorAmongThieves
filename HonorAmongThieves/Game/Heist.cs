@@ -21,8 +21,22 @@ namespace HonorAmongThieves.Game
 
         public float ExtortionAmount = 0.8f;
 
+        public string HeistSuccessMessage;
+
+        private static readonly string[] HeistSuccessMessages = {
+                "rob a jewelry store",
+                "rob a bank",
+                "pull off the art theft of the year",
+                "scam a tech billionaire",
+                "smuggle maple syrup",
+                "phish a hedge fund",
+                "steal an oil tanker",
+                "ransom off a nuclear missile"
+            };
+
         public Heist(string heistId, int heistCapacity, int snitchReward, int year, int snitchBlackmailWindow)
         {
+            this.HeistSuccessMessage = HeistSuccessMessages[Utils.Rng.Next(0, HeistSuccessMessages.Length - 2)];
             this.SnitchReward = snitchReward;
             this.Year = year;
             this.SnitchBlackmailWindow = snitchBlackmailWindow;
@@ -131,6 +145,7 @@ namespace HonorAmongThieves.Game
                 && !policeReported 
                 && heisters.Count > 0)
             {
+
                 var reward = this.TotalReward / heisters.Count;
                 foreach (var heister in heisters)
                 {
@@ -240,6 +255,7 @@ namespace HonorAmongThieves.Game
                     player.MaxJailSentence *= 2;
                 }
 
+                player.Decision.HeistSuccessMessage = this.HeistSuccessMessage;
                 player.Decision.FellowHeisters = heisters;
                 player.GenerateFateMessage(heistHappens, policeReported);
             }
