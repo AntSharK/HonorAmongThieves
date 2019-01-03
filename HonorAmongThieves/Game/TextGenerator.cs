@@ -234,7 +234,7 @@ namespace HonorAmongThieves.Game
                 }
             }
 
-            // Resolve summary of everything
+            // TODO: Summary of everything, not just jail, can be clearer
             if (decision.JailTerm > 0)
             {
                 fateMessage = fateMessage + SentencedToJail(decision);
@@ -475,13 +475,13 @@ namespace HonorAmongThieves.Game
             }
 
             var playerNames = new StringBuilder();
-            for (var i = 0; i < playerNames.Length-1; i++)
+            for (var i = 0; i < players.Count-1; i++)
             {
                 playerNames.Append(players[i].Name + ", ");
             }
 
             playerNames.Append("and ");
-            playerNames.Append(players[playerNames.Length - 1].Name);
+            playerNames.Append(players[players.Count - 1].Name);
             return playerNames.ToString();
         }
     }

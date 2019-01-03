@@ -242,7 +242,13 @@ namespace HonorAmongThieves.Game
             {
                 if (player.Decision.JailTerm > 0)
                 {
-                    if (!player.Decision.ReportPolice)
+                    if (player.Decision.ReportPolice
+                        && heistHappens
+                        && (!player.Decision.ExtortionSuccessful.HasValue || player.Decision.ExtortionSuccessful.Value)) // Failed extortionists still get fined
+                    {
+                        // Do nothing - exempt from fine
+                    }
+                    else
                     {
                         var jailFine = (int)(player.NetWorth * this.JailFine);
                         player.Decision.JailFine = jailFine;
