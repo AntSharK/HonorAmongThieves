@@ -17,6 +17,7 @@ About 1 screen down, there's a section that says **PRE-REQUISUTES**. Along with 
 Windows users should use ***Visual Studio*** or ***Visual Studio Code***. Using ***Visual Studio for Mac*** on a Windows machine is for advanced users or people who believe they can transcend the limits of their operating system.
 
 ## First-time setup
+* Make sure you've read the above section and downloaded the pre-requisite tools.
 * Open ***/HonorAmongstThieves.sln*** with ***Visual Studio***.
 * Pray that it's able to load
 * Right click the project or solution and click "Build"
