@@ -154,7 +154,6 @@ namespace HonorAmongThieves.Game
 
         private async Task UpdateFateView(HeistHub hub, bool setOkayButton = true)
         {
-            // TODO: At this stage, heists will have been resolved
             // Update idle people with some more information
             switch (this.PreviousStatus)
             {

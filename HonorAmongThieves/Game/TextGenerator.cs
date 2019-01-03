@@ -50,7 +50,7 @@ namespace HonorAmongThieves.Game
         {
             // Resolve not going on the heist but getting blackmailed while snitching
             if (decision.WasExtortedFrom.HasValue
-                && decision.GoOnHeist
+                && !decision.GoOnHeist
                 && decision.WasExtortedFrom.Value)
             {
                 return GetBlackmailedMessage(decision);
@@ -63,24 +63,26 @@ namespace HonorAmongThieves.Game
                 return Bailing;
             }
 
+            var fateTitle = "";
+            var fateMessage = "";
+
             // Resolve blackmail not finding the target
             if (decision.ExtortionSuccessful == null
                 && decision.PlayerToBlackmail != null)
             {
-                return BlackmaileeMissingMessage(decision);
+                fateTitle = fateTitle + $"COULD NOT FIND {decision.PlayerToBlackmail.Name}. ";
+                fateMessage = fateMessage + BlackmaileeMissingMessage(decision);
             }
 
             // Resolve blackmailing a snitch before he snitched and doesn't go on a heist
             if (decision.ExtortionSuccessful.HasValue
                 && decision.ExtortionSuccessful.Value
-                && decision.PlayerToBlackmail.Decision.GoOnHeist
+                && !decision.PlayerToBlackmail.Decision.GoOnHeist
                 && decision.PlayerToBlackmail.Decision.ReportPolice)
             {
-                return BlackmailSnitchMessage(decision);
+                fateTitle = fateTitle + $"CAUGHT {decision.PlayerToBlackmail.Name} SNITCHING. ";
+                fateMessage = fateMessage + BlackmailSnitchMessage(decision);
             }
-
-            var fateTitle = "";
-            var fateMessage = "";
 
             // Resolve heist status
             if (decision.GoOnHeist)
@@ -230,11 +232,12 @@ namespace HonorAmongThieves.Game
                         fateMessage = fateMessage + DefendedSelfAfterDisbanding(decision);
                     }
                 }
+            }
 
-                if (decision.JailTerm > 0)
-                {
-                    fateMessage = fateMessage + SentencedToJail(decision);
-                }
+            // Resolve summary of everything
+            if (decision.JailTerm > 0)
+            {
+                fateMessage = fateMessage + SentencedToJail(decision);
             }
 
             return Tuple.Create(fateTitle, fateMessage);
@@ -291,21 +294,17 @@ namespace HonorAmongThieves.Game
             }
         }
 
-        public static Tuple<string, string> BlackmaileeMissingMessage(Player.HeistDecision decision)
+        public static string BlackmaileeMissingMessage(Player.HeistDecision decision)
         {
-            var decisionTitle = $"COULD NOT FIND {decision.PlayerToBlackmail.Name}.";
-            var decisionMessage = $"Your contacts searched all over for {decision.PlayerToBlackmail.Name} but couldn't find him, which ruins your plans for blackmail.";
-            return Tuple.Create(decisionTitle, decisionMessage);
+            return $"Your contacts searched all over for {decision.PlayerToBlackmail.Name} but couldn't find him, which ruins your plans for blackmail. ";
         }
 
-        public static Tuple<string, string> BlackmailSnitchMessage(Player.HeistDecision decision)
+        public static string BlackmailSnitchMessage(Player.HeistDecision decision)
         {
-            var decisionTitle = $"FOUND {decision.PlayerToBlackmail.Name} SNITCHING.";
-            var decisionMessage = $"You conveniently found {decision.PlayerToBlackmail.Name} lurking in the area, about to tell the police about your crimes. " +
+            return $"You conveniently found {decision.PlayerToBlackmail.Name} lurking in the area, about to tell the police about your crimes. " +
                 (decision.PlayerToBlackmail.Decision.Blackmailers.Count > 1 ? $"Unsurprisingly, you find that {decision.PlayerToBlackmail.Decision.Blackmailers.Count - 1} of the thieves have the same idea." : "") +
                 $"The snitch is forced to hand over ${decision.BlackmailReward} MILLION " +
-                (decision.Blackmailers.Count > 1 ? " to each thief in exchange for their silence. " : " to you in exchange for this to never be spoken off again.");
-            return Tuple.Create(decisionTitle, decisionMessage);
+                (decision.PlayerToBlackmail.Decision.Blackmailers.Count > 1 ? " to each thief in exchange for their silence. " : " to you in exchange for this to never be spoken off again.");
         }
 
         public static string HeistAbandoned(List<Player> players)
@@ -415,7 +414,7 @@ namespace HonorAmongThieves.Game
             return $"While in lockup, you are confronted by {GetPlayerNames(decision.Blackmailers)} about your dealings with the police. " +
                 $"They seem to have unrefutable evidence, and you reckon prison won't treat a snitch very well. " +
                 $"You have no choice but to cough up ${decision.Blackmailers[0].Decision.BlackmailReward} MILLION " +
-                (decision.PlayerToBlackmail.Decision.Blackmailers.Count > 1 ? $"to each of them for their silence. " : $"in exchange for silence. ");
+                (decision.Blackmailers.Count > 1 ? $"to each of them for their silence. " : $"in exchange for silence. ");
         }
 
         public static string BlackmailedAfterSuccessfulHeist(Player.HeistDecision decision)
@@ -423,7 +422,7 @@ namespace HonorAmongThieves.Game
             return $"On your way back from the heist, you're stopped by by {GetPlayerNames(decision.Blackmailers)}. " +
                 $"Irrefutable evidence of your dealings with the police have gotten out. " +
                 $"You have no choice but to cough up ${decision.Blackmailers[0].Decision.BlackmailReward} MILLION " +
-                (decision.PlayerToBlackmail.Decision.Blackmailers.Count > 1 ? $"to each of them for their silence, and to let you live. " : $"in exchange for silence, and to let you live. ");
+                (decision.Blackmailers.Count > 1 ? $"to each of them for their silence, and to let you live. " : $"in exchange for silence, and to let you live. ");
         }
 
         public static string BlackmailedAfterDisbanding(Player.HeistDecision decision)
@@ -431,7 +430,7 @@ namespace HonorAmongThieves.Game
             return $"Just after you step away from the meeting, you're stopped by by {GetPlayerNames(decision.Blackmailers)}. " +
                 $"Irrefutable evidence of your dealings with the police have gotten out. " +
                 $"You have no choice but to cough up ${decision.Blackmailers[0].Decision.BlackmailReward} MILLION " +
-                (decision.PlayerToBlackmail.Decision.Blackmailers.Count > 1 ? $"to each of them for their silence, and to let you live. " : $"in exchange for silence, and to let you live. ");
+                (decision.Blackmailers.Count > 1 ? $"to each of them for their silence, and to let you live. " : $"in exchange for silence, and to let you live. ");
         }
 
         public static string DefendedSelfAfterArrest(Player.HeistDecision decision)
@@ -439,7 +438,7 @@ namespace HonorAmongThieves.Game
             return $"While in lockup, you are accused by {GetPlayerNames(decision.Blackmailers)} of being a snitch. " +
                 $"However, there is no concrete evidence against you, and you don't appreciate being antagonized. " +
                 $"After a lengthy talk with your lawyers, you manage to " +
-                (decision.PlayerToBlackmail.Decision.Blackmailers.Count > 1 ? $"pin more crimes on them, extending their jail sentences. " : $"find ways to get {decision.Blackmailers[0].Name} a longer jail sentence. ");
+                (decision.Blackmailers.Count > 1 ? $"pin more crimes on them, extending their jail sentences. " : $"find ways to get {decision.Blackmailers[0].Name} a longer jail sentence. ");
         }
 
         public static string DefendedSelfAfterSuccessfulHeist(Player.HeistDecision decision)
@@ -447,7 +446,7 @@ namespace HonorAmongThieves.Game
             return $"On your way back from the heist, you're stopped by by {GetPlayerNames(decision.Blackmailers)} and accused of being a snitch. " +
                 $"However, there is no concrete evidence against you, and you don't appreciate being antagonized. " +
                 $"You devote a good portion of the next year to " +
-                (decision.PlayerToBlackmail.Decision.Blackmailers.Count > 1 ? $"unearthing evidence of their previous crimes and landing them in jail. " : $"unearthing evidence of {decision.Blackmailers[0].Name}'s previous crimes and landing {decision.Blackmailers[0].Name} in jail. ");
+                (decision.Blackmailers.Count > 1 ? $"unearthing evidence of their previous crimes and landing them in jail. " : $"unearthing evidence of {decision.Blackmailers[0].Name}'s previous crimes and landing {decision.Blackmailers[0].Name} in jail. ");
         }
 
         public static string DefendedSelfAfterDisbanding(Player.HeistDecision decision)
@@ -455,7 +454,7 @@ namespace HonorAmongThieves.Game
             return $"Just after you step away from the meeting, you're stopped by {GetPlayerNames(decision.Blackmailers)} and accused of being a snitch. " +
                 $"However, there is no concrete evidence against you, and you don't appreciate being antagonized. " +
                 $"You devote a good portion of the next year to " +
-                (decision.PlayerToBlackmail.Decision.Blackmailers.Count > 1 ? $"unearthing evidence of their previous crimes and landing them in jail. " : $"unearthing evidence of {decision.Blackmailers[0].Name}'s previous crimes and landing {decision.Blackmailers[0].Name} in jail. ");
+                (decision.Blackmailers.Count > 1 ? $"unearthing evidence of their previous crimes and landing them in jail. " : $"unearthing evidence of {decision.Blackmailers[0].Name}'s previous crimes and landing {decision.Blackmailers[0].Name} in jail. ");
         }
 
         private static string GetPlayerNames(List<Player> players)
