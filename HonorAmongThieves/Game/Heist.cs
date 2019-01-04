@@ -36,12 +36,13 @@ namespace HonorAmongThieves.Game
                 "ransom off a nuclear missile"
             };
 
-        public Heist(string heistId, int heistCapacity, int snitchReward, int year, int snitchBlackmailWindow, int networthFudgePercentage)
+        public Heist(string heistId, int heistCapacity, int snitchReward, int year, int snitchBlackmailWindow, int networthFudgePercentage, int blackmailRewardPercentage)
         {
             this.HeistSuccessMessage = HeistSuccessMessages[Utils.Rng.Next(0, HeistSuccessMessages.Length - 2)];
             this.SnitchReward = snitchReward;
             this.Year = year;
             this.SnitchBlackmailWindow = snitchBlackmailWindow;
+            this.ExtortionAmount = (float)blackmailRewardPercentage / 100f;
 
             const int BASEREWARD = 30;
             const double EXPONENT = 2;

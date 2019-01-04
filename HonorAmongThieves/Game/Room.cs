@@ -35,6 +35,8 @@ namespace HonorAmongThieves.Game
 
         public int NetworthFudgePercentage { get; private set; } = 10;
 
+        public int BlackmailRewardPercentage { get; private set; } = 60;
+
         public Dictionary<string, Heist> Heists { get; } = new Dictionary<string, Heist>();
 
         private Random Random = new Random();
@@ -118,7 +120,7 @@ namespace HonorAmongThieves.Game
             var heistId = Utils.GenerateId(10, this.Heists);
 
             var snitchReward = this.BetrayalReward;
-            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear, this.SnitchBlackmailWindow, this.NetworthFudgePercentage);
+            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear, this.SnitchBlackmailWindow, this.NetworthFudgePercentage, this.BlackmailRewardPercentage);
 
             for (var i = 0; i < heistCapacity; i++)
             {
@@ -131,7 +133,7 @@ namespace HonorAmongThieves.Game
             return heist;
         }
 
-        public void StartGame(int betrayalReward, int maxGameLength, int minGameLength, int maxHeistSize, int minHeistSize, int snitchBlackmailWindow, int networthFudgePercentage)
+        public void StartGame(int betrayalReward, int maxGameLength, int minGameLength, int maxHeistSize, int minHeistSize, int snitchBlackmailWindow, int networthFudgePercentage, int blackmailRewardPercentage)
         {
             this.StartTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
@@ -160,6 +162,11 @@ namespace HonorAmongThieves.Game
             {
                 // Game end time is a random number between the min and max game length
                 this.MaxYears = Utils.Rng.Next(minGameLength, maxGameLength);
+            }
+
+            if (blackmailRewardPercentage > 0 && blackmailRewardPercentage < 101)
+            {
+                this.BlackmailRewardPercentage = blackmailRewardPercentage;
             }
 
             this.SnitchBlackmailWindow = snitchBlackmailWindow;
