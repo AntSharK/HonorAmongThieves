@@ -4,6 +4,8 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/heistHub").build()
 var userName;
 var roomId;
 
+var reconnecting = true;
+
 connection.on("ShowError", function (errorMessage) {
     window.alert(errorMessage);
 });
@@ -253,6 +255,7 @@ connection.start().catch(function (err) {
 connection.on("FreshConnection", function () {
     var sessionUserName = sessionStorage.getItem("username");
     var sessionRoomId = sessionStorage.getItem("roomid");
+    //reconnecting = false;
 
     if (sessionUserName != null && sessionRoomId != null) {
         // Resume the session
@@ -269,3 +272,25 @@ connection.on("ClearState", function () {
     sessionStorage.removeItem("username");
     sessionStorage.removeItem("roomid");
 })
+
+var conditionalReload = function () {
+    var sessionUserName = sessionStorage.getItem("username");
+    var sessionRoomId = sessionStorage.getItem("roomid");
+
+    if (sessionUserName != null && sessionRoomId != null) {
+        //reconnecting = true;
+        var elements = document.getElementsByClassName("state");
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.display = "none";
+        }
+
+        document.getElementById("pageName").textContent = "RECONNECTING...";
+        //setInterval(function () {
+        //    if (reconnecting === true) {
+        //        window.location.reload()
+        //    }
+        //}, 10000)
+    }
+}
+
+window.onload = conditionalReload;
