@@ -151,6 +151,11 @@ connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, m
     document.getElementById("yearstillsnitchingpurge").textContent = "SNITCHING EVIDENCE PURGED: " + snitchingEvidence;
 });
 
+connection.on("StartRoom_UpdateGameInfo", function (maxGameLength, snitchBlackmailWindow) {
+    document.getElementById("gamelength").textContent = "AT MOST " + maxGameLength + " YEARS";
+    document.getElementById("blackmailwindow").textContent = snitchBlackmailWindow + " YEARS";
+});
+
 connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitchReward) {
     document.getElementById("pageName").textContent = "HEIST SETUP";
     document.getElementById("heistnetworth").textContent = "HEIST REWARD: $" + heistReward + " MILLION";
@@ -186,6 +191,17 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
 
     var heistsetup = document.getElementById("heistsetup");
     heistsetup.style.display = "block";
+});
+
+connection.on("RoomOkay_Update", function (okayPlayerList) {
+    var playerList = document.getElementById("playerReadyList");
+    playerList.innerHTML = "";
+    var players = okayPlayerList.split("|");
+    for (let i = 0; i < players.length; i++) {
+        var li = document.createElement("li");
+        li.textContent = players[i];
+        playerList.appendChild(li);
+    }
 });
 
 // ----------------------------------
