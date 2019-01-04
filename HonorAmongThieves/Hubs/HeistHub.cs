@@ -63,6 +63,11 @@ namespace HonorAmongThieves.Hubs
             await room.Okay(this);
         }
 
+        //internal async Task OkayButton_Acknowledge()
+        //{
+        //    await Clients.Caller.SendAsync("OkayButton_Acknowledge");
+        //}
+
         public async Task CreateRoom(string userName)
         {
             var roomId = Program.Instance.CreateRoom(this, userName);

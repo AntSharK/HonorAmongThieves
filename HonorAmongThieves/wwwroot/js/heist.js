@@ -56,6 +56,10 @@ document.getElementById("okaybutton").addEventListener("click", function (event)
     event.preventDefault();
 });
 
+//connection.on("OkayButton_Acknowledge", function () {
+//    document.getElementById("okaybutton").style.display = "none";
+//});
+
 // ---------------------------
 // ----- STATE: PRE-GAME -----
 // ---------------------------
