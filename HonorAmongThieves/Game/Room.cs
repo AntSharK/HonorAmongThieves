@@ -37,6 +37,8 @@ namespace HonorAmongThieves.Game
 
         public int BlackmailRewardPercentage { get; private set; } = 60;
 
+        public int JailFinePercentage { get; private set; } = 20;
+
         public Dictionary<string, Heist> Heists { get; } = new Dictionary<string, Heist>();
 
         private Random Random = new Random();
@@ -120,7 +122,7 @@ namespace HonorAmongThieves.Game
             var heistId = Utils.GenerateId(10, this.Heists);
 
             var snitchReward = this.BetrayalReward;
-            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear, this.SnitchBlackmailWindow, this.NetworthFudgePercentage, this.BlackmailRewardPercentage);
+            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear, this.SnitchBlackmailWindow, this.NetworthFudgePercentage, this.BlackmailRewardPercentage, this.JailFinePercentage);
 
             for (var i = 0; i < heistCapacity; i++)
             {
@@ -133,7 +135,7 @@ namespace HonorAmongThieves.Game
             return heist;
         }
 
-        public void StartGame(int betrayalReward, int maxGameLength, int minGameLength, int maxHeistSize, int minHeistSize, int snitchBlackmailWindow, int networthFudgePercentage, int blackmailRewardPercentage)
+        public void StartGame(int betrayalReward, int maxGameLength, int minGameLength, int maxHeistSize, int minHeistSize, int snitchBlackmailWindow, int networthFudgePercentage, int blackmailRewardPercentage, int jailFinePercentage)
         {
             this.StartTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
@@ -167,6 +169,11 @@ namespace HonorAmongThieves.Game
             if (blackmailRewardPercentage > 0 && blackmailRewardPercentage < 101)
             {
                 this.BlackmailRewardPercentage = blackmailRewardPercentage;
+            }
+
+            if (jailFinePercentage > 0 && jailFinePercentage < 101)
+            {
+                this.JailFinePercentage = jailFinePercentage;
             }
 
             this.SnitchBlackmailWindow = snitchBlackmailWindow;

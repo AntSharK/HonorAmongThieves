@@ -115,7 +115,8 @@ document.getElementById("startbutton").addEventListener("click", function (event
     var snitchBlackmailWindow = document.getElementById("snitchblackmailwindow").value;
     var blackmailRewardPercentage = document.getElementById("blackmailrewardpercentage").value;
     var networthFudgePercentage = document.getElementById("networthfudgepercentage").value;
-    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, minGameLength, maxHeistSize, minHeistSize, snitchBlackmailWindow, networthFudgePercentage, blackmailRewardPercentage).catch(function (err) {
+    var jailFinePercentage = document.getElementById("jailfinepercentage").value;
+    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, minGameLength, maxHeistSize, minHeistSize, snitchBlackmailWindow, networthFudgePercentage, blackmailRewardPercentage, jailFinePercentage).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
