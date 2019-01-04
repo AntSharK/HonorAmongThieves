@@ -94,6 +94,8 @@ connection.on("JoinRoom_UpdateState", function (playersConcat, userJoined) {
         li.textContent = players[i];
         playerList.appendChild(li);
     }
+
+    document.getElementById("lobbyplayercount").textContent = players.length + "/20";
 });
 
 document.getElementById("joinroombutton").addEventListener("click", function (event) {
