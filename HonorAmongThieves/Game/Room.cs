@@ -29,7 +29,11 @@ namespace HonorAmongThieves.Game
 
         public int InitialMaxHeistCapacity { get; private set; } = 5;
 
+        public int InitialMinHeistCapacity { get; private set; } = 3;
+
         public int SnitchBlackmailWindow { get; private set; } = -1;
+
+        public int NetworthFudgePercentage { get; private set; } = 10;
 
         public Dictionary<string, Heist> Heists { get; } = new Dictionary<string, Heist>();
 
@@ -60,6 +64,7 @@ namespace HonorAmongThieves.Game
             // So let's pad it with even more lines
             Utils.Shuffle(eligiblePlayers);
 
+            var minHeistCapacity = this.InitialMinHeistCapacity;
             var maxHeistCapacity = this.InitialMaxHeistCapacity;
             while (eligiblePlayers.Count > 5)
             {
@@ -69,7 +74,12 @@ namespace HonorAmongThieves.Game
                     maxHeistCapacity = eligiblePlayers.Count - 2;
                 }
 
-                var heistCapacity = this.Random.Next(2, maxHeistCapacity);
+                if (eligiblePlayers.Count <= minHeistCapacity * 2)
+                {
+                    minHeistCapacity = Math.Min(eligiblePlayers.Count - 1, maxHeistCapacity);
+                }
+
+                var heistCapacity = this.Random.Next(minHeistCapacity, maxHeistCapacity);
                 this.CreateHeist(eligiblePlayers, heistCapacity);
             }
 
@@ -108,7 +118,7 @@ namespace HonorAmongThieves.Game
             var heistId = Utils.GenerateId(10, this.Heists);
 
             var snitchReward = this.BetrayalReward;
-            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear, this.SnitchBlackmailWindow);
+            var heist = new Heist(heistId, heistCapacity, snitchReward, this.CurrentYear, this.SnitchBlackmailWindow, this.NetworthFudgePercentage);
 
             for (var i = 0; i < heistCapacity; i++)
             {
@@ -121,25 +131,35 @@ namespace HonorAmongThieves.Game
             return heist;
         }
 
-        public void StartGame(int betrayalReward, int maxGameLength, int maxHeistSize, int snitchBlackmailWindow)
+        public void StartGame(int betrayalReward, int maxGameLength, int minGameLength, int maxHeistSize, int minHeistSize, int snitchBlackmailWindow, int networthFudgePercentage)
         {
             this.StartTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
+
+            if (networthFudgePercentage > 0 && networthFudgePercentage < 99)
+            {
+                this.NetworthFudgePercentage = networthFudgePercentage;
+            }
 
             if (betrayalReward >= 0)
             {
                 this.BetrayalReward = betrayalReward;
             }
 
-            if (maxHeistSize >= 2)
+            if (maxHeistSize >= 3)
             {
                 this.InitialMaxHeistCapacity = maxHeistSize;
             }
 
+            if (minHeistSize <= this.InitialMaxHeistCapacity)
+            {
+                this.InitialMinHeistCapacity = minHeistSize;
+            }
+
             if (maxGameLength >= 2)
             {
-                // Game end time is a random number between the max game length and half of it
-                this.MaxYears = Utils.Rng.Next(maxGameLength / 2, maxGameLength);
+                // Game end time is a random number between the min and max game length
+                this.MaxYears = Utils.Rng.Next(minGameLength, maxGameLength);
             }
 
             this.SnitchBlackmailWindow = snitchBlackmailWindow;

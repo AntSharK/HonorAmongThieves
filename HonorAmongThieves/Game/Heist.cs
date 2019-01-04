@@ -15,6 +15,8 @@ namespace HonorAmongThieves.Game
 
         public int SnitchBlackmailWindow { get; private set; } = -1;
 
+        public int NetworthFudgePercentage { get; private set; } = 10;
+
         private int Year;
 
         public float JailFine = 0.25f;
@@ -34,7 +36,7 @@ namespace HonorAmongThieves.Game
                 "ransom off a nuclear missile"
             };
 
-        public Heist(string heistId, int heistCapacity, int snitchReward, int year, int snitchBlackmailWindow)
+        public Heist(string heistId, int heistCapacity, int snitchReward, int year, int snitchBlackmailWindow, int networthFudgePercentage)
         {
             this.HeistSuccessMessage = HeistSuccessMessages[Utils.Rng.Next(0, HeistSuccessMessages.Length - 2)];
             this.SnitchReward = snitchReward;
@@ -55,7 +57,7 @@ namespace HonorAmongThieves.Game
             player.CurrentHeist = this;
             player.Decision = new Player.HeistDecision();
             player.Okay = false;
-            player.ProjectedNetworth = player.NetWorth * Utils.Rng.Next(50, 150) / 100;
+            player.ProjectedNetworth = player.NetWorth * Utils.Rng.Next(100 - this.NetworthFudgePercentage, 100 + this.NetworthFudgePercentage) / 100;
             this.Players[player.Name] = player;
         }
 
