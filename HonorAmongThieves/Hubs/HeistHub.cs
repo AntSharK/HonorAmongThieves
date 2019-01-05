@@ -349,7 +349,6 @@ namespace HonorAmongThieves.Hubs
         internal async Task UpdateGlobalNews(Player currentPlayer, IEnumerable<Player> players, bool newToJail, bool heistUpdate)
         {
             var newToJailNames = new StringBuilder();
-            var outOfJailNames = new StringBuilder();
             var heistUpdateNames = new StringBuilder();
 
             foreach (var player in players)
@@ -364,43 +363,28 @@ namespace HonorAmongThieves.Hubs
                         newToJailNames.Append("|");
                     }
 
-                    if (newToJail
-                        && !player.Decision.DecisionMade) // The only way to not have made a decision is to be in jail)
-                    {
-                        if (player.CurrentStatus == Player.Status.FindingHeist
-                            || (player.YearsLeftInJail == 1 && !player.Okay))
-                        {
-                            outOfJailNames.Append(player.Name);
-                            outOfJailNames.Append("|");
-                        }
-                    }
-
                     if (heistUpdate
                         && player.Decision.DecisionMade
-                        && player.Decision.HeistReward > 0)
+                        && player.Decision.HeistReward > 0
+                        && !player.Decision.ReportPolice)
                     {
                         heistUpdateNames.Append(player.Name);
                         heistUpdateNames.Append("|");
                     }
                 }
-
-                if (newToJailNames.Length > 0)
-                {
-                    newToJailNames.Length--;
-                }
-
-                if (outOfJailNames.Length > 0)
-                {
-                    outOfJailNames.Length--;
-                }
-
-                if (heistUpdateNames.Length > 0)
-                {
-                    heistUpdateNames.Length--;
-                }
-
-                await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateGlobalNews", newToJailNames.ToString(), outOfJailNames.ToString(), heistUpdateNames.ToString());
             }
+
+            if (newToJailNames.Length > 0)
+            {
+                newToJailNames.Length--;
+            }
+
+            if (heistUpdateNames.Length > 0)
+            {
+                heistUpdateNames.Length--;
+            }
+
+            await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateGlobalNews", newToJailNames.ToString(), heistUpdateNames.ToString());
         }
 
         internal async Task HeistPrep_ChangeState(Heist heist, bool sendToCaller = false)
