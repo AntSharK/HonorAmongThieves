@@ -261,8 +261,8 @@ namespace HonorAmongThieves.Game.Heist
 
                     player.Decision.NextStatus = Player.Status.InJail;
                     player.YearsLeftInJail = player.Decision.JailTerm;
-                    player.MinJailSentence *= 2;
-                    player.MaxJailSentence *= 2;
+                    player.MaxJailSentence = player.MaxJailSentence + 1;
+                    player.MinJailSentence = (player.MaxJailSentence - 1) / 2;
                 }
 
                 player.Decision.HeistSuccessMessage = this.HeistSuccessMessage;
