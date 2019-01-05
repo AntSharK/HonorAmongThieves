@@ -116,10 +116,15 @@ connection.on("JoinRoom_CreateStartButton", function () {
 
 document.getElementById("startbutton").addEventListener("click", function (event) {
     var betrayalReward = document.getElementById("betrayalreward").value;
+    var minGameLength = document.getElementById("mingamelength").value;
     var maxGameLength = document.getElementById("maxgamelength").value;
+    var minHeistSize = document.getElementById("minheistsize").value;
     var maxHeistSize = document.getElementById("maxheistsize").value;
     var snitchBlackmailWindow = document.getElementById("snitchblackmailwindow").value;
-    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, maxHeistSize, snitchBlackmailWindow).catch(function (err) {
+    var blackmailRewardPercentage = document.getElementById("blackmailrewardpercentage").value;
+    var networthFudgePercentage = document.getElementById("networthfudgepercentage").value;
+    var jailFinePercentage = document.getElementById("jailfinepercentage").value;
+    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, minGameLength, maxHeistSize, minHeistSize, snitchBlackmailWindow, networthFudgePercentage, blackmailRewardPercentage, jailFinePercentage).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
