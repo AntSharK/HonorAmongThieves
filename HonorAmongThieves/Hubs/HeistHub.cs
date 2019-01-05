@@ -199,7 +199,7 @@ namespace HonorAmongThieves.Hubs
             room.StartGame(betrayalReward, maxGameLength, minGameLength, maxHeistSize, minHeistSize, snitchBlackmailWindow, networthFudgePercentage, blackmailRewardPercentage, jailFinePercentage);
             room.UpdatedTime = DateTime.UtcNow; // Only update the room when the players click something
 
-            await Clients.Group(room.Id).SendAsync("StartRoom_UpdateGameInfo", maxGameLength, snitchBlackmailWindow);
+            await Clients.Group(room.Id).SendAsync("StartRoom_UpdateGameInfo", maxGameLength, minGameLength, snitchBlackmailWindow, blackmailRewardPercentage, jailFinePercentage);
             await this.StartRoom_UpdateState(room);
         }
 

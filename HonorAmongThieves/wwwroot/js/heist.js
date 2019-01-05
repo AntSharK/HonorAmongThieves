@@ -156,9 +156,11 @@ connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, m
     document.getElementById("yearstillsnitchingpurge").textContent = "SNITCHING EVIDENCE PURGED: " + snitchingEvidence;
 });
 
-connection.on("StartRoom_UpdateGameInfo", function (maxGameLength, snitchBlackmailWindow) {
-    document.getElementById("gamelength").textContent = "AT MOST " + maxGameLength + " YEARS";
-    document.getElementById("blackmailwindow").textContent = snitchBlackmailWindow + " YEARS";
+connection.on("StartRoom_UpdateGameInfo", function (maxGameLength, minGameLength, snitchBlackmailWindow, blackmailRewardPercentage, jailFinePercentage) {
+    document.getElementById("gamelength").textContent = "CAREER: " + minGameLength + "-" + maxGameLength + " YEARS";
+    document.getElementById("blackmailwindow").textContent = "EVIDENCE DURATION: " + snitchBlackmailWindow + " YEARS";
+    document.getElementById("blackmailreward").textContent = "BLACKMAIL AMOUNT: " + blackmailRewardPercentage + "%";
+    document.getElementById("jailfine").textContent = "JAIL FEE: " + jailFinePercentage + "%";
 });
 
 connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitchReward) {
