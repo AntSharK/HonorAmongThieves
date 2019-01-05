@@ -1,4 +1,4 @@
-﻿using HonorAmongThieves.Game;
+﻿using HonorAmongThieves.Game.Heist;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
@@ -26,7 +26,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistSuccess()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
             heist.AddPlayer(ron);
@@ -55,7 +55,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistAbandon()
         {
-            var heist = new Heist("12345", 2 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 2 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
 
@@ -78,7 +78,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistSnitchBailsAndBlackmailed()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
             heist.AddPlayer(sara);
@@ -110,7 +110,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistSnitchGoesOnHeistAndBlackmailed()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
             heist.AddPlayer(sara);
@@ -142,7 +142,7 @@ namespace HeistTests
         [TestMethod]
         public void BlackmailMissHeistAbandon()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
             heist.AddPlayer(sara);
@@ -173,7 +173,7 @@ namespace HeistTests
         [TestMethod]
         public void BlackmailMissHeistSuccess()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
             heist.AddPlayer(sara);
@@ -205,7 +205,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistSnitchSuccessAndSelfJail()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
             heist.AddPlayer(sara);
@@ -242,7 +242,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistAbandonSnitchFail()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
             heist.AddPlayer(sara);
@@ -279,7 +279,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistAbandonBlackmailFail()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
             heist.AddPlayer(sara);
@@ -320,7 +320,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistAbandonBlackmailSuccess()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(chee);
             heist.AddPlayer(harv);
             heist.AddPlayer(sara);
@@ -360,7 +360,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistArrestedBlackmailFail()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(ron);
             heist.AddPlayer(yc);
 
@@ -391,7 +391,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistArrestedBlackmailSuccess()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(ron);
             heist.AddPlayer(yc);
 
@@ -423,7 +423,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistSuccessBlackmailFail()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(ron);
             heist.AddPlayer(yc);
 
@@ -448,7 +448,7 @@ namespace HeistTests
         [TestMethod]
         public void HeistSuccessBlackmailSuccess()
         {
-            var heist = new Heist("12345", 5 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 5 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(ron);
             heist.AddPlayer(yc);
             heist.AddPlayer(sara);
@@ -474,7 +474,7 @@ namespace HeistTests
             var originalBlackmailRewardWithSuccessfulHeist = ron.Decision.BlackmailReward;
 
             // Ensure that if the heist didn't happen on a successful blackmail, the reward is much less
-            heist = new Heist("12345", 5 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            heist = new Heist("12345", 5 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(ron);
             heist.AddPlayer(yc);
             heist.AddPlayer(sara);
@@ -508,7 +508,7 @@ namespace HeistTests
         [TestMethod]
         public void ChainBlackmailSuccess()
         {
-            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 3 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(ron);
             heist.AddPlayer(yc);
             heist.AddPlayer(chee);
@@ -535,7 +535,7 @@ namespace HeistTests
         [TestMethod]
         public void DefenseAndSuccessfulBlackmail()
         {
-            var heist = new Heist("12345", 2 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 2 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(ron);
             heist.AddPlayer(yc);
 
@@ -564,7 +564,7 @@ namespace HeistTests
         [TestMethod]
         public void DefenseAndFailedBlackmail()
         {
-            var heist = new Heist("12345", 2 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/);
+            var heist = new Heist("12345", 2 /*Capacity*/, 10 /*SnitchReward*/, 10 /*Year*/, 5 /*SnitchWindow*/, 0 /*NetworthFudge*/, 60 /*BlackmailReward*/, 20 /*JailFine*/);
             heist.AddPlayer(ron);
             heist.AddPlayer(yc);
 
