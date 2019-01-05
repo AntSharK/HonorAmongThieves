@@ -1,4 +1,4 @@
-﻿using HonorAmongThieves.Game;
+﻿using HonorAmongThieves.Game.Heist;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;

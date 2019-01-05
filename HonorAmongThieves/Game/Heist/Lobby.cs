@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Timers;
 
-namespace HonorAmongThieves.Game
+namespace HonorAmongThieves.Game.Heist
 {
     public class Lobby
     {
