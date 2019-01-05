@@ -4,6 +4,8 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/heistHub").build()
 var userName;
 var roomId;
 
+var reconnecting = true;
+
 connection.on("ShowError", function (errorMessage) {
     window.alert(errorMessage);
 });
@@ -54,6 +56,10 @@ document.getElementById("okaybutton").addEventListener("click", function (event)
     event.preventDefault();
 });
 
+//connection.on("OkayButton_Acknowledge", function () {
+//    document.getElementById("okaybutton").style.display = "none";
+//});
+
 // ---------------------------
 // ----- STATE: PRE-GAME -----
 // ---------------------------
@@ -88,6 +94,8 @@ connection.on("JoinRoom_UpdateState", function (playersConcat, userJoined) {
         li.textContent = players[i];
         playerList.appendChild(li);
     }
+
+    document.getElementById("lobbyplayercount").textContent = players.length + "/20";
 });
 
 document.getElementById("joinroombutton").addEventListener("click", function (event) {
@@ -148,6 +156,13 @@ connection.on("StartRoom_UpdateState", function (netWorth, years, displayName, m
     document.getElementById("yearstillsnitchingpurge").textContent = "SNITCHING EVIDENCE PURGED: " + snitchingEvidence;
 });
 
+connection.on("StartRoom_UpdateGameInfo", function (maxGameLength, minGameLength, snitchBlackmailWindow, blackmailRewardPercentage, jailFinePercentage) {
+    document.getElementById("gamelength").textContent = "CAREER: " + minGameLength + "-" + maxGameLength + " YEARS";
+    document.getElementById("blackmailwindow").textContent = "EVIDENCE DURATION: " + snitchBlackmailWindow + " YEARS";
+    document.getElementById("blackmailreward").textContent = "BLACKMAIL AMOUNT: " + blackmailRewardPercentage + "%";
+    document.getElementById("jailfine").textContent = "JAIL FEE: " + jailFinePercentage + "%";
+});
+
 connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitchReward) {
     document.getElementById("pageName").textContent = "HEIST SETUP";
     document.getElementById("heistnetworth").textContent = "HEIST REWARD: $" + heistReward + " MILLION";
@@ -183,6 +198,17 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
 
     var heistsetup = document.getElementById("heistsetup");
     heistsetup.style.display = "block";
+});
+
+connection.on("RoomOkay_Update", function (okayPlayerList) {
+    var playerList = document.getElementById("playerReadyList");
+    playerList.innerHTML = "";
+    var players = okayPlayerList.split("|");
+    for (let i = 0; i < players.length; i++) {
+        var li = document.createElement("li");
+        li.textContent = players[i];
+        playerList.appendChild(li);
+    }
 });
 
 // ----------------------------------
@@ -258,6 +284,7 @@ connection.start().catch(function (err) {
 connection.on("FreshConnection", function () {
     var sessionUserName = sessionStorage.getItem("username");
     var sessionRoomId = sessionStorage.getItem("roomid");
+    //reconnecting = false;
 
     if (sessionUserName != null && sessionRoomId != null) {
         // Resume the session
@@ -274,3 +301,25 @@ connection.on("ClearState", function () {
     sessionStorage.removeItem("username");
     sessionStorage.removeItem("roomid");
 })
+
+var conditionalReload = function () {
+    var sessionUserName = sessionStorage.getItem("username");
+    var sessionRoomId = sessionStorage.getItem("roomid");
+
+    if (sessionUserName != null && sessionRoomId != null) {
+        //reconnecting = true;
+        var elements = document.getElementsByClassName("state");
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.display = "none";
+        }
+
+        document.getElementById("pageName").textContent = "RECONNECTING...";
+        //setInterval(function () {
+        //    if (reconnecting === true) {
+        //        window.location.reload()
+        //    }
+        //}, 10000)
+    }
+}
+
+window.onload = conditionalReload;

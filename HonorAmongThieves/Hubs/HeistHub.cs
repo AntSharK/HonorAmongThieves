@@ -61,7 +61,13 @@ namespace HonorAmongThieves.Hubs
 
             player.Okay = true;
             await room.Okay(this);
+            await this.RoomOkay(room);
         }
+
+        //internal async Task OkayButton_Acknowledge()
+        //{
+        //    await Clients.Caller.SendAsync("OkayButton_Acknowledge");
+        //}
 
         public async Task CreateRoom(string userName)
         {
@@ -193,6 +199,7 @@ namespace HonorAmongThieves.Hubs
             room.StartGame(betrayalReward, maxGameLength, minGameLength, maxHeistSize, minHeistSize, snitchBlackmailWindow, networthFudgePercentage, blackmailRewardPercentage, jailFinePercentage);
             room.UpdatedTime = DateTime.UtcNow; // Only update the room when the players click something
 
+            await Clients.Group(room.Id).SendAsync("StartRoom_UpdateGameInfo", maxGameLength, minGameLength, snitchBlackmailWindow, blackmailRewardPercentage, jailFinePercentage);
             await this.StartRoom_UpdateState(room);
         }
 
@@ -220,6 +227,28 @@ namespace HonorAmongThieves.Hubs
             }
 
             await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, player.Room.CurrentYear /* + 2018*/, player.Name, player.MinJailSentence, player.MaxJailSentence, snitchingEvidence);
+        }
+
+        internal async Task RoomOkay(Room room)
+        {
+            var owner = room.Players[room.OwnerName];
+            var okayPlayerList = new StringBuilder();
+            foreach (var player in room.Players.Values)
+            {
+                okayPlayerList.Append(player.Name);
+                if (!player.Okay)
+                {
+                    okayPlayerList.Append(" - NOT OKAY");
+                }
+                okayPlayerList.Append("|");
+            }
+
+            if (okayPlayerList.Length > 0)
+            {
+                okayPlayerList.Length--;
+            }
+
+            await Clients.Client(owner.ConnectionId).SendAsync("RoomOkay_Update", okayPlayerList.ToString());
         }
 
         internal async Task StartRoom_UpdateState(Room room)
@@ -265,6 +294,8 @@ namespace HonorAmongThieves.Hubs
             {
                 await this.UpdateIdleStatus(player);
             }
+
+            await this.RoomOkay(room);
         }
 
         internal async Task UpdateIdleStatus(Player player, bool setOkayButton = true)

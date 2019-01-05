@@ -237,6 +237,7 @@ namespace HonorAmongThieves.Game
                 // If a player isn't okay, do nothing
                 if (!player.Okay)
                 {
+                    //await hub.OkayButton_Acknowledge();
                     return;
                 }
             }
