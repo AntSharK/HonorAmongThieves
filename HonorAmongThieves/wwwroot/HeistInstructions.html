@@ -13,39 +13,40 @@
         This fortune also paid for your 2 masters degrees in social work and fine art. Which might explain your job situation. <br />
         <br />
         <h3>OBJECTIVE</h3>
-        The objective of this game is to be the richest thief alive by the time you retire. <br />
-        The game begins in 2018 and lasts an arbitrary number of years. At the end, everyone retires together. <br />
-        The upper limit for the number of years the game lasts is set by the room creator. <br />
-        The lower limit for the number of years the game lasts is half of the upper limit (rounded down). <br />
+        The objective of this game is to be the richest thief by the time you retire. <br />
+        The range of years the game lasts is set by the room creator. <br />
+        The actual number of years the game lasts is a random number within that range. <br />
         <br />
         <h3>HEIST OCCURRENCE</h3>
         Every year, you will take part in a heist. <br />
         For everyone's security, your heist mates are chosen by an arbitrary third party. <br />
-        Each heist consists of 2 or more thieves (including you). The upper bound is set by the room creator. <br />
+        Each heist consists of 2 or more thieves (including you). <br />
         The reward for a heist increases the larger it is (i.e. more thieves equals more money per person). <br />
         In the lobby of every heist, you can see the amount of years each fellow thief has spent in jail, and their approximate networth. <br />
-        Note that this is only a very rough estimate of their real networth, which only they know. <br />
         <br />
         <h3>GOING ON HEISTS</h3>
         You will be given a choice of whether or not to take part in the heist. <br />
         If half (rounded up) or more of the thieves in the heist choose to take part, the heist will occur. <br />
         The total reward is always the same. So the fewer thieves who take part, the larger the reward per thief. <br />
-        If more than half of the thieves don't show up, the heist does not happen and no one earns anything for that year. <br />
+        If more than half of the thieves don't show up, the heist does not happen. <br />
         Regardless of whether the heist happens, all the thiefs that opt to take part will know of each other. <br />
+        Note that you can uncheck the box to not go on the heist.
         <br />
         <h3>SNITCHING</h3>
         You can also opt to snitch on the thieves in the same heist as you. <br />
         If you snitch on them, and the heist happens, then every single thief that went on the heist goes to jail, and you get reward money. <br />
         Snitching on a heist also means that the heist does not dish out any reward. <br />
-        If you snitch on them, and the heist doesn't happen, you get put in jail for one year. <br />
+        If you snitch on them, and the heist doesn't happen, you get put in jail and fined. <br />
         If multiple thieves snitch, the reward money is split between them. <br />
         Note that you can snitch on a heist you take part in. <br />
         Also note if you snitch on a heist, even if you don't go on it, you can still be blackmailed! <br />
+        Lastly, note that you can uncheck every box and go on no heists, nor snitch, that year. <br />
         <br />
         <h3>GOING TO JAIL</h3>
-        If you are sent to jail because you took part in a heist, your next jail sentence will be twice as long. <br />
-        If you are sent to jail because you snitched on a heist that did not happen, you will always be sentenced for only one year. Your sentence will not increase. <br />
-        If you are sent to jail on a heist that you snitched on, you will receive the minimum sentence. But your next sentence will still increase. <br />
+        Your jail sentence is a random number between your minimum and maximum jail terms. <br />
+        Going to jail will always increase your next jail sentence. <br />
+        Going to jail also makes you lose a portion of your money. <br />
+        Unless you went to jail because you reported on your own crime, in which case you don't lose money. And are only sentenced the minimum amount. <br />
         <br />
         <h3>COMMITTING BLACKMAIL</h3>
         You can also opt to blackmail a thief in the same heist as you. <br />
@@ -54,7 +55,8 @@
         In the event that the other thief has snitched on an earlier heist, or is snitching on the current heist, you blackmail him. <br />
         A thief that is blackmailed, if he chooses to snitch, will not successfully snitch. <br />
         Successfully blackmailing another thief will give you a large portion of his fortune. <br />
-        However, if you try to blackmail a thief who has never snitched on a heist that occurred, the other thiefs protect him, and you get thrown into jail. <br />
+        However, if you try to blackmail a thief who has never snitched on a heist that occurred, you get thrown into jail. <br />
+        If you're already in jail, your jail term will be extended. <br />
         Note that if the Snitch Blackmail Window is set to -1, that means that the window is permanent. <br />
         If multiple players successfully black a thief at the same time, the blackmail reward is split evenly. <br />
         <br />

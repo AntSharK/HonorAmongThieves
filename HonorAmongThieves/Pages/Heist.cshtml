@@ -1,11 +1,11 @@
 ﻿@page
 <div class="container">
-    <div id="pageName" class="display-2" style="text-decoration:underline; text-align:center">JOIN A GAME</div>
+    <div id="pageName" class="display-4" style="text-decoration:underline; text-align:center">JOIN A GAME</div>
     <div class="state" id="startLobby" style="display:none">
         <h3><u style="text-align:center">PLAYERS IN GAME</u></h3>
         <ul id="lobbyList" class="h4"></ul>
 
-        <div id="startButtonDiv" style="display:none" class="h4">
+        <div id="startButtonDiv" style="display:none" class="h5">
             At least 2 players are required to start the game.<br />
             Make sure there are no players who are in the lobby but cannot see the game!!.<br />
             <br />
@@ -16,10 +16,15 @@
                 <br />
                 <div class="display-4">
                     <u>GAME PARAMETERS</u><br />
-                    Betrayal Reward: <input type="number" step="1" min="0" value="60" id="betrayalreward" size="2" /><br />
-                    Max Game Length: <input type="number" step="1" min="3" value="10" id="maxgamelength" size="2" /><br />
-                    Max Heist Size: <input type="number" step="1" min="2" value="5" id="maxheistsize" size="2" /><br />
-                    Blackmail Window: <input type="number" step="1" min="-1" value="4" id="snitchblackmailwindow" size="2" /><br />
+                    Betrayal Reward: <input type="number" step="1" min="0" max="99999" value="60" id="betrayalreward" /><br />
+                    Min Game Length: <input type="number" step="1" min="1" max="999" value="5" id="mingamelength" /><br />
+                    Max Game Length: <input type="number" step="1" min="3" max="999" value="10" id="maxgamelength" /><br />
+                    Min Heist Size: <input type="number" step="1" min="2" max="99" value="3" id="minheistsize" /><br />
+                    Max Heist Size: <input type="number" step="1" min="2" max="99" value="5" id="maxheistsize" /><br />
+                    Blackmail Window: <input type="number" step="1" min="-1" max="99" value="4" id="snitchblackmailwindow" /><br />
+                    Blackmail Reward %: <input type="number" step="1" min="1" max="99" value="60" id="blackmailrewardpercentage" /><br />
+                    Networth Fudge %: <input type="number" step="1" min="0" max="99" value="10" id="networthfudgepercentage" /><br />
+                    Jail Fine %: <input type="number" step="1" min="0" max="99" value="20" id="jailfinepercentage" /><br />
                 </div>
             </div>
             <br />
@@ -28,18 +33,18 @@
     <div class="row">&nbsp;</div>
 
     <div class="state" id="joinroom">
-        <div class="display-3" style="text-align:center">
+        <div class="display-4" style="text-align:center">
             Name: <input type="text" id="username" maxlength="10" size="10" oninput="this.value = this.value.toUpperCase()" /><br />
             Room ID: <input type="text" id="roomid" maxlength="5" size="5" oninput="this.value = this.value.toUpperCase()" /><br /><br />
             <input type="button" class="display-1" id="joinroombutton" value="JOIN" />
         </div>
-        <h3>
+        <h4>
             <br />
             Names are unique per room.<br />
             Only letters and numbers allowed in username. Username cannot be longer than 10 letters.<br />
             You need a username to create a room.<br />
             Room ID is automatically generated when you create a room. <br />
-        </h3>
+        </h4>
     <hr />
         <div style="text-align:center" class="display-1">
             <input type="button" id="createroombutton" value="CREATE" />
@@ -53,14 +58,14 @@
                 <ul id="heistMemberList"></ul>
             </div>
             <div style="text-align:center">
-                <h2 id="heiststatusmessage"></h2><br />
+                <h4 id="heiststatusmessage"></h4><br />
                 <input type="button" id="okaybutton" value="OKAY" class="display-1" style="display: block; margin:0 auto;" />
             </div>
         </div>
 
         <div class="state" id="heistsetup" style="display:none">
-            <h1 id="heistnetworth"></h1>
-            <h1 id="snitchingreward"></h1>
+            <h2 id="heistnetworth"></h2>
+            <h2 id="snitchingreward"></h2>
             <br />
             <div style="text-align:center" class="h3">
                 <u>HEIST PARTICIPANTS</u>
@@ -74,15 +79,15 @@
             </div>
             <hr />
             <div class="display-4" style="text-align:center">
-                GO ON HEIST: <input type="checkbox" id="goforheistcheck" style="width:60px; height:60px" checked /> <br />
-                SNITCH TO POLICE: <input type="checkbox" id="snitchtopolicecheck" style="width:60px; height:60px" /> <br />
-                <input type="button" id="makedecision" value="DECIDE" class="display-3" />
+                TAKE PART: <input type="checkbox" id="goforheistcheck" style="width:60px; height:60px" checked /> <br />
+                SNITCH: <input type="checkbox" id="snitchtopolicecheck" style="width:60px; height:60px" /> <br />
+                <input type="button" id="makedecision" value="DECIDE" class="display-4" />
             </div>
             <hr />
             <br />
             <div class="display-4" style="text-align:center">
-                BLACKMAIL: <div id="blackmailselection"></div>
-                <input type="button" id="commitblackmail" value="BLACKMAIL" class="display-3" />
+                <div id="blackmailselection"></div> <h6><br /></h6>
+                <input type="button" id="commitblackmail" value="BLACKMAIL" class="display-4" />
             </div>
             <br />
         </div>
