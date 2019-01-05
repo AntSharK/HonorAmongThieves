@@ -309,6 +309,7 @@ namespace HonorAmongThieves.Hubs
                 case Player.Status.InJail:
                     var inJailMessage = TextGenerator.InJail;
                     await this.UpdateHeistStatus(player, inJailMessage.Item1, string.Format(inJailMessage.Item2, player.YearsLeftInJail), setOkayButton);
+                    await this.UpdateCurrentJail(player, player.Room.Players.Values);
                     break;
             }
         }
@@ -321,6 +322,56 @@ namespace HonorAmongThieves.Hubs
             }
 
             await Clients.Client(player.ConnectionId).SendAsync("UpdateHeistStatus", title, message, okayButton);
+        }
+
+        internal async Task UpdateCurrentJail(Player currentPlayer, IEnumerable<Player> players)
+        {
+            var currentJailNames = new StringBuilder();
+            foreach (var player in players.Where(p => p.CurrentStatus == Player.Status.InJail))
+            {
+                if (player.Name != currentPlayer.Name)
+                {
+                    currentJailNames.Append(player.Name);
+                    currentJailNames.Append("|");
+                }
+            }
+
+            if (currentJailNames.Length > 0)
+            {
+                currentJailNames.Length--;
+            }
+
+            await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateCurrentJail", currentJailNames.ToString());
+        }
+
+        internal async Task UpdateGlobalNews(Player currentPlayer, IEnumerable<Player> players, bool newToJail, bool heistUpdate)
+        {
+            var newToJailNames = new StringBuilder();
+            var outOfJailNames = new StringBuilder();
+            var heistUpdateNames = new StringBuilder();
+
+            foreach (var player in players)
+            {
+                if (player.Name != currentPlayer.Name)
+                {
+
+                    if (newToJail
+                        && player.Decision.DecisionMade
+                        && player.Decision.JailTerm > 0)
+                    {
+                        newToJailNames.Append(player.Name);
+                        newToJailNames.Append("|");
+                    }
+
+                    if (newToJail
+                        && !player.Decision.DecisionMade // Player was in jail
+                        && player.CurrentStatus == Player.Status.FindingHeist)
+                    {
+                        outOfJailNames.Append(player.Name);
+                        outOfJailNames.Append("|");
+                    }
+                }
+            }
         }
 
         internal async Task HeistPrep_ChangeState(Heist heist, bool sendToCaller = false)

@@ -200,6 +200,18 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
     heistsetup.style.display = "block";
 });
 
+
+connection.on("UpdateCurrentJail", function (jailPlayerList) {
+    var jailPlayers = document.getElementById("jailbuddies");
+    jailPlayers.innerHTML = "<u>YOUR FELLOW INMATES</u><br>";
+    var names = jailPlayerList.split("|");
+    for (let i = 0; i < names.length; i++) {
+        jailPlayers.innerHTML = jailPlayers.innerHTML + names[i] + "<br />";
+    }
+
+    jailPlayers.style.display = "block";
+});
+
 connection.on("RoomOkay_Update", function (okayPlayerList) {
     var playerList = document.getElementById("playerReadyList");
     playerList.innerHTML = "";

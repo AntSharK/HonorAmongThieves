@@ -163,6 +163,7 @@ namespace HonorAmongThieves.Game.Heist
                     {
                         var message = TextGenerator.FreeFromJail;
                         await hub.UpdateHeistStatus(this, message.Item1, message.Item2, setOkayButton);
+                        await hub.UpdateGlobalNews(this, this.Room.Players.Values, true /*NewToJail*/, false /*HeistUpdates*/);
                     }
                     else
                     {
@@ -174,6 +175,7 @@ namespace HonorAmongThieves.Game.Heist
                 case Player.Status.FindingHeist:
                     var vacationMessage = TextGenerator.VacationEnded;
                     await hub.UpdateHeistStatus(this, vacationMessage.Item1, vacationMessage.Item2, setOkayButton);
+                    await hub.UpdateGlobalNews(this, this.Room.Players.Values, true /*NewToJail*/, true /*HeistUpdates*/);
                     break;
 
                 case Player.Status.HeistDecisionMade:
