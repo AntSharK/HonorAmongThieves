@@ -303,7 +303,9 @@ namespace HonorAmongThieves.Hubs
             switch (player.CurrentStatus)
             {
                 case Player.Status.FindingHeist:
-                    var noResponseMessage = TextGenerator.NoHeists;
+                    var noResponseMessage = TextGenerator.NoHeists; // This means the player had no response - this is equivalent to making a decision to do nothing
+                    player.Decision.DecisionMade = true;
+                    player.Decision.GoOnHeist = false;
                     await this.UpdateHeistStatus(player, noResponseMessage.Item1, noResponseMessage.Item2, setOkayButton);
                     break;
                 case Player.Status.InJail:
@@ -354,7 +356,6 @@ namespace HonorAmongThieves.Hubs
             {
                 if (player.Name != currentPlayer.Name)
                 {
-
                     if (newToJail
                         && player.Decision.DecisionMade
                         && player.Decision.JailTerm > 0)
@@ -364,13 +365,41 @@ namespace HonorAmongThieves.Hubs
                     }
 
                     if (newToJail
-                        && !player.Decision.DecisionMade // Player was in jail
-                        && player.CurrentStatus == Player.Status.FindingHeist)
+                        && !player.Decision.DecisionMade) // The only way to not have made a decision is to be in jail)
                     {
-                        outOfJailNames.Append(player.Name);
-                        outOfJailNames.Append("|");
+                        if (player.CurrentStatus == Player.Status.FindingHeist
+                            || (player.YearsLeftInJail == 1 && !player.Okay))
+                        {
+                            outOfJailNames.Append(player.Name);
+                            outOfJailNames.Append("|");
+                        }
+                    }
+
+                    if (heistUpdate
+                        && player.Decision.DecisionMade
+                        && player.Decision.HeistReward > 0)
+                    {
+                        heistUpdateNames.Append(player.Name);
+                        heistUpdateNames.Append("|");
                     }
                 }
+
+                if (newToJailNames.Length > 0)
+                {
+                    newToJailNames.Length--;
+                }
+
+                if (outOfJailNames.Length > 0)
+                {
+                    outOfJailNames.Length--;
+                }
+
+                if (heistUpdateNames.Length > 0)
+                {
+                    heistUpdateNames.Length--;
+                }
+
+                await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateGlobalNews", newToJailNames.ToString(), outOfJailNames.ToString(), heistUpdateNames.ToString());
             }
         }
 

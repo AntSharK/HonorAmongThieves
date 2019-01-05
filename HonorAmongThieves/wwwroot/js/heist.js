@@ -212,6 +212,38 @@ connection.on("UpdateCurrentJail", function (jailPlayerList) {
     jailPlayers.style.display = "block";
 });
 
+connection.on("UpdateGlobalNews", function (newToJailList, outOfJailList, heistSuccessList) {
+    var newToJail = document.getElementById("newtojail");
+    var newToJailNames = newToJailList.split("|");
+    if (newToJailNames.length > 0 && newToJailNames[0].length > 0) {
+        newToJail.innerHTML = "<u>SENTENCED TO JAIL</u><br>";
+        newToJail.style.display = "block";
+    }
+    for (let i = 0; i < newToJailNames.length; i++) {
+        newToJail.innerHTML = newToJail.innerHTML + newToJailNames[i] + "<br />";
+    }
+
+    var outOfJail = document.getElementById("outofjail");
+    var outOfJailNames = outOfJailList.split("|");
+    if (outOfJailNames.length > 0 && outOfJailNames[0].length > 0) {
+        outOfJail.innerHTML = "<u>RELEASED FROM JAIL</u><br>";
+        outOfJail.style.display = "block";
+    }
+    for (let i = 0; i < outOfJailNames.length; i++) {
+        outOfJail.innerHTML = outOfJail.innerHTML + outOfJailNames[i] + "<br />";
+    }
+
+    var successfulHeisters = document.getElementById("successfulheisters");
+    var heistSuccessNames = heistSuccessList.split("|");
+    if (heistSuccessNames.length > 0 && heistSuccessNames[0].length > 0) {
+        successfulHeisters.innerHTML = "<u>SUCCESSFUL HEISTS THIS YEAR BY</u><br>";
+        successfulHeisters.style.display = "block";
+    }
+    for (let i = 0; i < heistSuccessNames.length; i++) {
+        successfulHeisters.innerHTML = successfulHeisters.innerHTML + heistSuccessNames[i] + "<br />";
+    }
+});
+
 connection.on("RoomOkay_Update", function (okayPlayerList) {
     var playerList = document.getElementById("playerReadyList");
     playerList.innerHTML = "";

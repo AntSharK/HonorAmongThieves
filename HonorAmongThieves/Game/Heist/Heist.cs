@@ -57,7 +57,6 @@ namespace HonorAmongThieves.Game.Heist
         {
             player.CurrentStatus = Player.Status.InHeist;
             player.CurrentHeist = this;
-            player.Decision = new Player.HeistDecision();
             player.Okay = false;
             player.ProjectedNetworth = player.NetWorth * Utils.Rng.Next(100 - this.NetworthFudgePercentage, 100 + this.NetworthFudgePercentage) / 100;
             this.Players[player.Name] = player;

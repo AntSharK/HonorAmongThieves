@@ -163,13 +163,14 @@ namespace HonorAmongThieves.Game.Heist
                     {
                         var message = TextGenerator.FreeFromJail;
                         await hub.UpdateHeistStatus(this, message.Item1, message.Item2, setOkayButton);
-                        await hub.UpdateGlobalNews(this, this.Room.Players.Values, true /*NewToJail*/, false /*HeistUpdates*/);
                     }
                     else
                     {
                         var message = TextGenerator.StillInJail;
                         await hub.UpdateHeistStatus(this, message.Item1, string.Format(message.Item2, this.YearsLeftInJail), setOkayButton);
                     }
+
+                    await hub.UpdateGlobalNews(this, this.Room.Players.Values, true /*NewToJail*/, false /*HeistUpdates*/);
                     break;
 
                 case Player.Status.FindingHeist:
@@ -183,6 +184,10 @@ namespace HonorAmongThieves.Game.Heist
                     if (this.Decision.GoOnHeist && this.Decision.FellowHeisters != null && this.Decision.FellowHeisters.Count > 0)
                     {
                         await hub.UpdateHeistMeetup(this, this.Decision.FellowHeisters);
+                    }
+                    else if (!this.Decision.GoOnHeist && !this.Decision.ReportPolice)
+                    {
+                        await hub.UpdateGlobalNews(this, this.Room.Players.Values, true /*NewToJail*/, true /*HeistUpdates*/);
                     }
 
                     if (!string.IsNullOrEmpty(this.Decision.FateSummary))
