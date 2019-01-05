@@ -401,6 +401,11 @@ namespace HonorAmongThieves.Hubs
             await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateHeistMeetup", playerNames.ToString());
         }
 
+        internal async Task UpdateHeistSummary(Player currentPlayer, string fateSummary)
+        {
+            await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateHeistSummary", fateSummary);
+        }
+
         internal async Task EndGame_Broadcast(Room room, bool sendToCaller = false)
         {
             var playerInfo = new StringBuilder();

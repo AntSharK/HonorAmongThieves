@@ -75,6 +75,7 @@ namespace HonorAmongThieves.Game.Heist
         public void GenerateFateMessage(bool heistHappens, bool policeReported)
         {
             ( this.Decision.FateTitle, this.Decision.FateDescription) = TextGenerator.GenerateFateMessage(heistHappens, policeReported, this.Decision);
+            this.Decision.FateSummary = TextGenerator.GenerateFateSummary(this.Decision);
         }
 
         public async Task ResumePlayerSession(HeistHub hub)
@@ -182,6 +183,11 @@ namespace HonorAmongThieves.Game.Heist
                         await hub.UpdateHeistMeetup(this, this.Decision.FellowHeisters);
                     }
 
+                    if (!string.IsNullOrEmpty(this.Decision.FateSummary))
+                    {
+                        await hub.UpdateHeistSummary(this, this.Decision.FateSummary);
+                    }
+
                     break;
             }
         }
@@ -224,6 +230,7 @@ namespace HonorAmongThieves.Game.Heist
             public List<Player> FellowHeisters { get; set; }
             public Status NextStatus { get; set; } = Status.FindingHeist;
             public string HeistSuccessMessage { get; set; }
+            public string FateSummary { get; set; }
 
             public bool? ExtortionSuccessful { get; set; } = null;
             public bool? WasExtortedFrom { get; set; } = null;

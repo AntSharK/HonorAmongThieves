@@ -234,13 +234,102 @@ namespace HonorAmongThieves.Game.Heist
                 }
             }
 
-            // TODO: Summary of everything, not just jail, can be clearer
             if (decision.JailTerm > 0)
             {
                 fateMessage = fateMessage + SentencedToJail(decision);
             }
 
+
             return Tuple.Create(fateTitle, fateMessage);
+        }
+
+        public static string GenerateFateSummary(Player.HeistDecision decision)
+        {
+            var fateSummary = new StringBuilder();
+            if (decision.JailTerm > 0)
+            {
+                fateSummary.Append(JailPenaltySummary(decision));
+                fateSummary.Append("|");
+                if (decision.JailFine > 0)
+                {
+                    fateSummary.Append(JailFineSummary(decision));
+                    fateSummary.Append("|");
+                }
+            }
+
+            if (decision.HeistReward > 0)
+            {
+                fateSummary.Append(HeistRewardSummary(decision));
+                fateSummary.Append("|");
+            }
+
+            if (decision.PlayerToBlackmail != null)
+            {
+                fateSummary.Append(BlackmailSummary(decision));
+                fateSummary.Append("|");
+            }
+
+            if (decision.WasExtortedFrom.HasValue)
+            {
+                fateSummary.Append(BlackmailDefenseSummary(decision));
+                fateSummary.Append("|");
+            }
+
+            if (fateSummary.Length > 0)
+            {
+                fateSummary.Length = fateSummary.Length - 1;
+            }
+
+            return fateSummary.ToString();
+        }
+
+        public static string JailPenaltySummary(Player.HeistDecision decision)
+        {
+            return $"JAIL SENTENCE: {decision.JailTerm} YEARS.";
+        }
+        public static string JailFineSummary(Player.HeistDecision decision)
+        {
+            return $"LAWYER FEES: ${decision.JailFine} MILLION.";
+        }
+
+        public static string HeistRewardSummary(Player.HeistDecision decision)
+        {
+            return $"SUCCESSFUL HEIST REWARD: ${decision.HeistReward} MILLION.";
+        }
+
+        public static string BlackmailSummary(Player.HeistDecision decision)
+        {
+            if (decision.ExtortionSuccessful.HasValue 
+                && decision.ExtortionSuccessful.Value)
+            {
+                return $"BLACKMAILED {decision.PlayerToBlackmail.Name} FOR: ${decision.BlackmailReward} MILLION.";
+            }
+            else if (decision.ExtortionSuccessful.HasValue
+                && !decision.ExtortionSuccessful.Value)
+            {
+                return $"FAILED TO BLACKMAIL {decision.PlayerToBlackmail.Name}.";
+            }
+            else
+            {
+                return $"COULD NOT FIND {decision.PlayerToBlackmail.Name}.";
+            }
+        }
+
+        public static string BlackmailDefenseSummary(Player.HeistDecision decision)
+        {
+            if (decision.WasExtortedFrom.HasValue
+                && decision.WasExtortedFrom.Value)
+            {
+                return $"BLACKMAILED BY {GetPlayerNames(decision.Blackmailers)} FOR: ${decision.Blackmailers[0].Decision.BlackmailReward} MILLION " +
+                    $"{(decision.Blackmailers.Count > 1 ? "EACH" : "")}";
+            }
+            else if (decision.WasExtortedFrom.HasValue
+                && !decision.WasExtortedFrom.Value)
+            {
+                return $"{GetPlayerNames(decision.Blackmailers)} FAILED TO BLACKMAIL YOU.";
+            }
+
+            return "";
         }
 
         public static Tuple<string, string> DecisionMessage(Player.HeistDecision decision)

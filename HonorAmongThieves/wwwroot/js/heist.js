@@ -245,6 +245,17 @@ connection.on("UpdateHeistMeetup", function (playersConcat) {
     document.getElementById("heistmembers").style.display = "block";
 });
 
+connection.on("UpdateHeistSummary", function (fateSummary) {
+    var heistSummary = document.getElementById("heistsummary");
+    heistSummary.innerHTML = "<u>SUMMARY</u><br>";
+    var fates = fateSummary.split("|");
+    for (let i = 0; i < fates.length; i++) {
+        heistSummary.innerHTML = heistSummary.innerHTML + fates[i] + "<br />";
+    }
+
+    heistSummary.style.display = "block";
+});
+
 // ------------------------------
 // ----- STATE: END OF GAME -----
 // ------------------------------
