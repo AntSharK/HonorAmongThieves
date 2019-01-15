@@ -1,10 +1,9 @@
-﻿using HonorAmongThieves.Hubs;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace HonorAmongThieves.Game.Heist
+namespace HonorAmongThieves.Heist.GameLogic
 {
     public class Lobby
     {
