@@ -57,6 +57,7 @@ namespace HonorAmongThieves.Game.Heist
             var eligiblePlayers = new List<Player>();
             foreach (var player in this.Players.Values)
             {
+                player.Decision = new Player.HeistDecision(); // Reset all decisions
                 if (player.CurrentStatus == Player.Status.FindingHeist)
                 {
                     eligiblePlayers.Add(player);

@@ -75,6 +75,7 @@ namespace HonorAmongThieves.Game.Heist
         public void GenerateFateMessage(bool heistHappens, bool policeReported)
         {
             ( this.Decision.FateTitle, this.Decision.FateDescription) = TextGenerator.GenerateFateMessage(heistHappens, policeReported, this.Decision);
+            this.Decision.FateSummary = TextGenerator.GenerateFateSummary(this.Decision);
         }
 
         public async Task ResumePlayerSession(HeistHub hub)
@@ -168,11 +169,14 @@ namespace HonorAmongThieves.Game.Heist
                         var message = TextGenerator.StillInJail;
                         await hub.UpdateHeistStatus(this, message.Item1, string.Format(message.Item2, this.YearsLeftInJail), setOkayButton);
                     }
+
+                    await hub.UpdateGlobalNews(this, this.Room.Players.Values, true /*NewToJail*/, false /*HeistUpdates*/);
                     break;
 
                 case Player.Status.FindingHeist:
                     var vacationMessage = TextGenerator.VacationEnded;
                     await hub.UpdateHeistStatus(this, vacationMessage.Item1, vacationMessage.Item2, setOkayButton);
+                    await hub.UpdateGlobalNews(this, this.Room.Players.Values, true /*NewToJail*/, true /*HeistUpdates*/);
                     break;
 
                 case Player.Status.HeistDecisionMade:
@@ -180,6 +184,15 @@ namespace HonorAmongThieves.Game.Heist
                     if (this.Decision.GoOnHeist && this.Decision.FellowHeisters != null && this.Decision.FellowHeisters.Count > 0)
                     {
                         await hub.UpdateHeistMeetup(this, this.Decision.FellowHeisters);
+                    }
+                    else if (!this.Decision.GoOnHeist && !this.Decision.ReportPolice)
+                    {
+                        await hub.UpdateGlobalNews(this, this.Room.Players.Values, true /*NewToJail*/, true /*HeistUpdates*/);
+                    }
+
+                    if (!string.IsNullOrEmpty(this.Decision.FateSummary))
+                    {
+                        await hub.UpdateHeistSummary(this, this.Decision.FateSummary);
                     }
 
                     break;
@@ -224,6 +237,7 @@ namespace HonorAmongThieves.Game.Heist
             public List<Player> FellowHeisters { get; set; }
             public Status NextStatus { get; set; } = Status.FindingHeist;
             public string HeistSuccessMessage { get; set; }
+            public string FateSummary { get; set; }
 
             public bool? ExtortionSuccessful { get; set; } = null;
             public bool? WasExtortedFrom { get; set; } = null;

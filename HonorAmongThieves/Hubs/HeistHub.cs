@@ -303,12 +303,15 @@ namespace HonorAmongThieves.Hubs
             switch (player.CurrentStatus)
             {
                 case Player.Status.FindingHeist:
-                    var noResponseMessage = TextGenerator.NoHeists;
+                    var noResponseMessage = TextGenerator.NoHeists; // This means the player had no response - this is equivalent to making a decision to do nothing
+                    player.Decision.DecisionMade = true;
+                    player.Decision.GoOnHeist = false;
                     await this.UpdateHeistStatus(player, noResponseMessage.Item1, noResponseMessage.Item2, setOkayButton);
                     break;
                 case Player.Status.InJail:
                     var inJailMessage = TextGenerator.InJail;
                     await this.UpdateHeistStatus(player, inJailMessage.Item1, string.Format(inJailMessage.Item2, player.YearsLeftInJail), setOkayButton);
+                    await this.UpdateCurrentJail(player, player.Room.Players.Values);
                     break;
             }
         }
@@ -321,6 +324,67 @@ namespace HonorAmongThieves.Hubs
             }
 
             await Clients.Client(player.ConnectionId).SendAsync("UpdateHeistStatus", title, message, okayButton);
+        }
+
+        internal async Task UpdateCurrentJail(Player currentPlayer, IEnumerable<Player> players)
+        {
+            var currentJailNames = new StringBuilder();
+            foreach (var player in players.Where(p => p.CurrentStatus == Player.Status.InJail))
+            {
+                if (player.Name != currentPlayer.Name)
+                {
+                    currentJailNames.Append(player.Name);
+                    currentJailNames.Append("|");
+                }
+            }
+
+            if (currentJailNames.Length > 0)
+            {
+                currentJailNames.Length--;
+            }
+
+            await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateCurrentJail", currentJailNames.ToString());
+        }
+
+        internal async Task UpdateGlobalNews(Player currentPlayer, IEnumerable<Player> players, bool newToJail, bool heistUpdate)
+        {
+            var newToJailNames = new StringBuilder();
+            var heistUpdateNames = new StringBuilder();
+
+            foreach (var player in players)
+            {
+                if (player.Name != currentPlayer.Name)
+                {
+                    if (newToJail
+                        && player.Decision.DecisionMade
+                        && player.Decision.JailTerm > 0)
+                    {
+                        newToJailNames.Append(player.Name);
+                        newToJailNames.Append("|");
+                    }
+
+                    if (heistUpdate
+                        && player.Decision.DecisionMade
+                        && player.Decision.HeistReward > 0
+                        && !player.Decision.ReportPolice)
+                    {
+                        heistUpdateNames.Append(player.Name);
+                        heistUpdateNames.Append("|");
+                    }
+                }
+            }
+
+            if (newToJailNames.Length > 0)
+            {
+                newToJailNames.Length--;
+            }
+
+            if (heistUpdateNames.Length > 0)
+            {
+                heistUpdateNames.Length--;
+            }
+
+            await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateGlobalNews", newToJailNames.ToString(), heistUpdateNames.ToString());
         }
 
         internal async Task HeistPrep_ChangeState(Heist heist, bool sendToCaller = false)
@@ -399,6 +463,11 @@ namespace HonorAmongThieves.Hubs
             }
 
             await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateHeistMeetup", playerNames.ToString());
+        }
+
+        internal async Task UpdateHeistSummary(Player currentPlayer, string fateSummary)
+        {
+            await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateHeistSummary", fateSummary);
         }
 
         internal async Task EndGame_Broadcast(Room room, bool sendToCaller = false)

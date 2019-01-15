@@ -200,6 +200,40 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
     heistsetup.style.display = "block";
 });
 
+
+connection.on("UpdateCurrentJail", function (jailPlayerList) {
+    var jailPlayers = document.getElementById("jailbuddies");
+    jailPlayers.innerHTML = "<u>YOUR FELLOW INMATES</u><br>";
+    var names = jailPlayerList.split("|");
+    for (let i = 0; i < names.length; i++) {
+        jailPlayers.innerHTML = jailPlayers.innerHTML + names[i] + "<br />";
+    }
+
+    jailPlayers.style.display = "block";
+});
+
+connection.on("UpdateGlobalNews", function (newToJailList, heistSuccessList) {
+    var newToJail = document.getElementById("newtojail");
+    var newToJailNames = newToJailList.split("|");
+    if (newToJailNames.length > 0 && newToJailNames[0].length > 0) {
+        newToJail.innerHTML = "<u>SENTENCED TO JAIL</u><br>";
+        newToJail.style.display = "block";
+    }
+    for (let i = 0; i < newToJailNames.length; i++) {
+        newToJail.innerHTML = newToJail.innerHTML + newToJailNames[i] + "<br />";
+    }
+
+    var successfulHeisters = document.getElementById("successfulheisters");
+    var heistSuccessNames = heistSuccessList.split("|");
+    if (heistSuccessNames.length > 0 && heistSuccessNames[0].length > 0) {
+        successfulHeisters.innerHTML = "<u>SUCCESSFUL HEISTS THIS YEAR BY</u><br>";
+        successfulHeisters.style.display = "block";
+    }
+    for (let i = 0; i < heistSuccessNames.length; i++) {
+        successfulHeisters.innerHTML = successfulHeisters.innerHTML + heistSuccessNames[i] + "<br />";
+    }
+});
+
 connection.on("RoomOkay_Update", function (okayPlayerList) {
     var playerList = document.getElementById("playerReadyList");
     playerList.innerHTML = "";
@@ -243,6 +277,17 @@ connection.on("UpdateHeistMeetup", function (playersConcat) {
     }
 
     document.getElementById("heistmembers").style.display = "block";
+});
+
+connection.on("UpdateHeistSummary", function (fateSummary) {
+    var heistSummary = document.getElementById("heistsummary");
+    heistSummary.innerHTML = "<u>SUMMARY</u><br>";
+    var fates = fateSummary.split("|");
+    for (let i = 0; i < fates.length; i++) {
+        heistSummary.innerHTML = heistSummary.innerHTML + fates[i] + "<br />";
+    }
+
+    heistSummary.style.display = "block";
 });
 
 // ------------------------------
