@@ -13,8 +13,6 @@ namespace HonorAmongThieves
 {
     public class Program
     {
-        public static Lobby Instance = new Lobby();
-
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
