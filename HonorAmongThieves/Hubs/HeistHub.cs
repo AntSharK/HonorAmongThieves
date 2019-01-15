@@ -10,6 +10,13 @@ namespace HonorAmongThieves.Hubs
 {
     public class HeistHub : Hub
     {
+        private readonly Game.Heist.Lobby lobby;
+
+        public HeistHub(Lobby lobby)
+        {
+            this.lobby = lobby;
+        }
+
         public override async Task OnConnectedAsync()
         {
             await Clients.Caller.SendAsync("FreshConnection");
@@ -71,7 +78,7 @@ namespace HonorAmongThieves.Hubs
 
         public async Task CreateRoom(string userName)
         {
-            var roomId = Game.Heist.Lobby.CreateRoom(this, userName);
+            var roomId = this.lobby.CreateRoom(this, userName);
             if (!string.IsNullOrEmpty(roomId))
             {
                 await this.JoinRoom(roomId, userName);
@@ -122,7 +129,7 @@ namespace HonorAmongThieves.Hubs
                 return;
             }
 
-            var createdPlayer = Game.Heist.Lobby.JoinRoom(userName, room, Context.ConnectionId);
+            var createdPlayer = this.lobby.JoinRoom(userName, room, Context.ConnectionId);
             if (createdPlayer != null)
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomId);

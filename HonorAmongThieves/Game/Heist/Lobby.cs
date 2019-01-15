@@ -12,17 +12,18 @@ namespace HonorAmongThieves.Game.Heist
 
         public static DateTime CreationTime { get; } = DateTime.UtcNow;
 
-        private const int CLEANUPINTERVAL = 1200;//00;
+        private const int MAXROOMIDLEMINUTES = 30;
+        private const int CLEANUPINTERVAL = 120000;
         private static Timer CleanupTimer = new Timer(Cleanup, null, CLEANUPINTERVAL, CLEANUPINTERVAL);
 
-        public IHubContext<HeistHub> hubContext;
+        private IHubContext<HeistHub> hubContext;
 
         public Lobby(IHubContext<HeistHub> hubContext)
         {
             this.hubContext = hubContext;
         }
 
-        public static string CreateRoom(HeistHub hub, string playerName)
+        public string CreateRoom(HeistHub hub, string playerName)
         {
             const int MAXLOBBYSIZE = 300;
             const int ROOMIDLENGTH = 5;
@@ -35,7 +36,7 @@ namespace HonorAmongThieves.Game.Heist
             var roomId = Utils.GenerateId(ROOMIDLENGTH, Rooms);
             if (Rooms.Values.Count < MAXLOBBYSIZE && !string.IsNullOrEmpty(roomId))
             {
-                var room = new Room(roomId, hub);
+                var room = new Room(roomId, hub, this.hubContext);
                 room.OwnerName = playerName;
                 Rooms[roomId] = room;
                 return roomId;
@@ -46,7 +47,7 @@ namespace HonorAmongThieves.Game.Heist
             }
         }
 
-        public static Player JoinRoom(string playerName, Room room, string connectionId)
+        public Player JoinRoom(string playerName, Room room, string connectionId)
         {
             if (!Utils.IsValidName(playerName))
             {
@@ -58,7 +59,6 @@ namespace HonorAmongThieves.Game.Heist
 
         public static void Cleanup(object state)
         {
-            const int MAXROOMIDLEMINUTES = 30;
             List<string> roomsToDestroy = new List<string>();
             foreach (var room in Rooms)
             {
