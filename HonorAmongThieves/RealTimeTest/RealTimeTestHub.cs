@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace HonorAmongThieves.RealTimeTest
@@ -23,6 +24,27 @@ namespace HonorAmongThieves.RealTimeTest
             this.room.Players[Context.ConnectionId] = player;
 
             await Clients.Caller.SendAsync("EstablishedConnection", player.ConnectionId, player.PosX, player.PosY);
+
+
+            var positions = new StringBuilder();
+            foreach (var existingPlayer in room.Players.Values)
+            {
+                positions.Append(existingPlayer.ConnectionId);
+                positions.Append('|');
+                positions.Append(existingPlayer.PosX);
+                positions.Append('|');
+                positions.Append(existingPlayer.PosY);
+                positions.Append(',');
+            }
+
+            if (positions.Length > 0)
+            {
+                positions.Length--;
+            }
+
+            await Clients.Caller.SendAsync("ExistingPlayers", positions.ToString());
+
+            await Clients.All.SendAsync("NewPlayer", player.ConnectionId, player.PosX, player.PosY);
             await base.OnConnectedAsync();
         }
 
