@@ -14,6 +14,25 @@ namespace HonorAmongThieves.RealTimeTest
             this.room = room;
         }
 
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            Player player;
+            if (!this.room.Players.TryGetValue(Context.ConnectionId, out player))
+            {
+                return;
+            }
+
+            this.room.Players.Remove(player.ConnectionId);
+            await Clients.All.SendAsync("Disconnect", player.ConnectionId);
+
+            if (this.room.Players.Count == 0)
+            {
+                this.room.GameTimer.Stop();
+            }
+
+            await base.OnDisconnectedAsync(exception);
+        }
+
         public override async Task OnConnectedAsync()
         {
             var player = new Player();
@@ -22,9 +41,12 @@ namespace HonorAmongThieves.RealTimeTest
             player.PosX = 400;
             player.PosY = 400;
             this.room.Players[Context.ConnectionId] = player;
+            if (this.room.Players.Count == 1)
+            {
+                this.room.GameTimer.Start();
+            }
 
             await Clients.Caller.SendAsync("EstablishedConnection", player.ConnectionId, player.PosX, player.PosY);
-
 
             var positions = new StringBuilder();
             foreach (var existingPlayer in room.Players.Values)

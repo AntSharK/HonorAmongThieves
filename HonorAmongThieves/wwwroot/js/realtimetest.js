@@ -63,6 +63,14 @@ connection.on("NewPlayer", function (connectionIdIn, posXIn, posYIn) {
     }
 });
 
+connection.on("Disconnect", function (connectionIdIn, posXIn, posYIn) {
+    if (connectionIdIn != connectionId) {
+        delete otherPlayersX[connectionIdIn];
+        delete otherPlayersY[connectionIdIn];
+        delete otherPlayersDX[connectionIdIn];
+        delete otherPlayersDY[connectionIdIn];
+    }
+});
 connection.on("UpdatePositions", function (parsedPositions) {
     var playersData = parsedPositions.split(",");
     for (let i = 0; i < playersData.length; i++) {
@@ -117,7 +125,7 @@ function draw() {
     posX = posX + dX;
     posY = posY + dY;
     ctx.strokeText("+", posX, posY);
-    var serverUpdateRate = 10;
+    var serverUpdateRate = 40;
 
     for (var connectionId in otherPlayersX) {
         ctx.strokeText("O", otherPlayersX[connectionId], otherPlayersY[connectionId]);

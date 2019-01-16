@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading;
+using System.Timers;
 
 namespace HonorAmongThieves.RealTimeTest
 {
     public class Room
     {
-        private Timer gameTimer;
+        public Timer GameTimer;
 
         private IHubContext<RealTimeTestHub> hubContext;
 
@@ -16,11 +16,22 @@ namespace HonorAmongThieves.RealTimeTest
         public Room(IHubContext<RealTimeTestHub> hubContext)
         {
             this.hubContext = hubContext;
-            this.gameTimer = new Timer(Broadcast, null, 100, 100);
+            this.GameTimer = new Timer(25)
+            {
+                AutoReset = true,
+                Enabled = false,
+            };
+
+            GameTimer.Elapsed += Broadcast;
         }
 
-        private async void Broadcast(object state)
+        private async void Broadcast(object sender, ElapsedEventArgs e)
         {
+            if (this.Players.Count == 0)
+            {
+                return;
+            }
+
             var positions = new StringBuilder();
             foreach (var player in this.Players.Values)
             {
