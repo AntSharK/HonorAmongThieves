@@ -31,6 +31,7 @@ namespace HonorAmongThieves
 
             services.AddSignalR();
             services.AddSingleton<Heist.GameLogic.Lobby>();
+            services.AddSingleton<RealTimeTest.Room>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +49,7 @@ namespace HonorAmongThieves
             app.UseSignalR(routes =>
             {
                 routes.MapHub<Heist.HeistHub>("/heistHub");
+                routes.MapHub<RealTimeTest.RealTimeTestHub>("/realTimeTestHub");
             });
 
             app.UseMvc();
