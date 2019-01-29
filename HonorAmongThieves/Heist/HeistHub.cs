@@ -56,6 +56,14 @@ namespace HonorAmongThieves.Heist
             await player.ResumePlayerSession(this);
         }
 
+        internal async Task ReconnectToActiveGame(Player player)
+        {
+            await Clients.Caller.SendAsync("JoinRoom_ChangeState", player.Room.Id, player.Name);
+            await Clients.Caller.SendAsync("JoinRoom_TakeOverSession", player.Room.Id, player.Name);
+            await player.Room.UpdateRoomInfo(player);
+            await this.RoomOkay(player.Room, true /*Only update the current caller*/);
+        }
+
         internal async Task ShowError(string errorMessage)
         {
             await Clients.Caller.SendAsync("ShowError", errorMessage);
@@ -70,11 +78,6 @@ namespace HonorAmongThieves.Heist
             await room.Okay(this);
             await this.RoomOkay(room);
         }
-
-        //internal async Task OkayButton_Acknowledge()
-        //{
-        //    await Clients.Caller.SendAsync("OkayButton_Acknowledge");
-        //}
 
         public async Task CreateRoom(string userName)
         {
@@ -134,6 +137,13 @@ namespace HonorAmongThieves.Heist
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
                 await this.JoinRoom_UpdateView(room, createdPlayer);
+            }
+            else if (!room.SigningUp
+                && room.Players.ContainsKey(userName))
+            {
+                // Take over the existing session
+                await this.ResumeSession(roomId, userName);
+                return;
             }
             else
             {
@@ -236,7 +246,7 @@ namespace HonorAmongThieves.Heist
             await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, player.Room.CurrentYear /* + 2018*/, player.Name, player.MinJailSentence, player.MaxJailSentence, snitchingEvidence);
         }
 
-        internal async Task RoomOkay(Room room)
+        internal async Task RoomOkay(Room room, bool updateCurrentCaller = false)
         {
             var owner = room.Players[room.OwnerName];
             var okayPlayerList = new StringBuilder();
@@ -255,7 +265,14 @@ namespace HonorAmongThieves.Heist
                 okayPlayerList.Length--;
             }
 
-            await Clients.Client(owner.ConnectionId).SendAsync("RoomOkay_Update", okayPlayerList.ToString());
+            if (!updateCurrentCaller)
+            {
+                await Clients.Group(room.Id).SendAsync("RoomOkay_Update", okayPlayerList.ToString());
+            }
+            else
+            {
+                await Clients.Caller.SendAsync("RoomOkay_Update", okayPlayerList.ToString());
+            }
         }
 
         internal async Task StartRoom_UpdateState(Room room)

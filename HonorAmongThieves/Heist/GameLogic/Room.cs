@@ -47,12 +47,26 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         private IHubContext<HeistHub> hubContext;
 
+        private int minGameLength;
+
+        private int maxGameLength;
+
         public Room(string id, HeistHub hub, IHubContext<HeistHub> hubContext)
         {
             this.Id = id;
             this.CreatedTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
             this.hubContext = hubContext;
+        }
+
+        public async Task UpdateRoomInfo(Player player)
+        {
+            await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateGameInfo", 
+                this.maxGameLength,
+                this.minGameLength,
+                this.SnitchBlackmailWindow, 
+                this.BlackmailRewardPercentage,
+                this.JailFinePercentage);
         }
 
         public void SpawnHeists()
@@ -143,6 +157,8 @@ namespace HonorAmongThieves.Heist.GameLogic
         {
             this.StartTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
+            this.minGameLength = minGameLength;
+            this.maxGameLength = maxGameLength;
 
             if (networthFudgePercentage > 0 && networthFudgePercentage < 99)
             {
