@@ -11,7 +11,7 @@ namespace HonorAmongThieves.Pages
         public void OnGet()
         {
             HeistLobbies = new List<Tuple<string, DateTime, DateTime, int, string>>();
-            foreach (var room in Program.Instance.Rooms.Values)
+            foreach (var room in Heist.GameLogic.Lobby.Rooms.Values)
             {
                 HeistLobbies.Add(Tuple.Create(room.Id, room.CreatedTime, room.UpdatedTime, room.Players.Count, room.SigningUp ? "SIGNING UP" : "STARTED"));
             }

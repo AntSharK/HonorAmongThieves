@@ -1,28 +1,25 @@
-﻿using HonorAmongThieves.Hubs;
+﻿using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
-using System.Timers;
+using System.Threading;
 
-namespace HonorAmongThieves.Game.Heist
+namespace HonorAmongThieves.Heist.GameLogic
 {
     public class Lobby
     {
-        public Dictionary<string, Room> Rooms { get; } = new Dictionary<string, Room>();
+        public static Dictionary<string, Room> Rooms { get; } = new Dictionary<string, Room>();
 
         public static DateTime CreationTime { get; } = DateTime.UtcNow;
 
-        public Timer Timer { get; private set; }
+        private const int MAXROOMIDLEMINUTES = 30;
+        private const int CLEANUPINTERVAL = 120000;
+        private static Timer CleanupTimer = new Timer(Cleanup, null, CLEANUPINTERVAL, CLEANUPINTERVAL);
 
-        public Lobby()
+        private IHubContext<HeistHub> hubContext;
+
+        public Lobby(IHubContext<HeistHub> hubContext)
         {
-            const int CLEANUPINTERVAL = 120000;
-            this.Timer = new Timer(CLEANUPINTERVAL)
-            {
-                Enabled = true,
-                AutoReset = true,
-            };
-
-            this.Timer.Elapsed += this.Cleanup;
+            this.hubContext = hubContext;
         }
 
         public string CreateRoom(HeistHub hub, string playerName)
@@ -35,12 +32,12 @@ namespace HonorAmongThieves.Game.Heist
                 return null;
             }
 
-            var roomId = Utils.GenerateId(ROOMIDLENGTH, this.Rooms);
+            var roomId = Utils.GenerateId(ROOMIDLENGTH, Rooms);
             if (Rooms.Values.Count < MAXLOBBYSIZE && !string.IsNullOrEmpty(roomId))
             {
-                var room = new Room(roomId, hub);
+                var room = new Room(roomId, hub, this.hubContext);
                 room.OwnerName = playerName;
-                this.Rooms[roomId] = room;
+                Rooms[roomId] = room;
                 return roomId;
             }
             else
@@ -59,11 +56,10 @@ namespace HonorAmongThieves.Game.Heist
             return room.CreatePlayer(playerName, connectionId);
         }
 
-        public void Cleanup(Object source, ElapsedEventArgs e)
+        public static void Cleanup(object state)
         {
-            const int MAXROOMIDLEMINUTES = 30;
             List<string> roomsToDestroy = new List<string>();
-            foreach (var room in this.Rooms)
+            foreach (var room in Rooms)
             {
                 if ((DateTime.UtcNow - room.Value.UpdatedTime).TotalMinutes > MAXROOMIDLEMINUTES)
                 {
@@ -73,8 +69,8 @@ namespace HonorAmongThieves.Game.Heist
 
             foreach (var roomId in roomsToDestroy)
             {
-                this.Rooms[roomId].Destroy();
-                this.Rooms.Remove(roomId);
+                Rooms[roomId].Destroy();
+                Rooms.Remove(roomId);
             }
         }
     }

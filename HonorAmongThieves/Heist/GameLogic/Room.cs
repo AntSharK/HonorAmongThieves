@@ -1,9 +1,9 @@
-﻿using HonorAmongThieves.Hubs;
+﻿using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace HonorAmongThieves.Game.Heist
+namespace HonorAmongThieves.Heist.GameLogic
 {
     public class Room
     {
@@ -45,11 +45,14 @@ namespace HonorAmongThieves.Game.Heist
 
         public Status CurrentStatus { get; set; } = Status.SettingUp;
 
-        public Room(string id, HeistHub hub)
+        private IHubContext<HeistHub> hubContext;
+
+        public Room(string id, HeistHub hub, IHubContext<HeistHub> hubContext)
         {
             this.Id = id;
             this.CreatedTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
+            this.hubContext = hubContext;
         }
 
         public void SpawnHeists()
