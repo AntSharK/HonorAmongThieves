@@ -92,6 +92,7 @@ namespace HonorAmongThieves.Heist.GameLogic
                 return;
             }
 
+            await hub.ReconnectToActiveGame(this);
             await hub.StartRoom_UpdatePlayer(this);
 
             if (this.Room.CurrentStatus == Room.Status.ResolvingHeists)

@@ -85,6 +85,11 @@ connection.on("JoinRoom_ChangeState", function (roomJoined, userJoined) {
     document.getElementById("startLobby").style.display = "block";    
 });
 
+connection.on("JoinRoom_TakeOverSession", function (roomJoined, userJoined) {
+    userName = userJoined;
+    roomId = roomJoined;
+})
+
 connection.on("JoinRoom_UpdateState", function (playersConcat, userJoined) {
     var playerList = document.getElementById("lobbyList");
     playerList.innerHTML = "";

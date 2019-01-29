@@ -56,6 +56,12 @@ namespace HonorAmongThieves.Heist
             await player.ResumePlayerSession(this);
         }
 
+        internal async Task ReconnectToActiveGame(Player player)
+        {
+            await Clients.Caller.SendAsync("JoinRoom_ChangeState", player.Room.Id, player.Name);
+            await Clients.Caller.SendAsync("JoinRoom_TakeOverSession", player.Room.Id, player.Name);
+        }
+
         internal async Task ShowError(string errorMessage)
         {
             await Clients.Caller.SendAsync("ShowError", errorMessage);
@@ -70,11 +76,6 @@ namespace HonorAmongThieves.Heist
             await room.Okay(this);
             await this.RoomOkay(room);
         }
-
-        //internal async Task OkayButton_Acknowledge()
-        //{
-        //    await Clients.Caller.SendAsync("OkayButton_Acknowledge");
-        //}
 
         public async Task CreateRoom(string userName)
         {
@@ -134,6 +135,13 @@ namespace HonorAmongThieves.Heist
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
                 await this.JoinRoom_UpdateView(room, createdPlayer);
+            }
+            else if (!room.SigningUp
+                && room.Players.ContainsKey(userName))
+            {
+                // Take over the existing session
+                await this.ResumeSession(roomId, userName);
+                return;
             }
             else
             {
