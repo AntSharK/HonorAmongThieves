@@ -256,7 +256,7 @@ connection.on("RoomOkay_Update", function (okayPlayerList) {
 
 document.getElementById("commitblackmail").addEventListener("click", function (event) {
     var victim = document.getElementById("commitblackmailselection").value;
-    connection.invoke("CommitBlackmail", roomId, userName, victim).catch(function (err) {
+    connection.invoke("MakeDecision", roomId, userName, true, false, victim).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
@@ -265,7 +265,7 @@ document.getElementById("commitblackmail").addEventListener("click", function (e
 document.getElementById("makedecision").addEventListener("click", function (event) {
     var turnUpToHeist = document.getElementById("goforheistcheck").checked;
     var snitchToPolice = document.getElementById("snitchtopolicecheck").checked;
-    connection.invoke("MakeDecision", roomId, userName, turnUpToHeist, snitchToPolice).catch(function (err) {
+    connection.invoke("MakeDecision", roomId, userName, turnUpToHeist, snitchToPolice, "").catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

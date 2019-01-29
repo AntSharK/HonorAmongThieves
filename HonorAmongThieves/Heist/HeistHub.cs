@@ -456,12 +456,21 @@ namespace HonorAmongThieves.Heist
             await this.OkayButton(roomId, blackmailerName);
         }
 
-        public async Task MakeDecision(string roomId, string playerName, bool turnUpToHeist, bool snitchToPolice)
+        public async Task MakeDecision(string roomId, string playerName, bool turnUpToHeist, bool snitchToPolice, string blackmailVictimName)
         {
             var room = Lobby.Rooms[roomId];
             var player = room.Players[playerName];
 
-            player.MakeDecision(turnUpToHeist, snitchToPolice);
+            if (!string.IsNullOrWhiteSpace(blackmailVictimName))
+            {
+                var victim = room.Players[blackmailVictimName];
+                player.BlackmailDecision(victim);
+            }
+            else
+            {
+                player.MakeDecision(turnUpToHeist, snitchToPolice);
+            }
+
             await this.HeistPrep_UpdateDecision(player);
             await this.OkayButton(roomId, playerName);
         }
