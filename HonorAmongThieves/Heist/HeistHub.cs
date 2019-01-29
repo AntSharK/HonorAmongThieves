@@ -61,6 +61,11 @@ namespace HonorAmongThieves.Heist
             await Clients.Caller.SendAsync("JoinRoom_ChangeState", player.Room.Id, player.Name);
             await Clients.Caller.SendAsync("JoinRoom_TakeOverSession", player.Room.Id, player.Name);
             await player.Room.UpdateRoomInfo(player);
+
+            if (player.Room.OwnerName == player.Name)
+            {
+                await this.RoomOkay(player.Room);
+            }
         }
 
         internal async Task ShowError(string errorMessage)
