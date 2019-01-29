@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HonorAmongThieves.Game.Heist
+namespace HonorAmongThieves.Heist.GameLogic
 {
     public static class TextGenerator
     {

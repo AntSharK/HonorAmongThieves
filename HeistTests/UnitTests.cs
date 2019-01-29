@@ -1,4 +1,4 @@
-﻿using HonorAmongThieves.Game.Heist;
+﻿using HonorAmongThieves.Heist.GameLogic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 

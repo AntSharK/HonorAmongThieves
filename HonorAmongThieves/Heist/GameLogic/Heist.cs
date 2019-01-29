@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HonorAmongThieves.Game.Heist
+namespace HonorAmongThieves.Heist.GameLogic
 {
     public class Heist
     {

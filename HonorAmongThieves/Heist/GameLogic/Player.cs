@@ -1,9 +1,8 @@
-﻿using HonorAmongThieves.Hubs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace HonorAmongThieves.Game.Heist
+namespace HonorAmongThieves.Heist.GameLogic
 {
     public class Player
     {
