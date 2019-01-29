@@ -294,7 +294,14 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         public static string HeistRewardSummary(Player.HeistDecision decision)
         {
-            return $"SUCCESSFUL HEIST REWARD: ${decision.HeistReward} MILLION.";
+            if (decision.ReportPolice)
+            {
+                return $"SNITCH REWARD: ${decision.HeistReward} MILLION.";
+            }
+            else
+            {
+                return $"SUCCESSFUL HEIST REWARD: ${decision.HeistReward} MILLION.";
+            }
         }
 
         public static string BlackmailSummary(Player.HeistDecision decision)
