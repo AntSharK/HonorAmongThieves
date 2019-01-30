@@ -181,6 +181,10 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
     var blackmailList = document.createElement("select");
     blackmailList.id = "commitblackmailselection";
 
+    var blankOption = document.createElement("option");
+    blankOption.textContent = "";
+    blackmailList.appendChild(blankOption);
+
     var playerList = document.getElementById("heistparticipants");
     var players = playerInfos.split("=");
     for (let i = 0; i < players.length; i++) {
@@ -198,7 +202,7 @@ connection.on("HeistPrep_ChangeState", function (playerInfos, heistReward, snitc
         }
     }
 
-    document.getElementById("blackmailselection").innerHTML = "";
+    document.getElementById("blackmailselection").innerHTML = "BLACKMAIL: ";
     document.getElementById("blackmailselection").appendChild(blackmailList);
 
     var heistsetup = document.getElementById("heistsetup");
@@ -254,22 +258,43 @@ connection.on("RoomOkay_Update", function (okayPlayerList) {
 // ----- STATE: HEIST DECISIONS -----
 // ----------------------------------
 
-document.getElementById("commitblackmail").addEventListener("click", function (event) {
+document.getElementById("makedecision").addEventListener("click", function (event) {
+    var turnUpToHeist = document.getElementById("goforheistcheck").checked;
+    var snitchToPolice = document.getElementById("snitchtopolicecheck").checked;
     var victim = document.getElementById("commitblackmailselection").value;
-    connection.invoke("CommitBlackmail", roomId, userName, victim).catch(function (err) {
+    connection.invoke("MakeDecision", roomId, userName, turnUpToHeist, snitchToPolice, victim).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
 });
 
-document.getElementById("makedecision").addEventListener("click", function (event) {
-    var turnUpToHeist = document.getElementById("goforheistcheck").checked;
+document.getElementById("goforheistcheck").addEventListener("change", function (event) {
+    updateBlackmailState();
+})
+
+document.getElementById("snitchtopolicecheck").addEventListener("change", function (event) {
+    updateBlackmailState();
+})
+
+var updateBlackmailState = function () {
+    var goOnHeist = document.getElementById("goforheistcheck").checked;
     var snitchToPolice = document.getElementById("snitchtopolicecheck").checked;
-    connection.invoke("MakeDecision", roomId, userName, turnUpToHeist, snitchToPolice).catch(function (err) {
-        return console.error(err.toString());
-    });
-    event.preventDefault();
-});
+
+    if (goOnHeist == true && snitchToPolice != true) {
+        document.getElementById("blackmailselection").style.display = "block";
+        document.getElementById("blackmaildisabled").style.display = "none";
+    }
+    else {
+        document.getElementById("blackmailselection").style.display = "none";
+        document.getElementById("blackmaildisabled").style.display = "block";
+        if (goOnHeist == false) {
+            document.getElementById("cannotblackmailmessage").innerText = "Must go on heist to Blackmail";
+        }
+        else if (snitchToPolice == true) {
+            document.getElementById("cannotblackmailmessage").innerText = "Cannot Blackmail when Snitching";
+        }
+    }
+}
 
 connection.on("UpdateHeistMeetup", function (playersConcat) {
     var playerList = document.getElementById("heistMemberList");

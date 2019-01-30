@@ -445,23 +445,23 @@ namespace HonorAmongThieves.Heist
             }
         }
 
-        public async Task CommitBlackmail(string roomId, string blackmailerName, string victimName)
-        {
-            var room = Lobby.Rooms[roomId];
-            var blackmailer = room.Players[blackmailerName];
-            var victim = room.Players[victimName];
-
-            blackmailer.BlackmailDecision(victim);
-            await this.HeistPrep_UpdateDecision(blackmailer);
-            await this.OkayButton(roomId, blackmailerName);
-        }
-
-        public async Task MakeDecision(string roomId, string playerName, bool turnUpToHeist, bool snitchToPolice)
+        public async Task MakeDecision(string roomId, string playerName, bool turnUpToHeist, bool snitchToPolice, string blackmailVictimName)
         {
             var room = Lobby.Rooms[roomId];
             var player = room.Players[playerName];
 
-            player.MakeDecision(turnUpToHeist, snitchToPolice);
+            if (!string.IsNullOrWhiteSpace(blackmailVictimName)
+                && turnUpToHeist
+                && !snitchToPolice)
+            {
+                var victim = room.Players[blackmailVictimName];
+                player.BlackmailDecision(victim);
+            }
+            else
+            {
+                player.MakeDecision(turnUpToHeist, snitchToPolice);
+            }
+
             await this.HeistPrep_UpdateDecision(player);
             await this.OkayButton(roomId, playerName);
         }
