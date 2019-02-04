@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Heist.GameLogic
 {
-    public class Room
+    public class HeistRoom
     {
-        public bool SigningUp { get; set; } = true;
+        public bool SettingUp { get; set; } = true;
 
         public string Id { get; private set; }
 
         public string OwnerName { get; set; }
 
-        public Dictionary<string, Player> Players { get; } = new Dictionary<string, Player>();
+        public Dictionary<string, HeistPlayer> Players { get; } = new Dictionary<string, HeistPlayer>();
 
         public DateTime StartTime { get; private set; }
 
@@ -51,7 +51,7 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         private int maxGameLength;
 
-        public Room(string id, HeistHub hub, IHubContext<HeistHub> hubContext)
+        public HeistRoom(string id, HeistHub hub, IHubContext<HeistHub> hubContext)
         {
             this.Id = id;
             this.CreatedTime = DateTime.UtcNow;
@@ -59,7 +59,7 @@ namespace HonorAmongThieves.Heist.GameLogic
             this.hubContext = hubContext;
         }
 
-        public async Task UpdateRoomInfo(Player player)
+        public async Task UpdateRoomInfo(HeistPlayer player)
         {
             await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateGameInfo", 
                 this.maxGameLength,
@@ -71,11 +71,11 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         public void SpawnHeists()
         {
-            var eligiblePlayers = new List<Player>();
+            var eligiblePlayers = new List<HeistPlayer>();
             foreach (var player in this.Players.Values)
             {
-                player.Decision = new Player.HeistDecision(); // Reset all decisions
-                if (player.CurrentStatus == Player.Status.FindingHeist)
+                player.Decision = new HeistPlayer.HeistDecision(); // Reset all decisions
+                if (player.CurrentStatus == HeistPlayer.Status.FindingHeist)
                 {
                     eligiblePlayers.Add(player);
                 }
@@ -135,7 +135,7 @@ namespace HonorAmongThieves.Heist.GameLogic
             }
         }
 
-        private Heist CreateHeist(List<Player> eligiblePlayers, int heistCapacity)
+        private Heist CreateHeist(List<HeistPlayer> eligiblePlayers, int heistCapacity)
         {
             var heistId = Utils.GenerateId(10, this.Heists);
 
@@ -197,10 +197,10 @@ namespace HonorAmongThieves.Heist.GameLogic
             }
 
             this.SnitchBlackmailWindow = snitchBlackmailWindow;
-            this.SigningUp = false;
+            this.SettingUp = false;
         }
 
-        public Player CreatePlayer(string playerName, string connectionId)
+        public HeistPlayer CreatePlayer(string playerName, string connectionId)
         {
             const int ROOMCAPACITY = 20;
             if (this.Players.Count >= ROOMCAPACITY)
@@ -208,7 +208,7 @@ namespace HonorAmongThieves.Heist.GameLogic
                 return null;
             }
 
-            if (!this.SigningUp)
+            if (!this.SettingUp)
             {
                 return null;
             }
@@ -218,7 +218,7 @@ namespace HonorAmongThieves.Heist.GameLogic
                 return null;
             }
 
-            var playerToAdd = new Player(playerName, this);
+            var playerToAdd = new HeistPlayer(playerName, this);
             playerToAdd.ConnectionId = connectionId;
             this.Players[playerName] = playerToAdd;
             this.UpdatedTime = DateTime.UtcNow;
@@ -226,7 +226,7 @@ namespace HonorAmongThieves.Heist.GameLogic
             return playerToAdd;
         }
 
-        public Player CreateBot()
+        public HeistPlayer CreateBot()
         {
             string[] BOTNAMES = { "SAMBOT", "ANNBOT", "RONBOT", "TIMBOT", "GEORGEBOT", "SARABOT", "GEORGEBOT" };
             var botName = BOTNAMES[Utils.Rng.Next(0, BOTNAMES.Length)];
@@ -245,7 +245,7 @@ namespace HonorAmongThieves.Heist.GameLogic
         {
             foreach (var player in this.Players.Values)
             {
-                player.CurrentStatus = Player.Status.CleaningUp;
+                player.CurrentStatus = HeistPlayer.Status.CleaningUp;
             }
         }
 

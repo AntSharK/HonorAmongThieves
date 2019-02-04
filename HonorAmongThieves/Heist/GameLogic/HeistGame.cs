@@ -5,9 +5,9 @@ using System.Threading;
 
 namespace HonorAmongThieves.Heist.GameLogic
 {
-    public class Lobby
+    public class HeistGame
     {
-        public static Dictionary<string, Room> Rooms { get; } = new Dictionary<string, Room>();
+        public static Dictionary<string, HeistRoom> Rooms { get; } = new Dictionary<string, HeistRoom>();
 
         public static DateTime CreationTime { get; } = DateTime.UtcNow;
 
@@ -17,7 +17,7 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         private IHubContext<HeistHub> hubContext;
 
-        public Lobby(IHubContext<HeistHub> hubContext)
+        public HeistGame(IHubContext<HeistHub> hubContext)
         {
             this.hubContext = hubContext;
         }
@@ -35,7 +35,7 @@ namespace HonorAmongThieves.Heist.GameLogic
             var roomId = Utils.GenerateId(ROOMIDLENGTH, Rooms);
             if (Rooms.Values.Count < MAXLOBBYSIZE && !string.IsNullOrEmpty(roomId))
             {
-                var room = new Room(roomId, hub, this.hubContext);
+                var room = new HeistRoom(roomId, hub, this.hubContext);
                 room.OwnerName = playerName;
                 Rooms[roomId] = room;
                 return roomId;
@@ -46,7 +46,7 @@ namespace HonorAmongThieves.Heist.GameLogic
             }
         }
 
-        public Player JoinRoom(string playerName, Room room, string connectionId)
+        public HeistPlayer JoinRoom(string playerName, HeistRoom room, string connectionId)
         {
             if (!Utils.IsValidName(playerName))
             {

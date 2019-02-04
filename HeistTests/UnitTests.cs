@@ -7,20 +7,20 @@ namespace HeistTests
     [TestClass]
     public class UnitTests
     {
-        private static Player harv;
-        private static Player chee;
-        private static Player ron;
-        private static Player yc;
-        private static Player sara;
+        private static HeistPlayer harv;
+        private static HeistPlayer chee;
+        private static HeistPlayer ron;
+        private static HeistPlayer yc;
+        private static HeistPlayer sara;
 
         [TestInitialize]
         public void Initialize()
         {
-            harv = new Player("HARVEY", null);
-            chee = new Player("CHEEHOW", null);
-            ron = new Player("RONWANG", null);
-            yc = new Player("YUCHENG", null);
-            sara = new Player("SARAH", null);
+            harv = new HeistPlayer("HARVEY", null);
+            chee = new HeistPlayer("CHEEHOW", null);
+            ron = new HeistPlayer("RONWANG", null);
+            yc = new HeistPlayer("YUCHENG", null);
+            sara = new HeistPlayer("SARAH", null);
         }
 
         [TestMethod]
@@ -47,9 +47,9 @@ namespace HeistTests
             Assert.AreEqual(cheeStarting + reward, chee.NetWorth);
             Assert.AreEqual(harvStarting + reward, harv.NetWorth);
 
-            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(chee.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(ron.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
         }
 
         [TestMethod]
@@ -71,8 +71,8 @@ namespace HeistTests
             Assert.AreEqual(cheeStarting, chee.NetWorth);
             Assert.AreEqual(harvStarting, harv.NetWorth);
 
-            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(chee.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
         }
 
         [TestMethod]
@@ -102,9 +102,9 @@ namespace HeistTests
             Assert.AreEqual(saraStarting + heist.TotalReward / 2 + sara.Decision.BlackmailReward, sara.NetWorth);
             Assert.AreEqual(harvStarting - chee.Decision.BlackmailReward * 2, harv.NetWorth);
 
-            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(chee.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
         }
 
         [TestMethod]
@@ -134,9 +134,9 @@ namespace HeistTests
             Assert.AreEqual(saraStarting + heist.TotalReward / 3 + sara.Decision.BlackmailReward, sara.NetWorth);
             Assert.AreEqual(harvStarting + heist.TotalReward / 3 - chee.Decision.BlackmailReward * 2, harv.NetWorth);
 
-            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(chee.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
         }
 
         [TestMethod]
@@ -165,9 +165,9 @@ namespace HeistTests
             Assert.AreEqual(saraStarting, sara.NetWorth);
             Assert.AreEqual(harvStarting, harv.NetWorth);
 
-            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(chee.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
         }
 
         [TestMethod]
@@ -197,9 +197,9 @@ namespace HeistTests
             Assert.AreEqual(saraStarting + reward, sara.NetWorth);
             Assert.AreEqual(harvStarting, harv.NetWorth);
 
-            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(chee.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
         }
 
         [TestMethod]
@@ -232,11 +232,11 @@ namespace HeistTests
             Assert.AreEqual(saraStarting + 5 /*SnitchReward / 2*/, sara.NetWorth);
             Assert.AreEqual(harvStarting + 5 /*SnitchReward / 2*/, harv.NetWorth);
 
-            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(chee.Decision.NextStatus, HeistPlayer.Status.InJail);
             Assert.AreEqual(chee.Decision.JailTerm, chee.YearsLeftInJail);
-            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(sara.Decision.NextStatus, HeistPlayer.Status.InJail);
             Assert.AreEqual(sara.Decision.JailTerm, sara.YearsLeftInJail);
-            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
         }
 
         [TestMethod]
@@ -269,10 +269,10 @@ namespace HeistTests
             Assert.AreEqual(saraStarting - sara.Decision.JailFine, sara.NetWorth);
             Assert.AreEqual(harvStarting - harv.Decision.JailFine, harv.NetWorth);
 
-            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(chee.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, HeistPlayer.Status.InJail);
             Assert.AreEqual(sara.Decision.JailTerm, sara.YearsLeftInJail);
-            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(harv.Decision.NextStatus, HeistPlayer.Status.InJail);
             Assert.AreEqual(harv.Decision.JailTerm, harv.YearsLeftInJail);
         }
 
@@ -308,13 +308,13 @@ namespace HeistTests
             Assert.IsTrue(chee.Decision.JailFine > 0);
             Assert.IsTrue(chee.Decision.JailTerm > 0);
             Assert.AreEqual(chee.Decision.JailTerm, chee.YearsLeftInJail);
-            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(chee.Decision.NextStatus, HeistPlayer.Status.InJail);
             Assert.AreEqual(startingGold - chee.Decision.JailFine, chee.NetWorth);
 
-            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(ron.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(yc.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
         }
 
         [TestMethod]
@@ -350,11 +350,11 @@ namespace HeistTests
             Assert.AreEqual(startingGold + chee.Decision.BlackmailReward, chee.NetWorth);
             Assert.AreEqual(startingGold - chee.Decision.BlackmailReward, yc.NetWorth);
 
-            Assert.AreEqual(chee.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(sara.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(harv.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(chee.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(sara.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(harv.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(ron.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(yc.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
         }
 
         [TestMethod]
@@ -379,12 +379,12 @@ namespace HeistTests
             this.VerifyNonBlankFate(heist);
 
             // Assert that ron has been sentenced twice
-            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(ron.Decision.NextStatus, HeistPlayer.Status.InJail);
             Assert.IsTrue(ron.Decision.JailTerm >= 4);
             Assert.IsTrue(ron.Decision.JailFine > 0);
             Assert.AreEqual(startingNetworth - ron.Decision.JailFine + 10 /*Snitch reward*/, ron.NetWorth);
 
-            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(yc.Decision.NextStatus, HeistPlayer.Status.InJail);
             Assert.AreEqual(startingNetworth - yc.Decision.JailFine, yc.NetWorth);
         }
 
@@ -410,13 +410,13 @@ namespace HeistTests
             this.VerifyNonBlankFate(heist);
 
             // Assert that ron has been sentenced twice
-            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(ron.Decision.NextStatus, HeistPlayer.Status.InJail);
             Assert.IsTrue(ron.Decision.JailTerm < 4);
             Assert.IsTrue(ron.Decision.JailFine == 0);
             Assert.IsTrue(ron.Decision.BlackmailReward > 0);
             Assert.AreEqual(startingNetworth + 10 /*Snitch reward*/ + ron.Decision.BlackmailReward, ron.NetWorth);
 
-            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(yc.Decision.NextStatus, HeistPlayer.Status.InJail);
             Assert.AreEqual(startingNetworth - yc.Decision.JailFine - ron.Decision.BlackmailReward, yc.NetWorth);
         }
 
@@ -436,12 +436,12 @@ namespace HeistTests
             heist.Resolve();
             this.VerifyNonBlankFate(heist);
 
-            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(ron.Decision.NextStatus, HeistPlayer.Status.InJail);
             Assert.AreEqual(ron.Decision.JailTerm, ron.YearsLeftInJail);
             Assert.IsTrue(ron.Decision.JailFine > 0);
             Assert.AreEqual(heist.TotalReward / 2, ron.Decision.HeistReward);
             Assert.AreEqual(startingNetworth + ron.Decision.HeistReward - ron.Decision.JailFine, ron.NetWorth);
-            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(yc.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
             Assert.AreEqual(startingNetworth + heist.TotalReward / 2, yc.NetWorth);
         }
 
@@ -466,10 +466,10 @@ namespace HeistTests
             heist.Resolve();
             this.VerifyNonBlankFate(heist);
 
-            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(ron.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
             Assert.AreEqual(heist.TotalReward / 5, ron.Decision.HeistReward);
             Assert.AreEqual(startingNetworth + ron.Decision.HeistReward + ron.Decision.BlackmailReward, ron.NetWorth);
-            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(yc.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
             Assert.AreEqual(startingNetworth + heist.TotalReward / 5 - ron.Decision.BlackmailReward, yc.NetWorth);
             var originalBlackmailRewardWithSuccessfulHeist = ron.Decision.BlackmailReward;
 
@@ -486,10 +486,10 @@ namespace HeistTests
             sara.Decision.GoOnHeist = false;
             harv.Decision.GoOnHeist = false;
 
-            ron.Decision = new Player.HeistDecision();
+            ron.Decision = new HeistPlayer.HeistDecision();
             ron.Decision.GoOnHeist = true;
             ron.Decision.PlayerToBlackmail = yc;
-            yc.Decision = new Player.HeistDecision();
+            yc.Decision = new HeistPlayer.HeistDecision();
             yc.Decision.GoOnHeist = true;
             yc.Decision.ReportPolice = false;
             yc.LastBetrayedYear = 5; // Within window of snitching
@@ -499,9 +499,9 @@ namespace HeistTests
             Assert.IsTrue(ron.Decision.BlackmailReward < originalBlackmailRewardWithSuccessfulHeist);
             this.VerifyNonBlankFate(heist);
             Assert.AreEqual(0, ron.Decision.HeistReward);
-            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(ron.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
             Assert.AreEqual(startingNetworth + ron.Decision.BlackmailReward, ron.NetWorth);
-            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(yc.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
             Assert.AreEqual(startingNetworth - ron.Decision.BlackmailReward, yc.NetWorth);
         }
 
@@ -526,8 +526,8 @@ namespace HeistTests
             heist.Resolve();
             this.VerifyNonBlankFate(heist);
 
-            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.FindingHeist);
-            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(ron.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
+            Assert.AreEqual(yc.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
             Assert.AreEqual(ron.NetWorth, yc.NetWorth); // Blackmails are resolved equally
             Assert.AreEqual(yc.NetWorth, chee.NetWorth);
         }
@@ -552,8 +552,8 @@ namespace HeistTests
             heist.Resolve();
             this.VerifyNonBlankFate(heist);
 
-            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.InJail);
-            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.FindingHeist);
+            Assert.AreEqual(ron.Decision.NextStatus, HeistPlayer.Status.InJail);
+            Assert.AreEqual(yc.Decision.NextStatus, HeistPlayer.Status.FindingHeist);
             Assert.IsTrue(yc.Decision.BlackmailReward > 0);
             Assert.AreEqual(startingNetworth + heist.TotalReward / 2 + yc.Decision.BlackmailReward, yc.NetWorth);
             Assert.IsTrue(ron.Decision.JailFine > 0);
@@ -581,8 +581,8 @@ namespace HeistTests
             heist.Resolve();
             this.VerifyNonBlankFate(heist);
 
-            Assert.AreEqual(ron.Decision.NextStatus, Player.Status.InJail);
-            Assert.AreEqual(yc.Decision.NextStatus, Player.Status.InJail);
+            Assert.AreEqual(ron.Decision.NextStatus, HeistPlayer.Status.InJail);
+            Assert.AreEqual(yc.Decision.NextStatus, HeistPlayer.Status.InJail);
             Assert.IsTrue(ron.Decision.JailFine > 0);
             Assert.AreEqual(startingNetworth + heist.TotalReward / 2 - ron.Decision.JailFine, ron.NetWorth);
             Assert.IsTrue(ron.Decision.JailTerm > 0);

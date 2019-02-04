@@ -9,7 +9,7 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         public string Id { get; private set; }
 
-        public Dictionary<string, Player> Players { get; private set; } = new Dictionary<string, Player>();
+        public Dictionary<string, HeistPlayer> Players { get; private set; } = new Dictionary<string, HeistPlayer>();
 
         public int SnitchReward { get; private set; } = 60;
 
@@ -53,9 +53,9 @@ namespace HonorAmongThieves.Heist.GameLogic
             this.Id = heistId;
         }
 
-        public void AddPlayer(Player player)
+        public void AddPlayer(HeistPlayer player)
         {
-            player.CurrentStatus = Player.Status.InHeist;
+            player.CurrentStatus = HeistPlayer.Status.InHeist;
             player.CurrentHeist = this;
             player.Okay = false;
             player.ProjectedNetworth = player.NetWorth * Utils.Rng.Next(100 - this.NetworthFudgePercentage, 100 + this.NetworthFudgePercentage) / 100;
@@ -64,7 +64,7 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         public void Resolve()
         {
-            var heisters = new List<Player>();
+            var heisters = new List<HeistPlayer>();
 
             // PASS 1: Compute resolution from blackmailing
             foreach (var player in this.Players.Values)
@@ -74,7 +74,7 @@ namespace HonorAmongThieves.Heist.GameLogic
                 {
                     if (victim.Decision.Blackmailers == null)
                     {
-                        victim.Decision.Blackmailers = new List<Player>();
+                        victim.Decision.Blackmailers = new List<HeistPlayer>();
                     }
 
                     victim.Decision.Blackmailers.Add(player);
@@ -125,7 +125,7 @@ namespace HonorAmongThieves.Heist.GameLogic
 
             // PASS 2: Compute who successfully snitched
             var heistHappens = heisters.Count >= (this.Players.Count + 1) / 2;
-            var successfulSnitchers = new List<Player>();
+            var successfulSnitchers = new List<HeistPlayer>();
             foreach (var player in this.Players.Values)
             {
                 if (player.Decision.ReportPolice
@@ -258,7 +258,7 @@ namespace HonorAmongThieves.Heist.GameLogic
                         player.NetWorth = player.NetWorth - jailFine;
                     }
 
-                    player.Decision.NextStatus = Player.Status.InJail;
+                    player.Decision.NextStatus = HeistPlayer.Status.InJail;
                     player.YearsLeftInJail = player.Decision.JailTerm;
                     player.MaxJailSentence = player.MaxJailSentence + 1;
                     player.MinJailSentence = (player.MaxJailSentence) / 2;

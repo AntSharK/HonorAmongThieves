@@ -10,9 +10,9 @@ namespace HonorAmongThieves.Heist
 {
     public class HeistHub : Hub
     {
-        private readonly Lobby lobby;
+        private readonly HeistGame lobby;
 
-        public HeistHub(Lobby lobby)
+        public HeistHub(HeistGame lobby)
         {
             this.lobby = lobby;
         }
@@ -33,15 +33,15 @@ namespace HonorAmongThieves.Heist
 
         public async Task ResumeSession(string roomId, string userName)
         {
-            Room room;
-            if (!Lobby.Rooms.TryGetValue(roomId, out room))
+            HeistRoom room;
+            if (!HeistGame.Rooms.TryGetValue(roomId, out room))
             {
                 await Clients.Caller.SendAsync("ClearState");
                 await this.ShowError("Cannot find Room ID.");
                 return;
             }
 
-            Player player;
+            HeistPlayer player;
             if (!room.Players.TryGetValue(userName, out player))
             {
                 await Clients.Caller.SendAsync("ClearState");
@@ -56,7 +56,7 @@ namespace HonorAmongThieves.Heist
             await player.ResumePlayerSession(this);
         }
 
-        internal async Task ReconnectToActiveGame(Player player)
+        internal async Task ReconnectToActiveGame(HeistPlayer player)
         {
             await Clients.Caller.SendAsync("JoinRoom_ChangeState", player.Room.Id, player.Name);
             await Clients.Caller.SendAsync("JoinRoom_TakeOverSession", player.Room.Id, player.Name);
@@ -71,7 +71,7 @@ namespace HonorAmongThieves.Heist
 
         public async Task OkayButton(string roomId, string playerName)
         {
-            var room = Lobby.Rooms[roomId];
+            var room = HeistGame.Rooms[roomId];
             var player = room.Players[playerName];
 
             player.Okay = true;
@@ -94,7 +94,7 @@ namespace HonorAmongThieves.Heist
                 }
                 else
                 {
-                    var numRooms = Lobby.Rooms.Count;
+                    var numRooms = HeistGame.Rooms.Count;
                     await this.ShowError("Unable to create room. Number of total rooms: " + numRooms);
                 }
             }
@@ -102,8 +102,8 @@ namespace HonorAmongThieves.Heist
 
         public async Task AddBot(string roomId)
         {
-            Room room;
-            if (!Lobby.Rooms.TryGetValue(roomId, out room))
+            HeistRoom room;
+            if (!HeistGame.Rooms.TryGetValue(roomId, out room))
             {
                 // Room does not exist
                 await this.ShowError("Room does not exist.");
@@ -124,8 +124,8 @@ namespace HonorAmongThieves.Heist
 
         public async Task JoinRoom(string roomId, string userName)
         {
-            Room room;
-            if (!Lobby.Rooms.TryGetValue(roomId, out room))
+            HeistRoom room;
+            if (!HeistGame.Rooms.TryGetValue(roomId, out room))
             {
                 // Room does not exist
                 await this.ShowError("Room does not exist.");
@@ -138,7 +138,7 @@ namespace HonorAmongThieves.Heist
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
                 await this.JoinRoom_UpdateView(room, createdPlayer);
             }
-            else if (!room.SigningUp
+            else if (!room.SettingUp
                 && room.Players.ContainsKey(userName))
             {
                 // Take over the existing session
@@ -152,7 +152,7 @@ namespace HonorAmongThieves.Heist
             }
         }
 
-        internal async Task JoinRoom_UpdateView(Room room, Player newPlayer)
+        internal async Task JoinRoom_UpdateView(HeistRoom room, HeistPlayer newPlayer)
         {
             await Clients.Group(room.Id).SendAsync("JoinRoom", room.Id, newPlayer.Name);
 
@@ -184,9 +184,9 @@ namespace HonorAmongThieves.Heist
         public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int minGameLength, int maxHeistSize, int minHeistSize, int snitchBlackmailWindow, int networthFudgePercentage, int blackmailRewardPercentage, int jailFinePercentage)
         {
             const int MINPLAYERCOUNT = 2;
-            Room room;
-            if (!Lobby.Rooms.TryGetValue(roomId, out room)
-                && room.SigningUp)
+            HeistRoom room;
+            if (!HeistGame.Rooms.TryGetValue(roomId, out room)
+                && room.SettingUp)
             {
                 await this.ShowError("This room has timed out! Please refresh the page.");
                 return;
@@ -211,7 +211,7 @@ namespace HonorAmongThieves.Heist
             await this.StartRoom_ChangeState(room, betrayalReward, maxGameLength, minGameLength, maxHeistSize, minHeistSize, snitchBlackmailWindow, networthFudgePercentage, blackmailRewardPercentage, jailFinePercentage);
         }
 
-        internal async Task StartRoom_ChangeState(Room room, int betrayalReward, int maxGameLength, int minGameLength, int maxHeistSize, int minHeistSize, int snitchBlackmailWindow, int networthFudgePercentage, int blackmailRewardPercentage, int jailFinePercentage)
+        internal async Task StartRoom_ChangeState(HeistRoom room, int betrayalReward, int maxGameLength, int minGameLength, int maxHeistSize, int minHeistSize, int snitchBlackmailWindow, int networthFudgePercentage, int blackmailRewardPercentage, int jailFinePercentage)
         {
             room.StartGame(betrayalReward, maxGameLength, minGameLength, maxHeistSize, minHeistSize, snitchBlackmailWindow, networthFudgePercentage, blackmailRewardPercentage, jailFinePercentage);
             room.UpdatedTime = DateTime.UtcNow; // Only update the room when the players click something
@@ -220,7 +220,7 @@ namespace HonorAmongThieves.Heist
             await this.StartRoom_UpdateState(room);
         }
 
-        internal async Task StartRoom_UpdatePlayer(Player player)
+        internal async Task StartRoom_UpdatePlayer(HeistPlayer player)
         {
             var snitchingEvidence = "NOT A SNITCH";
             if (player.LastBetrayedYear >= 0)
@@ -246,7 +246,7 @@ namespace HonorAmongThieves.Heist
             await Clients.Client(player.ConnectionId).SendAsync("StartRoom_UpdateState", player.NetWorth, player.Room.CurrentYear /* + 2018*/, player.Name, player.MinJailSentence, player.MaxJailSentence, snitchingEvidence);
         }
 
-        internal async Task RoomOkay(Room room, bool updateCurrentCaller = false)
+        internal async Task RoomOkay(HeistRoom room, bool updateCurrentCaller = false)
         {
             var owner = room.Players[room.OwnerName];
             var okayPlayerList = new StringBuilder();
@@ -275,13 +275,13 @@ namespace HonorAmongThieves.Heist
             }
         }
 
-        internal async Task StartRoom_UpdateState(Room room)
+        internal async Task StartRoom_UpdateState(HeistRoom room)
         {
             foreach (var player in room.Players.Values)
             {
-                if (player.CurrentStatus == Player.Status.WaitingForGameStart)
+                if (player.CurrentStatus == HeistPlayer.Status.WaitingForGameStart)
                 { 
-                    player.CurrentStatus = Player.Status.FindingHeist;
+                    player.CurrentStatus = HeistPlayer.Status.FindingHeist;
                 }
 
                 if (!player.IsBot)
@@ -290,7 +290,7 @@ namespace HonorAmongThieves.Heist
                 }
             }
 
-            room.SigningUp = false;
+            room.SettingUp = false;
             room.SpawnHeists();
             foreach (var heist in room.Heists.Values)
             {
@@ -322,17 +322,17 @@ namespace HonorAmongThieves.Heist
             await this.RoomOkay(room);
         }
 
-        internal async Task UpdateIdleStatus(Player player, bool setOkayButton = true)
+        internal async Task UpdateIdleStatus(HeistPlayer player, bool setOkayButton = true)
         {
             switch (player.CurrentStatus)
             {
-                case Player.Status.FindingHeist:
+                case HeistPlayer.Status.FindingHeist:
                     var noResponseMessage = TextGenerator.NoHeists; // This means the player had no response - this is equivalent to making a decision to do nothing
                     player.Decision.DecisionMade = true;
                     player.Decision.GoOnHeist = false;
                     await this.UpdateHeistStatus(player, noResponseMessage.Item1, noResponseMessage.Item2, setOkayButton);
                     break;
-                case Player.Status.InJail:
+                case HeistPlayer.Status.InJail:
                     var inJailMessage = TextGenerator.InJail;
                     await this.UpdateHeistStatus(player, inJailMessage.Item1, string.Format(inJailMessage.Item2, player.YearsLeftInJail), setOkayButton);
                     await this.UpdateCurrentJail(player, player.Room.Players.Values);
@@ -340,7 +340,7 @@ namespace HonorAmongThieves.Heist
             }
         }
 
-        internal async Task UpdateHeistStatus(Player player, string title, string message, bool okayButton = false)
+        internal async Task UpdateHeistStatus(HeistPlayer player, string title, string message, bool okayButton = false)
         {
             if (okayButton)
             {
@@ -350,10 +350,10 @@ namespace HonorAmongThieves.Heist
             await Clients.Client(player.ConnectionId).SendAsync("UpdateHeistStatus", title, message, okayButton);
         }
 
-        internal async Task UpdateCurrentJail(Player currentPlayer, IEnumerable<Player> players)
+        internal async Task UpdateCurrentJail(HeistPlayer currentPlayer, IEnumerable<HeistPlayer> players)
         {
             var currentJailNames = new StringBuilder();
-            foreach (var player in players.Where(p => p.CurrentStatus == Player.Status.InJail))
+            foreach (var player in players.Where(p => p.CurrentStatus == HeistPlayer.Status.InJail))
             {
                 if (player.Name != currentPlayer.Name)
                 {
@@ -370,7 +370,7 @@ namespace HonorAmongThieves.Heist
             await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateCurrentJail", currentJailNames.ToString());
         }
 
-        internal async Task UpdateGlobalNews(Player currentPlayer, IEnumerable<Player> players, bool newToJail, bool heistUpdate)
+        internal async Task UpdateGlobalNews(HeistPlayer currentPlayer, IEnumerable<HeistPlayer> players, bool newToJail, bool heistUpdate)
         {
             var newToJailNames = new StringBuilder();
             var heistUpdateNames = new StringBuilder();
@@ -447,7 +447,7 @@ namespace HonorAmongThieves.Heist
 
         public async Task MakeDecision(string roomId, string playerName, bool turnUpToHeist, bool snitchToPolice, string blackmailVictimName)
         {
-            var room = Lobby.Rooms[roomId];
+            var room = HeistGame.Rooms[roomId];
             var player = room.Players[playerName];
 
             if (!string.IsNullOrWhiteSpace(blackmailVictimName)
@@ -466,13 +466,13 @@ namespace HonorAmongThieves.Heist
             await this.OkayButton(roomId, playerName);
         }
 
-        internal async Task HeistPrep_UpdateDecision(Player player)
+        internal async Task HeistPrep_UpdateDecision(HeistPlayer player)
         {
             var heistDecisionMessage = TextGenerator.DecisionMessage(player.Decision);
             await this.UpdateHeistStatus(player, heistDecisionMessage.Item1, heistDecisionMessage.Item2);
         }
 
-        internal async Task UpdateHeistMeetup(Player currentPlayer, List<Player> FellowHeisters)
+        internal async Task UpdateHeistMeetup(HeistPlayer currentPlayer, List<HeistPlayer> FellowHeisters)
         {
             var playerNames = new StringBuilder();
             foreach (var player in FellowHeisters)
@@ -489,12 +489,12 @@ namespace HonorAmongThieves.Heist
             await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateHeistMeetup", playerNames.ToString());
         }
 
-        internal async Task UpdateHeistSummary(Player currentPlayer, string fateSummary)
+        internal async Task UpdateHeistSummary(HeistPlayer currentPlayer, string fateSummary)
         {
             await Clients.Client(currentPlayer.ConnectionId).SendAsync("UpdateHeistSummary", fateSummary);
         }
 
-        internal async Task EndGame_Broadcast(Room room, bool sendToCaller = false)
+        internal async Task EndGame_Broadcast(HeistRoom room, bool sendToCaller = false)
         {
             var playerInfo = new StringBuilder();
 

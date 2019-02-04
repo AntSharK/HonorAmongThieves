@@ -30,7 +30,7 @@ namespace HonorAmongThieves
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddSignalR();
-            services.AddSingleton<Heist.GameLogic.Lobby>();
+            services.AddSingleton<Heist.GameLogic.HeistGame>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
