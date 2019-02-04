@@ -34,7 +34,7 @@ namespace HonorAmongThieves.GameLogic
         /// <summary>
         /// The last time this room was updated
         /// </summary>
-        public DateTime UpdatedTime { get; private set; } = DateTime.UtcNow;
+        public DateTime UpdatedTime { get; protected set; } = DateTime.UtcNow;
 
         /// <summary>
         /// The hub context to send messages to the room

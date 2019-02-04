@@ -34,7 +34,7 @@ namespace HonorAmongThieves.Heist
         public async Task ResumeSession(string roomId, string userName)
         {
             HeistRoom room;
-            if (!HeistGame.Rooms.TryGetValue(roomId, out room))
+            if (!this.lobby.Rooms.TryGetValue(roomId, out room))
             {
                 await Clients.Caller.SendAsync("ClearState");
                 await this.ShowError("Cannot find Room ID.");
@@ -71,7 +71,7 @@ namespace HonorAmongThieves.Heist
 
         public async Task OkayButton(string roomId, string playerName)
         {
-            var room = HeistGame.Rooms[roomId];
+            var room = this.lobby.Rooms[roomId];
             var player = room.Players[playerName];
 
             player.Okay = true;
@@ -81,7 +81,7 @@ namespace HonorAmongThieves.Heist
 
         public async Task CreateRoom(string userName)
         {
-            var roomId = this.lobby.CreateRoom(this, userName);
+            var roomId = this.lobby.CreateRoom(userName);
             if (!string.IsNullOrEmpty(roomId))
             {
                 await this.JoinRoom(roomId, userName);
@@ -94,7 +94,7 @@ namespace HonorAmongThieves.Heist
                 }
                 else
                 {
-                    var numRooms = HeistGame.Rooms.Count;
+                    var numRooms = this.lobby.Rooms.Count;
                     await this.ShowError("Unable to create room. Number of total rooms: " + numRooms);
                 }
             }
@@ -103,7 +103,7 @@ namespace HonorAmongThieves.Heist
         public async Task AddBot(string roomId)
         {
             HeistRoom room;
-            if (!HeistGame.Rooms.TryGetValue(roomId, out room))
+            if (!this.lobby.Rooms.TryGetValue(roomId, out room))
             {
                 // Room does not exist
                 await this.ShowError("Room does not exist.");
@@ -125,7 +125,7 @@ namespace HonorAmongThieves.Heist
         public async Task JoinRoom(string roomId, string userName)
         {
             HeistRoom room;
-            if (!HeistGame.Rooms.TryGetValue(roomId, out room))
+            if (!this.lobby.Rooms.TryGetValue(roomId, out room))
             {
                 // Room does not exist
                 await this.ShowError("Room does not exist.");
@@ -185,7 +185,7 @@ namespace HonorAmongThieves.Heist
         {
             const int MINPLAYERCOUNT = 2;
             HeistRoom room;
-            if (!HeistGame.Rooms.TryGetValue(roomId, out room)
+            if (!this.lobby.Rooms.TryGetValue(roomId, out room)
                 && room.SettingUp)
             {
                 await this.ShowError("This room has timed out! Please refresh the page.");
@@ -214,8 +214,6 @@ namespace HonorAmongThieves.Heist
         internal async Task StartRoom_ChangeState(HeistRoom room, int betrayalReward, int maxGameLength, int minGameLength, int maxHeistSize, int minHeistSize, int snitchBlackmailWindow, int networthFudgePercentage, int blackmailRewardPercentage, int jailFinePercentage)
         {
             room.StartGame(betrayalReward, maxGameLength, minGameLength, maxHeistSize, minHeistSize, snitchBlackmailWindow, networthFudgePercentage, blackmailRewardPercentage, jailFinePercentage);
-            room.UpdatedTime = DateTime.UtcNow; // Only update the room when the players click something
-
             await Clients.Group(room.Id).SendAsync("StartRoom_UpdateGameInfo", maxGameLength, minGameLength, snitchBlackmailWindow, blackmailRewardPercentage, jailFinePercentage);
             await this.StartRoom_UpdateState(room);
         }
@@ -447,7 +445,7 @@ namespace HonorAmongThieves.Heist
 
         public async Task MakeDecision(string roomId, string playerName, bool turnUpToHeist, bool snitchToPolice, string blackmailVictimName)
         {
-            var room = HeistGame.Rooms[roomId];
+            var room = this.lobby.Rooms[roomId];
             var player = room.Players[playerName];
 
             if (!string.IsNullOrWhiteSpace(blackmailVictimName)

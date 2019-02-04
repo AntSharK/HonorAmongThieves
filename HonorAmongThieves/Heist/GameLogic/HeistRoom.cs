@@ -1,26 +1,13 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using HonorAmongThieves.GameLogic;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Heist.GameLogic
 {
-    public class HeistRoom
+    public class HeistRoom : Room<HeistPlayer, HeistHub>
     {
-        public bool SettingUp { get; set; } = true;
-
-        public string Id { get; private set; }
-
-        public string OwnerName { get; set; }
-
-        public Dictionary<string, HeistPlayer> Players { get; } = new Dictionary<string, HeistPlayer>();
-
-        public DateTime StartTime { get; private set; }
-
-        public DateTime CreatedTime { get; private set; }
-
-        public DateTime UpdatedTime { get; set; }
-
         public int CurrentYear { get; set; } = 0;
 
         public int MaxYears { get; private set; } = Utils.Rng.Next(5, 10);
@@ -51,12 +38,12 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         private int maxGameLength;
 
-        public HeistRoom(string id, HeistHub hub, IHubContext<HeistHub> hubContext)
+        public HeistRoom(string id,IHubContext<HeistHub> hubContext)
+            : base(id, hubContext) { }
+
+        protected override HeistPlayer InstantiatePlayer(string playerName)
         {
-            this.Id = id;
-            this.CreatedTime = DateTime.UtcNow;
-            this.UpdatedTime = DateTime.UtcNow;
-            this.hubContext = hubContext;
+            return new HeistPlayer(playerName, this);
         }
 
         public async Task UpdateRoomInfo(HeistPlayer player)
@@ -155,7 +142,6 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         public void StartGame(int betrayalReward, int maxGameLength, int minGameLength, int maxHeistSize, int minHeistSize, int snitchBlackmailWindow, int networthFudgePercentage, int blackmailRewardPercentage, int jailFinePercentage)
         {
-            this.StartTime = DateTime.UtcNow;
             this.UpdatedTime = DateTime.UtcNow;
             this.minGameLength = minGameLength;
             this.maxGameLength = maxGameLength;
@@ -200,32 +186,6 @@ namespace HonorAmongThieves.Heist.GameLogic
             this.SettingUp = false;
         }
 
-        public HeistPlayer CreatePlayer(string playerName, string connectionId)
-        {
-            const int ROOMCAPACITY = 20;
-            if (this.Players.Count >= ROOMCAPACITY)
-            {
-                return null;
-            }
-
-            if (!this.SettingUp)
-            {
-                return null;
-            }
-
-            if (this.Players.ContainsKey(playerName))
-            {
-                return null;
-            }
-
-            var playerToAdd = new HeistPlayer(playerName, this);
-            playerToAdd.ConnectionId = connectionId;
-            this.Players[playerName] = playerToAdd;
-            this.UpdatedTime = DateTime.UtcNow;
-
-            return playerToAdd;
-        }
-
         public HeistPlayer CreateBot()
         {
             string[] BOTNAMES = { "SAMBOT", "ANNBOT", "RONBOT", "TIMBOT", "GEORGEBOT", "SARABOT", "GEORGEBOT" };
@@ -241,7 +201,7 @@ namespace HonorAmongThieves.Heist.GameLogic
             return bot;
         }
 
-        public void Destroy()
+        public override void Destroy()
         {
             foreach (var player in this.Players.Values)
             {

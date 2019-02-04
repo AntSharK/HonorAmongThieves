@@ -40,8 +40,8 @@ namespace HonorAmongThieves.Heist.GameLogic
         public Heist CurrentHeist;
 
         public HeistPlayer(string name, HeistRoom room)
+            : base(name)
         {
-            this.Name = name;
             this.Room = room;
             this.CurrentStatus = Status.WaitingForGameStart;
             this.LastUpdate = DateTime.UtcNow;
