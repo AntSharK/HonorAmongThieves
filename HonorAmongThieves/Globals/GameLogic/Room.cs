@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace HonorAmongThieves.GameLogic
+namespace HonorAmongThieves
 {
     /// <summary>
     /// An instance of a game

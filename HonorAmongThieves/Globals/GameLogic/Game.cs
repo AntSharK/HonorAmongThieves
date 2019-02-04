@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace HonorAmongThieves.GameLogic
+namespace HonorAmongThieves
 {
     /// <summary>
     /// Class representing a single game lobby

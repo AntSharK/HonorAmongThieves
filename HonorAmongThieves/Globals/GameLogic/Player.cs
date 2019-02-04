@@ -1,4 +1,4 @@
-﻿namespace HonorAmongThieves.GameLogic
+﻿namespace HonorAmongThieves
 {
     /// <summary>
     /// Class representing a player
