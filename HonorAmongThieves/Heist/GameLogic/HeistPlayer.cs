@@ -4,11 +4,9 @@ using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Heist.GameLogic
 {
-    public class Player
+    public class HeistPlayer : Player
     {
-        public Room Room { get; set; }
-
-        public string Name { get; private set; }
+        public HeistRoom Room { get; set; }
 
         public int NetWorth { get; set; } = 50;
 
@@ -32,8 +30,6 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         public DateTime LastUpdate { get; private set; }
 
-        public string ConnectionId { get; set; }
-
         public HeistDecision Decision { get; set; } = new HeistDecision();
 
         public bool Okay { get; set; } = true;
@@ -42,15 +38,15 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         public Heist CurrentHeist;
 
-        public Player(string name, Room room)
+        public HeistPlayer(string name, HeistRoom room)
+            : base(name)
         {
-            this.Name = name;
             this.Room = room;
             this.CurrentStatus = Status.WaitingForGameStart;
             this.LastUpdate = DateTime.UtcNow;
         }
 
-        public void BlackmailDecision(Player victim)
+        public void BlackmailDecision(HeistPlayer victim)
         {
             this.Decision.DecisionMade = true;
             this.Decision.GoOnHeist = true;
@@ -79,7 +75,7 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         public async Task ResumePlayerSession(HeistHub hub)
         {
-            if (this.Room.SigningUp)
+            if (this.Room.SettingUp)
             {
                 await hub.JoinRoom_UpdateView(this.Room, this);
                 return;
@@ -95,14 +91,14 @@ namespace HonorAmongThieves.Heist.GameLogic
             await hub.ReconnectToActiveGame(this);
             await hub.StartRoom_UpdatePlayer(this);
 
-            if (this.Room.CurrentStatus == Room.Status.ResolvingHeists)
+            if (this.Room.CurrentStatus == HeistRoom.Status.ResolvingHeists)
             {
                 await this.UpdateFateView(hub, !this.Okay /*Don't set the OKAY button if it has already been pressed*/);
                 return;
             }
 
-            if (this.Room.CurrentStatus == Room.Status.AwaitingHeistDecisions
-                || this.Room.CurrentStatus == Room.Status.NoHeists)
+            if (this.Room.CurrentStatus == HeistRoom.Status.AwaitingHeistDecisions
+                || this.Room.CurrentStatus == HeistRoom.Status.NoHeists)
             {
                 switch (this.CurrentStatus)
                 {
@@ -130,19 +126,19 @@ namespace HonorAmongThieves.Heist.GameLogic
             this.PreviousStatus = this.CurrentStatus;
             switch (this.CurrentStatus)
             {
-                case Player.Status.InJail:
+                case HeistPlayer.Status.InJail:
                     this.YearsLeftInJail--;
                     this.TimeSpentInJail++;
                     if (this.YearsLeftInJail <= 0)
                     {
-                        this.CurrentStatus = Player.Status.FindingHeist;
+                        this.CurrentStatus = HeistPlayer.Status.FindingHeist;
                     }
                     break;
 
-                case Player.Status.FindingHeist:
+                case HeistPlayer.Status.FindingHeist:
                     break;
 
-                case Player.Status.HeistDecisionMade:
+                case HeistPlayer.Status.HeistDecisionMade:
                     this.CurrentStatus = this.Decision.NextStatus;
                     break;
             }
@@ -158,7 +154,7 @@ namespace HonorAmongThieves.Heist.GameLogic
             // Update idle people with some more information
             switch (this.PreviousStatus)
             {
-                case Player.Status.InJail:
+                case HeistPlayer.Status.InJail:
                     if (this.YearsLeftInJail <= 0)
                     {
                         var message = TextGenerator.FreeFromJail;
@@ -173,13 +169,13 @@ namespace HonorAmongThieves.Heist.GameLogic
                     await hub.UpdateGlobalNews(this, this.Room.Players.Values, true /*NewToJail*/, false /*HeistUpdates*/);
                     break;
 
-                case Player.Status.FindingHeist:
+                case HeistPlayer.Status.FindingHeist:
                     var vacationMessage = TextGenerator.VacationEnded;
                     await hub.UpdateHeistStatus(this, vacationMessage.Item1, vacationMessage.Item2, setOkayButton);
                     await hub.UpdateGlobalNews(this, this.Room.Players.Values, true /*NewToJail*/, true /*HeistUpdates*/);
                     break;
 
-                case Player.Status.HeistDecisionMade:
+                case HeistPlayer.Status.HeistDecisionMade:
                     await hub.UpdateHeistStatus(this, this.Decision.FateTitle, this.Decision.FateDescription, setOkayButton);
                     if (this.Decision.GoOnHeist && this.Decision.FellowHeisters != null && this.Decision.FellowHeisters.Count > 0)
                     {
@@ -228,13 +224,13 @@ namespace HonorAmongThieves.Heist.GameLogic
             public bool DecisionMade { get; set; } = false;
             public bool GoOnHeist { get; set; } = true;
             public bool ReportPolice { get; set; } = false;
-            public Player PlayerToBlackmail { get; set; } = null;
+            public HeistPlayer PlayerToBlackmail { get; set; } = null;
 
             // For decision resolution
             public string FateTitle { get; set; } = "";
             public string FateDescription { get; set; } = "";
-            public List<Player> Blackmailers { get; set; }
-            public List<Player> FellowHeisters { get; set; }
+            public List<HeistPlayer> Blackmailers { get; set; }
+            public List<HeistPlayer> FellowHeisters { get; set; }
             public Status NextStatus { get; set; } = Status.FindingHeist;
             public string HeistSuccessMessage { get; set; }
             public string FateSummary { get; set; }
