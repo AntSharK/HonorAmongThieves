@@ -31,8 +31,6 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         public Status CurrentStatus { get; set; } = Status.SettingUp;
 
-        private IHubContext<HeistHub> hubContext;
-
         private int minGameLength;
 
         private int maxGameLength;

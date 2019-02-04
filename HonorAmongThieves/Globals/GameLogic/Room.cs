@@ -39,7 +39,7 @@ namespace HonorAmongThieves
         /// <summary>
         /// The hub context to send messages to the room
         /// </summary>
-        private IHubContext<HubType> hubContext;
+        protected IHubContext<HubType> hubContext;
 
         /// <summary>
         /// Creates an instance of this room
