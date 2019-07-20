@@ -1,16 +1,55 @@
 ﻿"use strict";
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/cakeryHub").build();
+var userName;
+var roomId;
+
+// -------------------------
+// ----- STATE: CONNECTING -
+// -------------------------
+connection.on("ShowError", function (errorMessage) {
+    window.alert(errorMessage);
+});
+
+connection.on("FreshConnection", function () {
+    var sessionUserName = sessionStorage.getItem("username");
+    var sessionRoomId = sessionStorage.getItem("roomid");
+
+    if (sessionUserName != null && sessionRoomId != null) {
+        // Resume the session
+        userName = sessionUserName;
+        roomId = sessionRoomId;
+
+        connection.invoke("ResumeSession", roomId, userName).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+});
+
+connection.on("ClearState", function () {
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("roomid");
+})
+
+var conditionalReload = function () {
+    var sessionUserName = sessionStorage.getItem("username");
+    var sessionRoomId = sessionStorage.getItem("roomid");
+
+    if (sessionUserName != null && sessionRoomId != null) {
+        var elements = document.getElementsByClassName("state");
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.display = "none";
+        }
+
+        document.getElementById("pageName").textContent = "RECONNECTING...";
+    }
+}
+
 connection.start().catch(function (err) {
     return console.error(err.toString());
 });
 
-var userName;
-var roomId;
-
-connection.on("ShowError", function (errorMessage) {
-    window.alert(errorMessage);
-});
+window.onload = conditionalReload;
 
 // -------------------------
 // ----- STATE: LOBBY ------
@@ -25,7 +64,7 @@ document.getElementById("createroombutton").addEventListener("click", function (
 });
 
 // ---------------------------
-// ----- STATE: PRE-GAME -----
+// ----- STATE: GAME SETUP ---
 // ---------------------------
 connection.on("JoinRoom_ChangeState", function (roomJoined, userJoined) {
     // Hide the start button by default
@@ -49,11 +88,13 @@ connection.on("JoinRoom_ChangeState", function (roomJoined, userJoined) {
     document.getElementById("startLobby").style.display = "block";
 });
 
+// Taking over an existing user
 connection.on("JoinRoom_TakeOverSession", function (roomJoined, userJoined) {
     userName = userJoined;
     roomId = roomJoined;
 })
 
+// Player joins the room
 connection.on("JoinRoom_UpdateState", function (playersConcat, userJoined) {
     var playerList = document.getElementById("lobbyList");
     playerList.innerHTML = "";

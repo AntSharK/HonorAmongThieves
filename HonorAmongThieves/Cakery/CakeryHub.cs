@@ -17,17 +17,20 @@ namespace HonorAmongThieves.Cakery
             this.lobby = lobby;
         }
 
+        // On connected
         public override async Task OnConnectedAsync()
         {
             await Clients.Caller.SendAsync("FreshConnection");
             await base.OnConnectedAsync();
         }
 
+        // Display an error message
         internal async Task ShowError(string errorMessage)
         {
             await Clients.Caller.SendAsync("ShowError", errorMessage);
         }
 
+        // Room creation
         public async Task CreateRoom(string userName)
         {
             var roomId = this.lobby.CreateRoom(userName);
@@ -49,6 +52,7 @@ namespace HonorAmongThieves.Cakery
             }
         }
 
+        // Joining Room
         public async Task JoinRoom(string roomId, string userName)
         {
             CakeryRoom room;
@@ -64,6 +68,13 @@ namespace HonorAmongThieves.Cakery
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
                 await this.JoinRoom_UpdateView(room, createdPlayer);
+            }
+            else if (!room.SettingUp
+                && room.Players.ContainsKey(userName))
+            {
+                // Take over the existing session
+                await this.ResumeSession(roomId, userName);
+                return;
             }
             else
             {
@@ -95,6 +106,32 @@ namespace HonorAmongThieves.Cakery
             }
 
             await Clients.Group(room.Id).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newPlayer.Name);
+        }
+
+        // Resuming session
+        public async Task ResumeSession(string roomId, string userName)
+        {
+            CakeryRoom room;
+            if (!this.lobby.Rooms.TryGetValue(roomId, out room))
+            {
+                await Clients.Caller.SendAsync("ClearState");
+                await this.ShowError("Cannot find Room ID.");
+                return;
+            }
+
+            CakeryPlayer player;
+            if (!room.Players.TryGetValue(userName, out player))
+            {
+                await Clients.Caller.SendAsync("ClearState");
+                await this.ShowError("Cannot find player in room.");
+                return;
+            }
+
+            player.ConnectionId = Context.ConnectionId;
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+
+            //TODO: Resume player session
+            //await player.ResumePlayerSession(this);
         }
     }
 }
