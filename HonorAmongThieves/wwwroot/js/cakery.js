@@ -125,8 +125,20 @@ connection.on("JoinRoom_CreateStartButton", function () {
 });
 
 document.getElementById("startbutton").addEventListener("click", function (event) {
-    connection.invoke("StartRoom", roomId /*TODO: OTHER PARAMS*/).catch(function (err) {
+    var gamelength = document.getElementById("gamelength").value;
+    var startingcash = document.getElementById("startingcash").value;
+    connection.invoke("StartRoom", roomId, gamelength, startingcash).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
+});
+
+// General update from server to initialize production
+connection.on("UpdateProductionState", function (currentPrices, currentMarket, playerResources, playerUpgrades) {
+    // Do stuff
+});
+
+// General update from server to show market report
+connection.on("MarketReport", function (currentPrices, currentMarket, playerGoods) {
+    // Do stuff
 });

@@ -45,9 +45,9 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
         public Status CurrentStatus { get; set; } = Status.WaitingForGameStart;
 
-        private Resources resources = new Resources();
-        private BakedGoods bakedGoods = new BakedGoods();
-        private Upgrades upgrades = new Upgrades();
+        public Resources CurrentResources { get; set; } = new Resources();
+        public BakedGoods CurrentBakedGoods { get; set; } = new BakedGoods();
+        public Upgrades CurrentUpgrades { get; set; } = new Upgrades();
 
         public CakeryPlayer(string playerName, CakeryRoom room)
             : base(playerName)

@@ -23,9 +23,17 @@ namespace HonorAmongThieves.Cakery.GameLogic
             // Buy-price of upgrades
         }
 
-        public int CurrentYear { get; set; } = 0;
-        public int MaxYears { get; set; } = 10;
-        public Prices CurrentPrices { get; } = new Prices();        
+        public class Market
+        {
+            public long Cookies = 0;
+            public long Croissants = 0;
+            public long Cakes = 0;
+            public int CurrentYear = 0;
+            public int MaxYears = 10;
+        }
+
+        public Prices CurrentPrices { get; } = new Prices();
+        public Market CurrentMarket { get; } = new Market();
 
         public override void Destroy()
         {
@@ -41,6 +49,18 @@ namespace HonorAmongThieves.Cakery.GameLogic
         protected override CakeryPlayer InstantiatePlayer(string playerName)
         {
             return new CakeryPlayer(playerName, this);
+        }
+
+        public void StartGame(int gameLength, int startingCash)
+        {
+            this.CurrentMarket.MaxYears = gameLength;
+            foreach (var player in this.Players.Values)
+            {
+                player.CurrentStatus = CakeryPlayer.Status.Producing;
+                player.CurrentResources.Money = startingCash;
+            }
+
+            this.SettingUp = false;
         }
     }
 }

@@ -108,6 +108,41 @@ namespace HonorAmongThieves.Cakery
             await Clients.Group(room.Id).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newPlayer.Name);
         }
 
+        public async Task StartRoom(string roomId, int gameLength, int startingCash)
+        {
+            const int MINPLAYERCOUNT = 2;
+            CakeryRoom room;
+            if (!this.lobby.Rooms.TryGetValue(roomId, out room)
+                && room.SettingUp)
+            {
+                await this.ShowError("This room has timed out! Please refresh the page.");
+                return;
+            }
+
+            if (room.Players.Count < MINPLAYERCOUNT)
+            {
+                await this.ShowError("Need at least " + MINPLAYERCOUNT + " players!");
+                return;
+            }
+
+            room.StartGame(gameLength, startingCash);
+            await this.UpdateRoom_NextRound(room);
+        }
+
+        // Updates everyone in the room for the next round
+        public async Task UpdateRoom_NextRound(CakeryRoom room)
+        {
+            // All calculations for costs should be done by now
+            foreach (var player in room.Players.Values)
+            {
+                await Clients.Client(player.ConnectionId).SendAsync("UpdateProductionState",
+                    room.CurrentPrices,
+                    room.CurrentMarket,
+                    player.CurrentResources,
+                    player.CurrentUpgrades);
+            }
+        }
+
         // Resuming session
         public async Task ResumeSession(string roomId, string userName)
         {
@@ -130,8 +165,25 @@ namespace HonorAmongThieves.Cakery
             player.ConnectionId = Context.ConnectionId;
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
 
-            //TODO: Resume player session
-            //await player.ResumePlayerSession(this);
+            switch (player.CurrentStatus)
+            {
+                case CakeryPlayer.Status.WaitingForGameStart:
+                    await this.JoinRoom_UpdateView(room, player);
+                    break;
+                case CakeryPlayer.Status.Producing:
+                    await Clients.Caller.SendAsync("UpdateProductionState",
+                            room.CurrentPrices,
+                            room.CurrentMarket,
+                            player.CurrentResources,
+                            player.CurrentUpgrades);
+                    break;
+                case CakeryPlayer.Status.MarketReport:
+                    await Clients.Caller.SendAsync("MarketReport",
+                            room.CurrentPrices,
+                            room.CurrentMarket,
+                            player.CurrentBakedGoods);
+                    break;
+            }
         }
     }
 }
