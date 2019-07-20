@@ -31,6 +31,7 @@ namespace HonorAmongThieves
 
             services.AddSignalR();
             services.AddSingleton<Heist.GameLogic.HeistGame>();
+            services.AddSingleton<Cakery.GameLogic.CakeryGame>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +49,7 @@ namespace HonorAmongThieves
             app.UseSignalR(routes =>
             {
                 routes.MapHub<Heist.HeistHub>("/heistHub");
+                routes.MapHub<Cakery.CakeryHub>("/cakeryHub");
             });
 
             app.UseMvc();

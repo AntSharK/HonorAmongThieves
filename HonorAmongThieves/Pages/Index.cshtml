@@ -4,6 +4,8 @@
 <div style="text-align:center">
     <h1 class="display-1"><a href="/Heist">HEIST</a></h1>
     <h4 class="display-4"><a href="HeistInstructions.html">Instructions</a></h4>
+    <h1 class="display-1"><a href="/Cakery">CAKERY</a></h1>
+    <h4 class="display-4"><a href="CakeryInstructions.html">Instructions</a></h4>
 </div>
 <hr />
 <h2><u>Existing Lobbies</u></h2>
@@ -15,12 +17,27 @@
         <th>Player Count</th>
         @foreach (var heistGame in Model.HeistRooms)
         {
-        <tr>
-            <th>@heistGame.Item1</th>
-            <th>@heistGame.Item2.ToString()</th>
-            <th>@heistGame.Item3.ToString()</th>
-            <th>@heistGame.Item4.ToString()</th>
-        </tr>
+            <tr>
+                <th>@heistGame.Item1</th>
+                <th>@heistGame.Item2.ToString()</th>
+                <th>@heistGame.Item3.ToString()</th>
+                <th>@heistGame.Item4.ToString()</th>
+            </tr>
+        }
+    </table>
+    <h3><u>Cakery Lobbies</u></h3>
+    <table border="1">
+        <th>Room ID</th>
+        <th>Updated Time</th>
+        <th>Player Count</th>
+        @foreach (var game in Model.CakeryRooms)
+        {
+            <tr>
+                <th>@game.Item1</th>
+                <th>@game.Item2.ToString()</th>
+                <th>@game.Item3.ToString()</th>
+                <th>@game.Item4.ToString()</th>
+            </tr>
         }
     </table>
 }

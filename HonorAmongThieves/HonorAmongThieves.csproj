@@ -14,7 +14,7 @@
 
 
   <ItemGroup>
-    <Folder Include="Categories\GameLogic\" />
+    <Folder Include="Categories\" />
   </ItemGroup>
 
 </Project>

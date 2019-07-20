@@ -2,7 +2,7 @@
 
 namespace HonorAmongThieves.Pages
 {
-    public class HeistModel : PageModel
+    public class CakeryModel : PageModel
     {
         public void OnGet()
         {
