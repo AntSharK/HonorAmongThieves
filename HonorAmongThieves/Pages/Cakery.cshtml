@@ -1,6 +1,8 @@
 ﻿@page
 <div class="container">
+    <div id="pageName" class="display-4" style="text-decoration:underline; text-align:center">JOIN A GAME</div>
 
+    <!------ JOIN/CREATE MENU --------->
     <div class="state" id="joinroom">
         <div class="display-4" style="text-align:center">
             Bakery Name: <input type="text" id="username" maxlength="10" size="10" oninput="this.value = this.value.toUpperCase()" /><br />
@@ -14,15 +16,37 @@
             You need a bakery name to create a room.<br />
             Room ID is automatically generated when you create a room. <br />
         </h4>
-    <hr />
+        <hr />
         <div style="text-align:center" class="display-1">
             <input type="button" id="createroombutton" value="CREATE" />
         </div>
     </div>
-</div>
 
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/cakery.js"></script>
+    <!------- GAME START LOBBY -------->
+    <div class="state" id="startLobby" style="display:none">
+        <h3><u style="text-align:center">PLAYERS IN GAME</u></h3>
+        <div id="lobbyplayercount" class="h4"></div>
+        <ul id="lobbyList" class="h4"></ul>
+
+        <div id="startButtonDiv" style="display:none" class="h5">
+            At least 2 players are required to start the game.<br />
+            Make sure there are no players who are in the lobby but cannot see the game!!.<br />
+            <br />
+            <div style="text-align:center">
+                <input type="button" id="startbutton" value="BEGIN GAME" class="display-2" /><br /><br />
+                <br />
+                <br />
+                <div class="display-4">
+                    <u>GAME PARAMETERS</u><br />
+                    <!-- TODO: INSERT PARAMETERS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/cakery.js"></script>
+</div>
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>

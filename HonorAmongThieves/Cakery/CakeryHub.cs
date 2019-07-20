@@ -74,7 +74,6 @@ namespace HonorAmongThieves.Cakery
 
         internal async Task JoinRoom_UpdateView(CakeryRoom room, CakeryPlayer newPlayer)
         {
-            // TODO: LOTS OF STUFF
             await Clients.Group(room.Id).SendAsync("JoinRoom", room.Id, newPlayer.Name);
             await Clients.Caller.SendAsync("JoinRoom_ChangeState", room.Id, newPlayer.Name);
 

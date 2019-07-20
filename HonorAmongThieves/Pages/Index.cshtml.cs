@@ -25,7 +25,7 @@ namespace HonorAmongThieves.Pages
             CakeryRooms = new List<Tuple<string, DateTime, int, string>>();
             foreach (var room in cakeryLobby.Rooms.Values)
             {
-                HeistRooms.Add(Tuple.Create(room.Id, room.UpdatedTime, room.Players.Count, room.SettingUp ? "SIGNING UP" : "STARTED"));
+                CakeryRooms.Add(Tuple.Create(room.Id, room.UpdatedTime, room.Players.Count, room.SettingUp ? "SIGNING UP" : "STARTED"));
             }
         }
     }
