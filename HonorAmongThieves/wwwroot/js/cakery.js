@@ -4,6 +4,21 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/cakeryHub").build(
 var userName;
 var roomId;
 
+// The player 
+var roundActions = {
+    goldSpent: 0,
+    cakesBaked: 0,
+    croissantsBaked: 0,
+    cookiesBaked: 0,
+    // TODO: Upgrades purchased
+}
+
+// The player state currently, not including this round's purchases
+var playerState = {
+    resources: {},
+    upgrades: {}
+}
+
 // -------------------------
 // ----- STATE: CONNECTING -
 // -------------------------
@@ -135,6 +150,10 @@ document.getElementById("startbutton").addEventListener("click", function (event
 
 // General update from server to initialize production
 connection.on("UpdateProductionState", function (currentPrices, currentMarket, playerResources, playerUpgrades) {
+    playerState.resources = playerResources;
+    playerState.upgrades = playerUpgrades;
+    // window.alert("You have $" + playerResources.money);
+    // TODO: Take the player's current round actions and update the display
     // Do stuff
 });
 

@@ -48,6 +48,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
         public Resources CurrentResources { get; set; } = new Resources();
         public BakedGoods CurrentBakedGoods { get; set; } = new BakedGoods();
         public Upgrades CurrentUpgrades { get; set; } = new Upgrades();
+        public long TotalSales { get; set; } = 0;
 
         public CakeryPlayer(string playerName, CakeryRoom room)
             : base(playerName)
