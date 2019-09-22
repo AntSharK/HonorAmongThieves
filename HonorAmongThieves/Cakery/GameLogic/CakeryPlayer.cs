@@ -56,5 +56,23 @@ namespace HonorAmongThieves.Cakery.GameLogic
         {
             this.Room = room;
         }
+
+        internal bool MakePurchase(int butterBought, int flourBought, int sugarBought)
+        {
+            var totalCost = butterBought * Room.CurrentPrices.Butter
+                + flourBought * Room.CurrentPrices.Flour
+                + sugarBought * Room.CurrentPrices.Sugar;
+
+            if (totalCost <= this.CurrentResources.Money)
+            {
+                this.CurrentResources.Money = this.CurrentResources.Money - totalCost;
+                this.CurrentResources.Butter = this.CurrentResources.Butter + butterBought * 1000;
+                this.CurrentResources.Flour = this.CurrentResources.Flour + flourBought * 1000;
+                this.CurrentResources.Sugar = this.CurrentResources.Sugar + sugarBought * 1000;
+                return true;
+            }
+
+            return false;
+        }
     }
 }

@@ -197,5 +197,26 @@ namespace HonorAmongThieves.Cakery
                     break;
             }
         }
+
+        // Buying ingredients for a player
+        public async Task BuyIngredients(string roomId, string playerName, int butterBought, int flourBought, int sugarBought)
+        {
+            var room = this.lobby.Rooms[roomId];
+            var player = room.Players[playerName];
+
+            if (player.MakePurchase(butterBought, flourBought, sugarBought))
+            {
+                await Clients.Caller.SendAsync("UpdateProductionState",
+                        room.CurrentPrices,
+                        room.CurrentMarket,
+                        player.CurrentResources,
+                        player.CurrentUpgrades,
+                        player.CurrentBakedGoods);
+            }
+            else
+            {
+                await ShowError("Error purchasing ingredients.");
+            }
+        }
     }
 }

@@ -195,6 +195,15 @@ function showBakeMenu() {
     baking = true;
     changeUiState("BAKE!!", "bakegoods");
 
+    // Reset the input forms
+    document.getElementById("buybutteramount").value = 0;
+    document.getElementById("buyflouramount").value = 0;
+    document.getElementById("buysugaramount").value = 0;
+
+    document.getElementById("bakecookiesamount").value = 0;
+    document.getElementById("bakecroissantsamount").value = 0;
+    document.getElementById("bakecakesamount").value = 0;
+
     // Update the available resources and current prices
     var cakeCost = playerState.bakedGoods.cakeCost;
     var croissantCost = playerState.bakedGoods.croissantCost;
@@ -213,9 +222,9 @@ function showBakeMenu() {
     document.getElementById("cakepricemoney").textContent = "$" + (cakeCost.item4 / 100).toFixed(2);
 
     document.getElementById("moneyowned").textContent = "Cash Available: $" + (playerState.resources.money / 100).toFixed(2);
-    document.getElementById("flourowned").textContent = (playerState.resources.flour / 1000) + "g";
-    document.getElementById("sugarowned").textContent = (playerState.resources.sugar / 1000) + "g";
-    document.getElementById("butterowned").textContent = (playerState.resources.butter / 1000) + "g";
+    document.getElementById("flourowned").textContent = playerState.resources.flour + "g";
+    document.getElementById("sugarowned").textContent = playerState.resources.sugar + "g";
+    document.getElementById("butterowned").textContent = playerState.resources.butter + "g";
 
     document.getElementById("flourprice").textContent = "$" + (gameState.currentPrices.flour / 100).toFixed(2);
     document.getElementById("butterprice").textContent = "$" + (gameState.currentPrices.butter / 100).toFixed(2);
@@ -227,6 +236,29 @@ function showBakeMenu() {
 
     document.getElementById("currentyear").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
 }
+
+document.getElementById("buyingredientsbutton").addEventListener("click", function (event) {
+    var butterbought = document.getElementById("buybutteramount").value;
+    var flourbought = document.getElementById("buyflouramount").value;
+    var sugarbought = document.getElementById("buysugaramount").value;
+
+    // Client-side check to make sure this is possible
+    var moneySpent = gameState.currentPrices.butter * butterbought
+        + gameState.currentPrices.flour * flourbought
+        + gameState.currentPrices.sugar * sugarbought;
+
+    if (moneySpent > playerState.resources.money) {
+        window.alert("NOT ENOUGH MONEY! Ingredients cost $" + (moneySpent / 100).toFixed(2)
+            + " but you only have $" + (playerState.resources.money / 100).toFixed(2));
+    }
+    else {
+        connection.invoke("BuyIngredients", roomId, userName, butterbought, flourbought, sugarbought).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+
+    event.preventDefault();
+});
 
 document.getElementById("switchtoupgradeviewbutton").addEventListener("click", function (event) {
     showUpgradeMenu();
