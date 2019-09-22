@@ -52,10 +52,13 @@
             <input type="button" id="switchtoupgradeviewbutton" value="VIEW UPGRADES" /> <hr />
             <table align="center" class="h2" border="1px solid black" cellpadding="3%">
                 <tr>
+                    <td id="moneyowned" colspan="4"></td>
+                </tr>
+                <tr>
                     <th></th>
                     <th>Price</th>
                     <th>Amount</th>
-                    <th>Owned</th>
+                    <th>On Hand</th>
                 </tr>
                 <tr>
                     <td>Flour</td>
@@ -76,12 +79,6 @@
                     <td id="butterowned"></td>
                 </tr>
                 <tr>
-                    <td>Money</td>
-                    <td></td>
-                    <td></td>
-                    <td id="moneyowned"></td>
-                </tr>
-                <tr>
                     <td colspan="3"><input type="button" id="buyingredientsbutton" value="BUY INGREDIENTS" /></td>
                 </tr>
             </table> <hr />
@@ -94,7 +91,7 @@
                     <th>Sugar</th>
                     <th>Butter</th>
                     <th>Amount</th>
-                    <th>Baked</th>
+                    <th>On Hand</th>
                 </tr>
                 <tr>
                     <td>Cookie</td>
@@ -140,6 +137,9 @@
             <input type="button" id="switchtobakeviewbutton" value="BACK TO BAKING" /> <hr />
             <table align="center" class="h2" border="1px solid black" cellpadding="3%">
                 <tr>
+                <tr>
+                    <td id="moneyowned2" colspan="4"></td>
+                </tr>
                     <th></th>
                     <th>Owned</th>
                     <th></th>
@@ -163,18 +163,16 @@
                     <td>Cakes</td>
                     <td id="cakesbaked2"></td>
                 </tr>
-                <tr>
-                    <td>Money</td>
-                    <td id="moneyowned2"></td>
-                </tr>
             </table> <hr />
         </div>
     </div>
+
     <!------ TODO: YOUR MARKET SUMMARY --------->
     <div class="state" id="goodsbaked" style="display:none">
         <div class="display-4" style="text-align:center">
         </div>
     </div>
+
     <!------ TODO: YEAR'S MARKET REPORT --------->
     <div class="state" id="marketreport" style="display:none">
         <div class="display-4" style="text-align:center">

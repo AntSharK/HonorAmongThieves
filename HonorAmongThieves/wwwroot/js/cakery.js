@@ -212,7 +212,7 @@ function showBakeMenu() {
     document.getElementById("cakepricesugar").textContent = cakeCost.item3 + "g";
     document.getElementById("cakepricemoney").textContent = "$" + (cakeCost.item4 / 100).toFixed(2);
 
-    document.getElementById("moneyowned").textContent = "$" + (playerState.resources.money / 100).toFixed(2);
+    document.getElementById("moneyowned").textContent = "Cash Available: $" + (playerState.resources.money / 100).toFixed(2);
     document.getElementById("flourowned").textContent = (playerState.resources.flour / 1000) + "g";
     document.getElementById("sugarowned").textContent = (playerState.resources.sugar / 1000) + "g";
     document.getElementById("butterowned").textContent = (playerState.resources.butter / 1000) + "g";
@@ -237,6 +237,15 @@ document.getElementById("switchtoupgradeviewbutton").addEventListener("click", f
 function showUpgradeMenu() {
     baking = false;
     changeUiState("UPGRADE!!", "upgrademenu");
+
+    document.getElementById("moneyowned2").textContent = "Cash Available: $" + (playerState.resources.money / 100).toFixed(2);
+    document.getElementById("flourowned2").textContent = (playerState.resources.flour / 1000) + "g";
+    document.getElementById("sugarowned2").textContent = (playerState.resources.sugar / 1000) + "g";
+    document.getElementById("butterowned2").textContent = (playerState.resources.butter / 1000) + "g";
+
+    document.getElementById("cookiesbaked2").textContent = playerState.bakedGoods.cookies;
+    document.getElementById("croissantsbaked2").textContent = playerState.bakedGoods.croissants;
+    document.getElementById("cakesbaked2").textContent = playerState.bakedGoods.cakes;
 }
 
 document.getElementById("switchtobakeviewbutton").addEventListener("click", function (event) {

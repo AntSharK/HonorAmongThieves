@@ -110,7 +110,11 @@ namespace HonorAmongThieves.Cakery
 
         public async Task StartRoom(string roomId, int gameLength, int startingCash)
         {
+#if DEBUG
+            const int MINPLAYERCOUNT = 1;
+#else
             const int MINPLAYERCOUNT = 2;
+#endif
             CakeryRoom room;
             if (!this.lobby.Rooms.TryGetValue(roomId, out room)
                 && room.SettingUp)
