@@ -3,7 +3,11 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/cakeryHub").build();
 var userName;
 var roomId;
+var baking = true;
 
+// -------------------------
+// ----- GAME OBJECTS ------
+// -------------------------
 // The player 
 var roundActions = {
     goldSpent: 0,
@@ -18,6 +22,11 @@ var playerState = {
     resources: {},
     upgrades: {},
     bakedGoods: {},
+}
+
+var gameState = {
+    currentPrices: {},
+    currentMarket: {}
 }
 
 // -------------------------
@@ -150,12 +159,8 @@ document.getElementById("startbutton").addEventListener("click", function (event
     event.preventDefault();
 });
 
-// Entering the baking menu
-connection.on("UpdateProductionState", function (currentPrices, currentMarket, playerResources, playerUpgrades, playerBakedGoods) {
-    playerState.resources = playerResources;
-    playerState.upgrades = playerUpgrades;
-    playerState.bakedGoods = playerBakedGoods;
-    document.getElementById("pageName").textContent = "BAKE!!";
+function changeUiState(title, stateToChange) {
+    document.getElementById("pageName").textContent = title;
 
     // Hide all elements
     var elements = document.getElementsByClassName("state");
@@ -163,9 +168,32 @@ connection.on("UpdateProductionState", function (currentPrices, currentMarket, p
         elements[i].style.display = "none";
     }
 
-    // Display the Baking Menu
-    var bakingmenu = document.getElementById("bakegoods");
+    // Display the new UI
+    var bakingmenu = document.getElementById(stateToChange);
     bakingmenu.style.display = "block";
+}
+
+// -------------------------
+// ----- STATE: BAKING -----
+// -------------------------
+// Entering the baking menu
+connection.on("UpdateProductionState", function (currentPrices, currentMarket, playerResources, playerUpgrades, playerBakedGoods) {
+    gameState.currentPrices = currentPrices;
+    gameState.currentMarket = currentMarket;
+    playerState.resources = playerResources;
+    playerState.upgrades = playerUpgrades;
+    playerState.bakedGoods = playerBakedGoods;
+    if (baking) {
+        showBakeMenu();
+    }
+    else {
+        showUpgradeMenu();
+    }
+});
+
+function showBakeMenu() {
+    baking = true;
+    changeUiState("BAKE!!", "bakegoods");
 
     // Update the available resources and current prices
     var cakeCost = playerState.bakedGoods.cakeCost;
@@ -189,16 +217,42 @@ connection.on("UpdateProductionState", function (currentPrices, currentMarket, p
     document.getElementById("sugarowned").textContent = (playerState.resources.sugar / 1000) + "g";
     document.getElementById("butterowned").textContent = (playerState.resources.butter / 1000) + "g";
 
-    document.getElementById("flourprice").textContent = "$" + (currentPrices.flour / 100).toFixed(2);
-    document.getElementById("butterprice").textContent = "$" + (currentPrices.butter / 100).toFixed(2);
-    document.getElementById("sugarprice").textContent = "$" + (currentPrices.sugar / 100).toFixed(2);
+    document.getElementById("flourprice").textContent = "$" + (gameState.currentPrices.flour / 100).toFixed(2);
+    document.getElementById("butterprice").textContent = "$" + (gameState.currentPrices.butter / 100).toFixed(2);
+    document.getElementById("sugarprice").textContent = "$" + (gameState.currentPrices.sugar / 100).toFixed(2);
 
     document.getElementById("cookiesbaked").textContent = playerState.bakedGoods.cookies;
     document.getElementById("croissantsbaked").textContent = playerState.bakedGoods.croissants;
     document.getElementById("cakesbaked").textContent = playerState.bakedGoods.cakes;
+
+    document.getElementById("currentyear").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
+}
+
+document.getElementById("switchtoupgradeviewbutton").addEventListener("click", function (event) {
+    showUpgradeMenu();
+    event.preventDefault();
 });
 
-// General update from server to show market report
-connection.on("MarketReport", function (currentPrices, currentMarket, playerGoods) {
+// TODO: Show the upgrade menu
+function showUpgradeMenu() {
+    baking = false;
+    changeUiState("UPGRADE!!", "upgrademenu");
+}
+
+document.getElementById("switchtobakeviewbutton").addEventListener("click", function (event) {
+    showBakeMenu();
+    event.preventDefault();
+});
+
+// TODO: Show your setting up shop - all resources, and things to be sold
+connection.on("SetUpShop", function (playerResources, playerUpgrades, playerBakedGoods) {
+    playerState.resources = playerResources;
+    playerState.upgrades = playerUpgrades;
+    playerState.bakedGoods = playerBakedGoods;
+});
+
+// TODO: Show market report
+connection.on("MarketReport", function (currentPrices, currentMarket, playerBakedGoods) {
+
     // Do stuff
 });

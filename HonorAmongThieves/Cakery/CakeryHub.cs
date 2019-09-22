@@ -179,6 +179,12 @@ namespace HonorAmongThieves.Cakery
                             player.CurrentUpgrades,
                             player.CurrentBakedGoods);
                     break;
+                case CakeryPlayer.Status.SettingUpShop:
+                    await Clients.Caller.SendAsync("SetUpShop",
+                            player.CurrentResources,
+                            player.CurrentUpgrades,
+                            player.CurrentBakedGoods);
+                    break;
                 case CakeryPlayer.Status.MarketReport:
                     await Clients.Caller.SendAsync("MarketReport",
                             room.CurrentPrices,

@@ -11,6 +11,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
         {
             WaitingForGameStart,
             Producing,
+            SettingUpShop,
             MarketReport,
             CleaningUp
         }
