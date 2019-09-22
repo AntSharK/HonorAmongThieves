@@ -48,25 +48,88 @@
     <!------ BAKE THINGS --------->
     <div class="state" id="bakegoods" style="display:none">
         <div class="display-4" style="text-align:center">
-            <div id="resources" class="h4"></div>
-            <h1>BUY THINGS</h1>
-            <div style="text-align:left" class="h4">
-                <input type="number" step="1" min="0" max="9999" value="0" id="buyflouramount" /> <input type="button" id="buyflourbutton" value="FLOUR" /><div id="flourprice"></div> <br />
-                <input type="number" step="1" min="0" max="9999" value="0" id="buysugaramount" /> <input type="button" id="buysugarbutton" value="SUGAR" /><div id="sugarprice"></div> <br />
-                <input type="number" step="1" min="0" max="9999" value="0" id="buybutteramount" /> <input type="button" id="buybutterbutton" value="BUTTER" /><div id="butterprice"></div> <br />
-            </div>
-            <h1>BAKE THINGS</h1>
-            <div style="text-align:left" class="h4">
-                <input type="number" step="1" min="0" max="9999" value="0" id="bakecookiesamount" /> <input type="button" id="bakecookiesbutton" value="COOKIES" /><div id="cookieprice"></div> <br />
-                <input type="number" step="1" min="0" max="9999" value="0" id="bakecroissantsamount" /> <input type="button" id="bakecroissantsbutton" value="CROISSANTS" /><div id="croissantprice"></div> <br />
-                <input type="number" step="1" min="0" max="9999" value="0" id="bakecakesamount" /> <input type="button" id="bakecakesbutton" value="CAKES" /><div id="cakeprice"></div> <br />
-            </div>
-            <h1>GOODS BAKED</h1>
-            <div id="goodsbaked" class="h4"></div>
+            <input type="button" id="switchviewbutton" value="VIEW UPGRADES" /> <hr />
+            <table align="center" class="h4" border="1px solid black" cellpadding="3%">
+                <tr>
+                    <th></th>
+                    <th>Price</th>
+                    <th>Amount</th>
+                    <th>Owned</th>
+                </tr>
+                <tr>
+                    <td>Flour</td>
+                    <td id="flourprice"></td>
+                    <td> <input type="number" step="1" min="0" max="9999" value="0" id="buyflouramount" /> </td>
+                    <td id="flourowned"></td>
+                </tr>
+                <tr>
+                    <td>Flour</td>
+                    <td id="sugarprice"></td>
+                    <td> <input type="number" step="1" min="0" max="9999" value="0" id="buysugaramount" /> </td>
+                    <td id="sugarowned"></td>
+                </tr>
+                <tr>
+                    <td>Butter</td>
+                    <td id="butterprice"></td>
+                    <td> <input type="number" step="1" min="0" max="9999" value="0" id="buybutteramount" /> </td>
+                    <td id="butterowned"></td>
+                </tr>
+                <tr>
+                    <td>Money</td>
+                    <td></td>
+                    <td></td>
+                    <td id="moneyowned"></td>
+                </tr>
+                <tr>
+                    <td colspan="3"><input type="button" id="buyingredientsbutton" value="BUY INGREDIENTS" /></td>
+                </tr>
+            </table> <hr />
+
+            <table align="center" class="h4" border="1px solid black" cellpadding="3%">
+                <tr>
+                    <th></th>
+                    <th>Cost</th>
+                    <th>Flour</th>
+                    <th>Sugar</th>
+                    <th>Butter</th>
+                    <th>Amount</th>
+                    <th>Baked</th>
+                </tr>
+                <tr>
+                    <td>Cookie</td>
+                    <td id="cookiepricemoney"></td>
+                    <td id="cookiepriceflour"></td>
+                    <td id="cookiepricesugar"></td>
+                    <td id="cookiepricebutter"></td>
+                    <td><input type="number" step="1" min="0" max="9999" value="0" id="bakecookiesamount" /></td>
+                    <td id="cookiesbaked"></td>
+                </tr>
+                <tr>
+                    <td>Croissant</td>
+                    <td id="croissantpricemoney"></td>
+                    <td id="croissantpriceflour"></td>
+                    <td id="croissantpricesugar"></td>
+                    <td id="croissantpricebutter"></td>
+                    <td><input type="number" step="1" min="0" max="9999" value="0" id="bakecroissantsamount" /></td>
+                    <td id="croissantsbaked"></td>
+                </tr>
+                <tr>
+                    <td>Cake</td>
+                    <td id="cakepricemoney"></td>
+                    <td id="cakepriceflour"></td>
+                    <td id="cakepricesugar"></td>
+                    <td id="cakepricebutter"></td>
+                    <td><input type="number" step="1" min="0" max="9999" value="0" id="bakecakesamount" /></td>
+                    <td id="cakesbaked"></td>
+                </tr>
+                <tr>
+                    <td colspan="6"><input type="button" id="bakethingsbutton" value="BAKE THINGS" /></td>
+                </tr>
+            </table> <hr />
         </div>
         <hr />
         <div style="text-align:center" class="display-1">
-            <input type="button" id="endturnbutton" value="END TURN" />
+            <input type="button" id="endturnbutton" value="SELL GOODS (End Turn)" />
         </div>
     </div>
 
