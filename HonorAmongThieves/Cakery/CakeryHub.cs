@@ -139,7 +139,8 @@ namespace HonorAmongThieves.Cakery
                     room.CurrentPrices,
                     room.CurrentMarket,
                     player.CurrentResources,
-                    player.CurrentUpgrades);
+                    player.CurrentUpgrades,
+                    player.CurrentBakedGoods);
             }
         }
 
@@ -175,7 +176,8 @@ namespace HonorAmongThieves.Cakery
                             room.CurrentPrices,
                             room.CurrentMarket,
                             player.CurrentResources,
-                            player.CurrentUpgrades);
+                            player.CurrentUpgrades,
+                            player.CurrentBakedGoods);
                     break;
                 case CakeryPlayer.Status.MarketReport:
                     await Clients.Caller.SendAsync("MarketReport",

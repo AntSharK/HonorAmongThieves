@@ -16,7 +16,8 @@ var roundActions = {
 // The player state currently, not including this round's purchases
 var playerState = {
     resources: {},
-    upgrades: {}
+    upgrades: {},
+    bakedGoods: {},
 }
 
 // -------------------------
@@ -148,14 +149,57 @@ document.getElementById("startbutton").addEventListener("click", function (event
     event.preventDefault();
 });
 
-// General update from server to initialize production
-connection.on("UpdateProductionState", function (currentPrices, currentMarket, playerResources, playerUpgrades) {
+// Entering the baking menu
+connection.on("UpdateProductionState", function (currentPrices, currentMarket, playerResources, playerUpgrades, playerBakedGoods) {
     playerState.resources = playerResources;
     playerState.upgrades = playerUpgrades;
-    // window.alert("You have $" + playerResources.money);
-    // TODO: Take the player's current round actions and update the display
-    // Do stuff
+    playerState.bakedGoods = playerBakedGoods;
+    document.getElementById("pageName").textContent = "BAKE THINGS";
+
+    // Hide all elements
+    var elements = document.getElementsByClassName("state");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+    }
+
+    // Display the Baking Menu
+    var bakingmenu = document.getElementById("bakegoods");
+    bakingmenu.style.display = "block";
+
+    var cakeCost = playerState.bakedGoods.cakeCost;
+    var croissantCost = playerState.bakedGoods.croissantCost;
+    var cookieCost = playerState.bakedGoods.cookieCost;
+    document.getElementById("cookieprice").textContent = "Requires: " + cookieCost.item1 + "g butter, "
+        + cookieCost.item2 + "g flour, "
+        + cookieCost.item3 + "g sugar, "
+        + "and $" + cookieCost.item4;
+    document.getElementById("croissantprice").textContent = "Requires: " + croissantCost.item1 + "g butter, "
+        + croissantCost.item2 + "g flour, "
+        + croissantCost.item3 + "g sugar, "
+        + "and $" + croissantCost.item4;
+    document.getElementById("cakeprice").textContent = "Requires: " + cakeCost.item1 + "g butter, "
+        + cakeCost.item2 + "g flour, "
+        + cakeCost.item3 + "g sugar, "
+        + "and $" + cakeCost.item4;
+
+    document.getElementById("flourprice").textContent = "Cost: $" + currentPrices.flour / 100;
+    document.getElementById("butterprice").textContent = "Cost: $" + currentPrices.butter / 100;
+    document.getElementById("sugarprice").textContent = "Cost: $" + currentPrices.sugar / 100;
+
+    // Update the available resources and current prices
+    document.getElementById("resources").textContent =
+        "MONEYS: $" + playerState.resources.money +
+        " - FLOUR: " + playerState.resources.flour + "g" +
+        " - SUGAR: " + playerState.resources.sugar + "g" +
+        " - BUTTER: " + playerState.resources.butter + "g";
+
+    document.getElementById("goodsbaked").textContent =
+        playerState.bakedGoods.cookies + " Cookies, " +
+        playerState.bakedGoods.croissants + " Croissants, " +
+        playerState.bakedGoods.cakes + " Cakes.";
 });
+
+// TODO: Each button for buying goods and baking things
 
 // General update from server to show market report
 connection.on("MarketReport", function (currentPrices, currentMarket, playerGoods) {

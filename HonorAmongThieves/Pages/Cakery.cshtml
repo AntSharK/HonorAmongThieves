@@ -45,6 +45,31 @@
         </div>
     </div>
 
+    <!------ BAKE THINGS --------->
+    <div class="state" id="bakegoods" style="display:none">
+        <div class="display-4" style="text-align:center">
+            <div id="resources" class="h4"></div>
+            <h1>BUY THINGS</h1>
+            <div style="text-align:left" class="h4">
+                <input type="number" step="1" min="0" max="9999" value="0" id="buyflouramount" /> <input type="button" id="buyflourbutton" value="FLOUR" /><div id="flourprice"></div> <br />
+                <input type="number" step="1" min="0" max="9999" value="0" id="buysugaramount" /> <input type="button" id="buysugarbutton" value="SUGAR" /><div id="sugarprice"></div> <br />
+                <input type="number" step="1" min="0" max="9999" value="0" id="buybutteramount" /> <input type="button" id="buybutterbutton" value="BUTTER" /><div id="butterprice"></div> <br />
+            </div>
+            <h1>BAKE THINGS</h1>
+            <div style="text-align:left" class="h4">
+                <input type="number" step="1" min="0" max="9999" value="0" id="bakecookiesamount" /> <input type="button" id="bakecookiesbutton" value="COOKIES" /><div id="cookieprice"></div> <br />
+                <input type="number" step="1" min="0" max="9999" value="0" id="bakecroissantsamount" /> <input type="button" id="bakecroissantsbutton" value="CROISSANTS" /><div id="croissantprice"></div> <br />
+                <input type="number" step="1" min="0" max="9999" value="0" id="bakecakesamount" /> <input type="button" id="bakecakesbutton" value="CAKES" /><div id="cakeprice"></div> <br />
+            </div>
+            <h1>GOODS BAKED</h1>
+            <div id="goodsbaked" class="h4"></div>
+        </div>
+        <hr />
+        <div style="text-align:center" class="display-1">
+            <input type="button" id="endturnbutton" value="END TURN" />
+        </div>
+    </div>
+
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/cakery.js"></script>
 </div>
