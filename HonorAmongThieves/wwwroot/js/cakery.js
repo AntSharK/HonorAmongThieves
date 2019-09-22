@@ -45,6 +45,7 @@ connection.on("FreshConnection", function () {
 connection.on("ClearState", function () {
     sessionStorage.removeItem("username");
     sessionStorage.removeItem("roomid");
+    location.reload();
 })
 
 var conditionalReload = function () {
@@ -182,9 +183,9 @@ connection.on("UpdateProductionState", function (currentPrices, currentMarket, p
         + cakeCost.item3 + "g sugar, "
         + "and $" + cakeCost.item4;
 
-    document.getElementById("flourprice").textContent = "Cost: $" + currentPrices.flour / 100;
-    document.getElementById("butterprice").textContent = "Cost: $" + currentPrices.butter / 100;
-    document.getElementById("sugarprice").textContent = "Cost: $" + currentPrices.sugar / 100;
+    document.getElementById("flourprice").textContent = "Cost: $" + (currentPrices.flour / 100).toFixed(2);
+    document.getElementById("butterprice").textContent = "Cost: $" + (currentPrices.butter / 100).toFixed(2);
+    document.getElementById("sugarprice").textContent = "Cost: $" + (currentPrices.sugar / 100).toFixed(2);
 
     // Update the available resources and current prices
     document.getElementById("resources").textContent =

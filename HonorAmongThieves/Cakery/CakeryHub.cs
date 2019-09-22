@@ -150,16 +150,16 @@ namespace HonorAmongThieves.Cakery
             CakeryRoom room;
             if (!this.lobby.Rooms.TryGetValue(roomId, out room))
             {
-                await Clients.Caller.SendAsync("ClearState");
                 await this.ShowError("Cannot find Room ID.");
+                await Clients.Caller.SendAsync("ClearState");
                 return;
             }
 
             CakeryPlayer player;
             if (!room.Players.TryGetValue(userName, out player))
             {
-                await Clients.Caller.SendAsync("ClearState");
                 await this.ShowError("Cannot find player in room.");
+                await Clients.Caller.SendAsync("ClearState");
                 return;
             }
 
