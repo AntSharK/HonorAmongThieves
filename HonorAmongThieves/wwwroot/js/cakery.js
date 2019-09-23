@@ -199,10 +199,17 @@ function showBakeMenu() {
     document.getElementById("buybutteramount").value = 0;
     document.getElementById("buyflouramount").value = 0;
     document.getElementById("buysugaramount").value = 0;
+    document.getElementById("ingredientcost").textContent = "";
+    document.getElementById("buyingredientsbutton").disabled = true;
 
     document.getElementById("bakecookiesamount").value = 0;
     document.getElementById("bakecroissantsamount").value = 0;
     document.getElementById("bakecakesamount").value = 0;
+    document.getElementById("moneyforbaking").textContent = "";
+    document.getElementById("flourforbaking").textContent = "";
+    document.getElementById("sugarforbaking").textContent = "";
+    document.getElementById("butterforbaking").textContent = "";
+    document.getElementById("bakethingsbutton").disabled = true;
 
     // Update the available resources and current prices
     var cakeCost = playerState.bakedGoods.cakeCost;
@@ -237,15 +244,13 @@ function showBakeMenu() {
     document.getElementById("currentyear").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
 }
 
+// Click on buying ingredients
 document.getElementById("buyingredientsbutton").addEventListener("click", function (event) {
+    var moneySpent = getIngredientsCost();
+
     var butterbought = document.getElementById("buybutteramount").value;
     var flourbought = document.getElementById("buyflouramount").value;
     var sugarbought = document.getElementById("buysugaramount").value;
-
-    // Client-side check to make sure this is possible
-    var moneySpent = gameState.currentPrices.butter * butterbought
-        + gameState.currentPrices.flour * flourbought
-        + gameState.currentPrices.sugar * sugarbought;
 
     if (moneySpent > playerState.resources.money) {
         window.alert("NOT ENOUGH MONEY! Ingredients cost $" + (moneySpent / 100).toFixed(2)
@@ -260,6 +265,52 @@ document.getElementById("buyingredientsbutton").addEventListener("click", functi
     event.preventDefault();
 });
 
+function getIngredientsCost() {
+    var butterbought = document.getElementById("buybutteramount").value;
+    var flourbought = document.getElementById("buyflouramount").value;
+    var sugarbought = document.getElementById("buysugaramount").value;
+
+    // Client-side check to make sure this is possible
+    var moneySpent = gameState.currentPrices.butter * butterbought
+        + gameState.currentPrices.flour * flourbought
+        + gameState.currentPrices.sugar * sugarbought;
+
+    return moneySpent;
+}
+
+document.getElementById("buyflouramount").addEventListener("change", function (event) {
+    updateIngredientsCost();
+});
+document.getElementById("buysugaramount").addEventListener("change", function (event) {
+    updateIngredientsCost();
+});
+document.getElementById("buybutteramount").addEventListener("change", function (event) {
+    updateIngredientsCost();
+});
+
+function updateIngredientsCost() {
+    var ingredientsCost = getIngredientsCost();
+
+    // Early abort if nothing is being bought
+    if (ingredientsCost <= 0) {
+        document.getElementById("ingredientcost").textContent = "";
+        document.getElementById("buyingredientsbutton").disabled = true;
+        return;
+    }
+
+    document.getElementById("ingredientcost").textContent = "$" + (ingredientsCost / 100).toFixed(2) + "/$" + (playerState.resources.money / 100).toFixed(2);
+
+    if (ingredientsCost > playerState.resources.money) {
+        document.getElementById("ingredientcost").style.color = "red";
+        document.getElementById("buyingredientsbutton").disabled = true;
+    }
+    else {
+        document.getElementById("ingredientcost").style.color = "blue";
+        document.getElementById("buyingredientsbutton").disabled = false;
+    }
+}
+
+// Click on baking things
 document.getElementById("bakethingsbutton").addEventListener("click", function (event) {
     var cookiesBaked = document.getElementById("bakecookiesamount").value;
     var croissantsBaked = document.getElementById("bakecroissantsamount").value;
@@ -291,12 +342,81 @@ document.getElementById("bakethingsbutton").addEventListener("click", function (
     event.preventDefault();
 });
 
+document.getElementById("bakecookiesamount").addEventListener("change", function (event) {
+    updateBakingCost();
+});
+document.getElementById("bakecroissantsamount").addEventListener("change", function (event) {
+    updateBakingCost();
+});
+document.getElementById("bakecakesamount").addEventListener("change", function (event) {
+    updateBakingCost();
+});
+
+function updateBakingCost() {
+    // This is a copy+paste of a function that exists when clicking the "Bake" button
+    var cookiesBaked = document.getElementById("bakecookiesamount").value;
+    var croissantsBaked = document.getElementById("bakecroissantsamount").value;
+    var cakesBaked = document.getElementById("bakecakesamount").value;
+
+    // Early abort if nothing is being baked
+    if (cookiesBaked + croissantsBaked + cakesBaked <= 0) {
+        document.getElementById("bakethingsbutton").disabled = true;
+        document.getElementById("moneyforbaking").textContent = "";
+        document.getElementById("flourforbaking").textContent = "";
+        document.getElementById("sugarforbaking").textContent = "";
+        document.getElementById("butterforbaking").textContent = "";
+        return;
+    }
+
+    var cakeCost = playerState.bakedGoods.cakeCost;
+    var croissantCost = playerState.bakedGoods.croissantCost;
+    var cookieCost = playerState.bakedGoods.cookieCost;
+
+    var butterUsed = cookieCost.item1 * cookiesBaked + croissantCost.item1 * croissantsBaked + cakeCost.item1 * cakesBaked;
+    var flourUsed = cookieCost.item2 * cookiesBaked + croissantCost.item2 * croissantsBaked + cakeCost.item2 * cakesBaked;
+    var sugarUsed = cookieCost.item3 * cookiesBaked + croissantCost.item3 * croissantsBaked + cakeCost.item3 * cakesBaked;
+    var moneyUsed = cookieCost.item4 * cookiesBaked + croissantCost.item4 * croissantsBaked + cakeCost.item4 * cakesBaked;
+    // Copy+paste ends here
+
+    document.getElementById("butterforbaking").textContent = butterUsed + "g";
+    document.getElementById("flourforbaking").textContent = flourUsed + "g";
+    document.getElementById("sugarforbaking").textContent = sugarUsed + "g";
+    document.getElementById("moneyforbaking").textContent = "$" + (moneyUsed / 100).toFixed(2);
+
+    var bakingEnabled = true;
+
+    if (butterUsed > playerState.resources.butter) {
+        document.getElementById("butterforbaking").style.color = "red";
+        bakingEnabled = false;
+    }
+    if (flourUsed > playerState.resources.flour) {
+        document.getElementById("flourforbaking").style.color = "red";
+        bakingEnabled = false;
+    }
+    if (sugarUsed > playerState.resources.sugar) {
+        document.getElementById("sugarforbaking").style.color = "red";
+        bakingEnabled = false;
+    }
+    if (moneyUsed > playerState.resources.money) {
+        document.getElementById("moneyforbaking").style.color = "red";
+        bakingEnabled = false;
+    }
+
+    if (bakingEnabled) {
+        document.getElementById("bakethingsbutton").disabled = false;
+    }
+    else {
+        document.getElementById("bakethingsbutton").disabled = true;
+    }
+}
+
+// Click on "Upgrade" view
 document.getElementById("switchtoupgradeviewbutton").addEventListener("click", function (event) {
     showUpgradeMenu();
     event.preventDefault();
 });
 
-// TODO: Show the upgrade menu
+// TODO: Show the actual list of upgrades upgrade menu
 function showUpgradeMenu() {
     baking = false;
     changeUiState("UPGRADE!!", "upgrademenu");
@@ -311,6 +431,7 @@ function showUpgradeMenu() {
     document.getElementById("cakesbaked2").textContent = playerState.bakedGoods.cakes;
 }
 
+// Switch back to "Baking" view
 document.getElementById("switchtobakeviewbutton").addEventListener("click", function (event) {
     showBakeMenu();
     event.preventDefault();

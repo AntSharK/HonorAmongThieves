@@ -79,6 +79,10 @@
                     <td id="butterowned"></td>
                 </tr>
                 <tr>
+                    <td>Cost</td>
+                    <td id="ingredientcost" colspan="3"></td>
+                </tr>
+                <tr>
                     <!-- TODO: Grey out button when cost exceeds. Display current cost. -->
                     <td colspan="3"><input type="button" id="buyingredientsbutton" value="BUY INGREDIENTS" /></td>
                 </tr>
@@ -120,6 +124,13 @@
                     <td id="cakepricebutter"></td>
                     <td><input type="number" step="1" min="0" max="9999" value="0" id="bakecakesamount" /></td>
                     <td id="cakesbaked"></td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td id="moneyforbaking"></td>
+                    <td id="flourforbaking"></td>
+                    <td id="sugarforbaking"></td>
+                    <td id="butterforbaking"></td>
                 </tr>
                 <tr>
                     <td colspan="6"><input type="button" id="bakethingsbutton" value="BAKE THINGS" /></td>
