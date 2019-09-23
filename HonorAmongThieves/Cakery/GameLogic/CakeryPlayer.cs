@@ -93,10 +93,10 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 + croissantsBaked * this.CurrentBakedGoods.CroissantCost.money
                 + cakesBaked * this.CurrentBakedGoods.CakeCost.money;
 
-            if (flourCost < this.CurrentResources.Flour
-                || butterCost < this.CurrentResources.Butter
-                || sugarCost < this.CurrentResources.Sugar
-                || moneyCost < this.CurrentResources.Flour)
+            if (flourCost > this.CurrentResources.Flour
+                || butterCost > this.CurrentResources.Butter
+                || sugarCost > this.CurrentResources.Sugar
+                || moneyCost > this.CurrentResources.Money)
             {
                 return false;
             }
@@ -105,6 +105,11 @@ namespace HonorAmongThieves.Cakery.GameLogic
             this.CurrentResources.Butter = this.CurrentResources.Butter - butterCost;
             this.CurrentResources.Flour = this.CurrentResources.Flour - flourCost;
             this.CurrentResources.Sugar = this.CurrentResources.Sugar - sugarCost;
+
+            this.CurrentBakedGoods.Cookies = this.CurrentBakedGoods.Cookies + cookiesBaked;
+            this.CurrentBakedGoods.Croissants = this.CurrentBakedGoods.Croissants + croissantsBaked;
+            this.CurrentBakedGoods.Cakes = this.CurrentBakedGoods.Cakes + cakesBaked;
+
             return true;
         }
     }

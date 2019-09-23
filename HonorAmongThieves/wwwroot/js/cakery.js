@@ -260,6 +260,37 @@ document.getElementById("buyingredientsbutton").addEventListener("click", functi
     event.preventDefault();
 });
 
+document.getElementById("bakethingsbutton").addEventListener("click", function (event) {
+    var cookiesBaked = document.getElementById("bakecookiesamount").value;
+    var croissantsBaked = document.getElementById("bakecroissantsamount").value;
+    var cakesBaked = document.getElementById("bakecakesamount").value;
+
+    var cakeCost = playerState.bakedGoods.cakeCost;
+    var croissantCost = playerState.bakedGoods.croissantCost;
+    var cookieCost = playerState.bakedGoods.cookieCost;
+
+    // Client-side check to make sure this is possible
+    var butterUsed = cookieCost.item1 * cookiesBaked + croissantCost.item1 * croissantsBaked + cakeCost.item1 * cakesBaked;
+    var flourUsed = cookieCost.item2 * cookiesBaked + croissantCost.item2 * croissantsBaked + cakeCost.item2 * cakesBaked;
+    var sugarUsed = cookieCost.item3 * cookiesBaked + croissantCost.item3 * croissantsBaked + cakeCost.item3 * cakesBaked;
+    var moneyUsed = cookieCost.item4 * cookiesBaked + croissantCost.item4 * croissantsBaked + cakeCost.item4 * cakesBaked;
+
+    if (moneyUsed > playerState.resources.money
+        || flourUsed > playerState.resources.flour
+        || butterUsed > playerState.resources.butter
+        || sugarUsed > playerState.resources.sugar) {
+        window.alert("NOT ENOUGH RESOURCES! Ingredients cost $" + (moneyUsed / 100).toFixed(2)
+            + ", " + butterUsed + "g butter, " + flourUsed + "g flour, " + sugarUsed + "g sugar.");
+    }
+    else {
+        connection.invoke("BakeGoods", roomId, userName, cookiesBaked, croissantsBaked, cakesBaked).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+
+    event.preventDefault();
+});
+
 document.getElementById("switchtoupgradeviewbutton").addEventListener("click", function (event) {
     showUpgradeMenu();
     event.preventDefault();
