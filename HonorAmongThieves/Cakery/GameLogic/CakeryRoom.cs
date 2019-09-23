@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Cakery.GameLogic
 {
     public class CakeryRoom : Room<CakeryPlayer, CakeryHub>
     {
+        // Global prices
         public class Prices
         {
             // Buy-price of raw materials
@@ -32,8 +30,16 @@ namespace HonorAmongThieves.Cakery.GameLogic
             public int MaxYears = 10;
         }
 
+        public class MarketReport
+        {
+            public (double cookiePrice, double croissantPrice, double cakePrice) Prices;
+            public Dictionary<Player, (int cookiesSold, int croissantsSold, int cakesSold)> PlayerSalesData = new Dictionary<Player, (int cookiesSold, int croissantsSold, int cakesSold)>();
+            public (int cookiesSold, int croissantsSold, int cakesSold) TotalSales;
+        }
+
         public Prices CurrentPrices { get; } = new Prices();
         public Market CurrentMarket { get; } = new Market();
+        public MarketReport[] MarketReports;
 
         public override void Destroy()
         {
@@ -60,6 +66,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 player.CurrentResources.Money = startingCash;
             }
 
+            this.MarketReports = new MarketReport[gameLength];
             this.SettingUp = false;
         }
     }

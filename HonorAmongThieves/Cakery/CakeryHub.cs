@@ -218,5 +218,26 @@ namespace HonorAmongThieves.Cakery
                 await ShowError("Error purchasing ingredients.");
             }
         }
+
+        // Baking goods for a player
+        public async Task BakeGoods(string roomId, string playerName, int cookiesBaked, int croissantsBaked, int cakesBaked)
+        {
+            var room = this.lobby.Rooms[roomId];
+            var player = room.Players[playerName];
+
+            if (player.BakeGoods(cookiesBaked, croissantsBaked, cakesBaked))
+            {
+                await Clients.Caller.SendAsync("UpdateProductionState",
+                        room.CurrentPrices,
+                        room.CurrentMarket,
+                        player.CurrentResources,
+                        player.CurrentUpgrades,
+                        player.CurrentBakedGoods);
+            }
+            else
+            {
+                await ShowError("Error baking goods.");
+            }
+        }
     }
 }

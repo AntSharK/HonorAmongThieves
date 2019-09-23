@@ -74,5 +74,38 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
             return false;
         }
+
+        internal bool BakeGoods(int cookiesBaked, int croissantsBaked, int cakesBaked)
+        {
+            var flourCost = cookiesBaked * this.CurrentBakedGoods.CookieCost.flour
+                + croissantsBaked * this.CurrentBakedGoods.CroissantCost.flour
+                + cakesBaked * this.CurrentBakedGoods.CakeCost.flour;
+
+            var butterCost = cookiesBaked * this.CurrentBakedGoods.CookieCost.butter
+                + croissantsBaked * this.CurrentBakedGoods.CroissantCost.butter
+                + cakesBaked * this.CurrentBakedGoods.CakeCost.butter;
+
+            var sugarCost = cookiesBaked * this.CurrentBakedGoods.CookieCost.sugar
+                + croissantsBaked * this.CurrentBakedGoods.CroissantCost.sugar
+                + cakesBaked * this.CurrentBakedGoods.CakeCost.sugar;
+
+            var moneyCost = cookiesBaked * this.CurrentBakedGoods.CookieCost.money
+                + croissantsBaked * this.CurrentBakedGoods.CroissantCost.money
+                + cakesBaked * this.CurrentBakedGoods.CakeCost.money;
+
+            if (flourCost < this.CurrentResources.Flour
+                || butterCost < this.CurrentResources.Butter
+                || sugarCost < this.CurrentResources.Sugar
+                || moneyCost < this.CurrentResources.Flour)
+            {
+                return false;
+            }
+
+            this.CurrentResources.Money = this.CurrentResources.Money - moneyCost;
+            this.CurrentResources.Butter = this.CurrentResources.Butter - butterCost;
+            this.CurrentResources.Flour = this.CurrentResources.Flour - flourCost;
+            this.CurrentResources.Sugar = this.CurrentResources.Sugar - sugarCost;
+            return true;
+        }
     }
 }
