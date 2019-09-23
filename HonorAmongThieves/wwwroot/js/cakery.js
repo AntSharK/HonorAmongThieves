@@ -389,17 +389,32 @@ function updateBakingCost() {
         document.getElementById("butterforbaking").style.color = "red";
         bakingEnabled = false;
     }
+    else {
+        document.getElementById("butterforbaking").style.color = "blue";
+    }
+
     if (flourUsed > playerState.resources.flour) {
         document.getElementById("flourforbaking").style.color = "red";
         bakingEnabled = false;
     }
+    else {
+        document.getElementById("flourforbaking").style.color = "blue";
+    }
+
     if (sugarUsed > playerState.resources.sugar) {
         document.getElementById("sugarforbaking").style.color = "red";
         bakingEnabled = false;
     }
+    else {
+        document.getElementById("sugarforbaking").style.color = "blue";
+    }
+
     if (moneyUsed > playerState.resources.money) {
         document.getElementById("moneyforbaking").style.color = "red";
         bakingEnabled = false;
+    }
+    else {
+        document.getElementById("moneyforbaking").style.color = "blue";
     }
 
     if (bakingEnabled) {
