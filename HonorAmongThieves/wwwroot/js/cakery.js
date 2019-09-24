@@ -215,23 +215,23 @@ function showBakeMenu() {
     var cakeCost = playerState.bakedGoods.cakeCost;
     var croissantCost = playerState.bakedGoods.croissantCost;
     var cookieCost = playerState.bakedGoods.cookieCost;
-    document.getElementById("cookiepricebutter").textContent = cookieCost.item1 + "g";
-    document.getElementById("cookiepriceflour").textContent = cookieCost.item2 + "g";
-    document.getElementById("cookiepricesugar").textContent = cookieCost.item3 + "g";
+    document.getElementById("cookiepricebutter").textContent = cookieCost.item1.ToFixed(0) + "g";
+    document.getElementById("cookiepriceflour").textContent = cookieCost.item2.ToFixed(0) + "g";
+    document.getElementById("cookiepricesugar").textContent = cookieCost.item3.ToFixed(0) + "g";
     document.getElementById("cookiepricemoney").textContent = "$" + (cookieCost.item4 / 100).toFixed(2);
-    document.getElementById("croissantpricebutter").textContent = croissantCost.item1 + "g";
-    document.getElementById("croissantpriceflour").textContent = croissantCost.item2 + "g";
-    document.getElementById("croissantpricesugar").textContent = croissantCost.item3 + "g";
+    document.getElementById("croissantpricebutter").textContent = croissantCost.item1.ToFixed(0) + "g";
+    document.getElementById("croissantpriceflour").textContent = croissantCost.item2.ToFixed(0) + "g";
+    document.getElementById("croissantpricesugar").textContent = croissantCost.item3.ToFixed(0) + "g";
     document.getElementById("croissantpricemoney").textContent = "$" + (croissantCost.item4 / 100).toFixed(2);
-    document.getElementById("cakepricebutter").textContent = cakeCost.item1 + "g";
-    document.getElementById("cakepriceflour").textContent = cakeCost.item2 + "g";
-    document.getElementById("cakepricesugar").textContent = cakeCost.item3 + "g";
+    document.getElementById("cakepricebutter").textContent = cakeCost.item1.ToFixed(0) + "g";
+    document.getElementById("cakepriceflour").textContent = cakeCost.item2.ToFixed(0) + "g";
+    document.getElementById("cakepricesugar").textContent = cakeCost.item3.ToFixed(0) + "g";
     document.getElementById("cakepricemoney").textContent = "$" + (cakeCost.item4 / 100).toFixed(2);
 
     document.getElementById("moneyowned").textContent = "Cash Available: $" + (playerState.resources.money / 100).toFixed(2);
-    document.getElementById("flourowned").textContent = playerState.resources.flour + "g";
-    document.getElementById("sugarowned").textContent = playerState.resources.sugar + "g";
-    document.getElementById("butterowned").textContent = playerState.resources.butter + "g";
+    document.getElementById("flourowned").textContent = playerState.resources.flour.ToFixed(0) + "g";
+    document.getElementById("sugarowned").textContent = playerState.resources.sugar.ToFixed(0) + "g";
+    document.getElementById("butterowned").textContent = playerState.resources.butter.ToFixed(0) + "g";
 
     document.getElementById("flourprice").textContent = "$" + (gameState.currentPrices.flour / 100).toFixed(2);
     document.getElementById("butterprice").textContent = "$" + (gameState.currentPrices.butter / 100).toFixed(2);
@@ -331,7 +331,7 @@ document.getElementById("bakethingsbutton").addEventListener("click", function (
         || butterUsed > playerState.resources.butter
         || sugarUsed > playerState.resources.sugar) {
         window.alert("NOT ENOUGH RESOURCES! Ingredients cost $" + (moneyUsed / 100).toFixed(2)
-            + ", " + butterUsed + "g butter, " + flourUsed + "g flour, " + sugarUsed + "g sugar.");
+            + ", " + butterUsed.toFixed(0) + "g butter, " + flourUsed.toFixed(0) + "g flour, " + sugarUsed.toFixed(0) + "g sugar.");
     }
     else {
         connection.invoke("BakeGoods", roomId, userName, cookiesBaked, croissantsBaked, cakesBaked).catch(function (err) {
@@ -378,9 +378,9 @@ function updateBakingCost() {
     var moneyUsed = cookieCost.item4 * cookiesBaked + croissantCost.item4 * croissantsBaked + cakeCost.item4 * cakesBaked;
     // Copy+paste ends here
 
-    document.getElementById("butterforbaking").textContent = butterUsed + "g";
-    document.getElementById("flourforbaking").textContent = flourUsed + "g";
-    document.getElementById("sugarforbaking").textContent = sugarUsed + "g";
+    document.getElementById("butterforbaking").textContent = butterUsed.ToFixed(0) + "g";
+    document.getElementById("flourforbaking").textContent = flourUsed.ToFixed(0) + "g";
+    document.getElementById("sugarforbaking").textContent = sugarUsed.ToFixed(0) + "g";
     document.getElementById("moneyforbaking").textContent = "$" + (moneyUsed / 100).toFixed(2);
 
     var bakingEnabled = true;

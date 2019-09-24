@@ -43,6 +43,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
         public Prices CurrentPrices { get; } = new Prices();
         public Market CurrentMarket { get; } = new Market();
         public MarketReport[] MarketReports;
+        public int LifetimeGlobalSales = 0; // The sum of all the money given to all the players - the more money in the system, the higher the price of goods!
 
         public override void Destroy()
         {
@@ -70,6 +71,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             }
 
             this.MarketReports = new MarketReport[gameLength];
+            this.LifetimeGlobalSales = startingCash * this.Players.Count;
             this.SettingUp = false;
         }
 
