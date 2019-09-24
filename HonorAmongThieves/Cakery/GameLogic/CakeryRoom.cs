@@ -35,9 +35,9 @@ namespace HonorAmongThieves.Cakery.GameLogic
         public class MarketReport
         {
             public (double cookiePrice, double croissantPrice, double cakePrice) Prices;
-            public Dictionary<Player, (int cookiesSold, int croissantsSold, int cakesSold)> PlayerSalesData = new Dictionary<Player, (int cookiesSold, int croissantsSold, int cakesSold)>();
-            public Dictionary<Player, int> PlayerProfits = new Dictionary<Player, int>();
-            public (int cookiesSold, int croissantsSold, int cakesSold) TotalSales;
+            public Dictionary<Player, (long cookiesSold, long croissantsSold, long cakesSold)> PlayerSalesData = new Dictionary<Player, (long cookiesSold, long croissantsSold, long cakesSold)>();
+            public Dictionary<Player, long> PlayerProfits = new Dictionary<Player, long>();
+            public (long cookiesSold, long croissantsSold, long cakesSold) TotalSales;
         }
 
         public Prices CurrentPrices { get; } = new Prices();
@@ -100,8 +100,46 @@ namespace HonorAmongThieves.Cakery.GameLogic
             // Advance to the next state if everyone has ended their turn
             if (notReadyPlayerNames.Count() <= 0)
             {
-                // TODO
+                await this.EndRound();
             }
+        }
+
+        public async Task EndRound()
+        {
+            var marketReport = new MarketReport();
+            marketReport.TotalSales = (0, 0, 0);
+
+            foreach (var player in this.Players.Values)
+            {
+                marketReport.PlayerSalesData[player] = (player.CurrentBakedGoods.Cookies, player.CurrentBakedGoods.Croissants, player.CurrentBakedGoods.Cakes);
+                marketReport.TotalSales = (marketReport.TotalSales.cookiesSold + player.CurrentBakedGoods.Cookies,
+                    marketReport.TotalSales.croissantsSold + player.CurrentBakedGoods.Croissants,
+                    marketReport.TotalSales.cakesSold + player.CurrentBakedGoods.Cakes);
+            }
+
+            // First, re-calculate baked goods cost
+            // There is a base cost difference
+            // Then, based on the current market, 
+            // TODO
+
+            // Then, sell all goods baked
+            foreach (var player in this.Players.Values)
+            {
+                // TODO
+                player.SellGoods(marketReport);
+            }
+
+            // Then, finalize upgrades
+            foreach (var player in this.Players.Values)
+            {
+                // TODO
+                player.FinalizeUpgrades();
+            }
+
+            // Re-calculate raw material cost
+
+            // Finally, broadcast this year's report
+            // TODO
         }
     }
 }
