@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Cakery.GameLogic
 {
@@ -34,6 +36,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
         {
             public (double cookiePrice, double croissantPrice, double cakePrice) Prices;
             public Dictionary<Player, (int cookiesSold, int croissantsSold, int cakesSold)> PlayerSalesData = new Dictionary<Player, (int cookiesSold, int croissantsSold, int cakesSold)>();
+            public Dictionary<Player, int> PlayerProfits = new Dictionary<Player, int>();
             public (int cookiesSold, int croissantsSold, int cakesSold) TotalSales;
         }
 
@@ -68,6 +71,35 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
             this.MarketReports = new MarketReport[gameLength];
             this.SettingUp = false;
+        }
+
+        public async Task EndPlayerTurn(CakeryPlayer readyPlayer)
+        {
+            readyPlayer.CurrentStatus = CakeryPlayer.Status.SettingUpShop;
+            
+            var readyPlayerNames = from player 
+                                   in this.Players.Values
+                                   where player.CurrentStatus != CakeryPlayer.Status.Producing
+                                   select player.Name;
+
+            var notReadyPlayerNames = from player
+                                   in this.Players.Values
+                                   where player.CurrentStatus == CakeryPlayer.Status.Producing
+                                   select player.Name;
+
+            var readyPlayers = this.Players.Values.Where(p => p.CurrentStatus != CakeryPlayer.Status.Producing);
+            foreach (var player in readyPlayers)
+            {
+                await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("UpdatePlayerList",
+                    readyPlayerNames,
+                    notReadyPlayerNames);
+            }
+
+            // Advance to the next state if everyone has ended their turn
+            if (notReadyPlayerNames.Count() <= 0)
+            {
+                // TODO
+            }
         }
     }
 }

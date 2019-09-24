@@ -14,7 +14,7 @@ var roundActions = {
     cakesBaked: 0,
     croissantsBaked: 0,
     cookiesBaked: 0,
-    // TODO: Upgrades purchased
+    // TODO (Upgrades): Upgrades purchased
 }
 
 // The player state currently, not including this round's purchases
@@ -431,7 +431,7 @@ document.getElementById("switchtoupgradeviewbutton").addEventListener("click", f
     event.preventDefault();
 });
 
-// TODO: Show the actual list of upgrades upgrade menu
+// TODO (Upgrades): Show the actual list of upgrades upgrade menu
 function showUpgradeMenu() {
     baking = false;
     changeUiState("UPGRADE!!", "upgrademenu");
@@ -452,12 +452,76 @@ document.getElementById("switchtobakeviewbutton").addEventListener("click", func
     event.preventDefault();
 });
 
-// TODO: Show your setting up shop - all resources, and things to be sold
-connection.on("SetUpShop", function (playerResources, playerUpgrades, playerBakedGoods) {
+document.getElementById("gobacktobakeviewbutton").addEventListener("click", function (event) {
+    showBakeMenu();
+    event.preventDefault();
+});
+
+// Go to set up shop screen
+document.getElementById("endturnbutton").addEventListener("click", function (event) {
+    summarizeGoodsBaked();
+    document.getElementById("confirmationbuttons").style.display = "block";
+    document.getElementById("readylist").style.display = "none";
+
+    event.preventDefault();
+});
+
+// Summarize the elements in goods baked
+function summarizeGoodsBaked() {
+    changeUiState("SET UP SHOP", "goodsbaked");
+    document.getElementById("currentyearsummary").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
+
+    document.getElementById("cookiesbeingsold").textContent = playerState.bakedGoods.cookies;
+    document.getElementById("croissantsbeingsold").textContent = playerState.bakedGoods.croissants;
+    document.getElementById("cakesbeingsold").textContent = playerState.bakedGoods.cakes;
+
+    // TODO (Upgrades): List upgrades
+}
+
+// Confirm ending of turn
+document.getElementById("reallyendturnbutton").addEventListener("click", function (event) {
+    connection.invoke("SetUpShop", roomId, userName).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
+});
+
+// Show setting up shop screen
+connection.on("SetUpShop", function (currentPrices, currentMarket, playerResources, playerUpgrades, playerBakedGoods, readyPlayers, notReadyPlayers) {
+    gameState.currentPrices = currentPrices;
+    gameState.currentMarket = currentMarket;
     playerState.resources = playerResources;
     playerState.upgrades = playerUpgrades;
     playerState.bakedGoods = playerBakedGoods;
+
+    summarizeGoodsBaked();
+    updatePlayerList(readyPlayers, notReadyPlayers);
 });
+
+connection.on("UpdatePlayerList", function (readyPlayers, notReadyPlayers) {
+    updatePlayerList(readyPlayers, notReadyPlayers);
+})
+
+function updatePlayerList(readyPlayers, slowBastards) {
+    document.getElementById("confirmationbuttons").style.display = "none";
+    document.getElementById("readylist").style.display = "block";
+
+    var readyList = document.getElementById("playerreadylist");
+    readyList.innerHTML = "";
+    for (let i = 0; i < readyPlayers.length; i++) {
+        var li = document.createElement("li");
+        li.textContent = readyPlayers[i];
+        readyList.appendChild(li);
+    }
+
+    var slowBastardList = document.getElementById("playerwaitinglist");
+    slowBastardList.innerHTML = "";
+    for (let i = 0; i < slowBastards.length; i++) {
+        var li = document.createElement("li");
+        li.textContent = slowBastards[i];
+        slowBastardList.appendChild(li);
+    }
+}
 
 // TODO: Show market report
 connection.on("MarketReport", function (currentPrices, currentMarket, playerBakedGoods) {

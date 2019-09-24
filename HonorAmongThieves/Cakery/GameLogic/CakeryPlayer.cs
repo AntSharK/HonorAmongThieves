@@ -39,7 +39,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
         public class Upgrades
         {
-            // TODO
+            // TODO (Upgrades)
         }
 
         public CakeryRoom Room { get; set; }
@@ -48,7 +48,8 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
         public Resources CurrentResources { get; set; } = new Resources();
         public BakedGoods CurrentBakedGoods { get; set; } = new BakedGoods();
-        public Upgrades CurrentUpgrades { get; set; } = new Upgrades();
+        public Upgrades CurrentUpgrades { get; set; } = new Upgrades(); // Does not include upgrades that are just purchased this round
+        public Upgrades JustPurchasedUpgrades { get; set; } = new Upgrades(); // Upgrades take into effect only in the round after you purchase them
         public long TotalSales { get; set; } = 0;
 
         public CakeryPlayer(string playerName, CakeryRoom room)

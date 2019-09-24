@@ -83,7 +83,6 @@
                     <td id="ingredientcost" colspan="3"></td>
                 </tr>
                 <tr>
-                    <!-- TODO: Grey out button when cost exceeds. Display current cost. -->
                     <td colspan="3"><input type="button" id="buyingredientsbutton" value="BUY INGREDIENTS" /></td>
                 </tr>
             </table> <hr />
@@ -143,19 +142,18 @@
         </div>
     </div>
 
-    <!------ TODO: UPGRADE THINGS --------->
+    <!------ TODO (Upgrades): UPGRADE THINGS --------->
     <div class="state" id="upgrademenu" style="display:none">
         <div class="display-4" style="text-align:center">
             <input type="button" id="switchtobakeviewbutton" value="BACK TO BAKING" /> <hr />
             <table align="center" class="h2" border="1px solid black" cellpadding="3%">
                 <tr>
-                <tr>
                     <td id="moneyowned2" colspan="4"></td>
                 </tr>
-                    <th></th>
-                    <th>Owned</th>
-                    <th></th>
-                    <th>Baked</th>
+                <th></th>
+                <th>Owned</th>
+                <th></th>
+                <th>Baked</th>
                 </tr>
                 <tr>
                     <td>Flour</td>
@@ -179,9 +177,46 @@
         </div>
     </div>
 
-    <!------ TODO: YOUR MARKET SUMMARY --------->
+    <!------ YOUR MARKET SUMMARY --------->
     <div class="state" id="goodsbaked" style="display:none">
         <div class="display-4" style="text-align:center">
+            <div id="currentyearsummary" class="h1"></div>
+            <table align="center" class="h2" border="1px solid black" cellpadding="3%">
+                <tr>
+                    <td colspan="2">To be sold:</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>Amount</th>
+                </tr>
+                <tr>
+                    <td>Cookies</td>
+                    <td id="cookiesbeingsold"></td>
+                </tr>
+                <tr>
+                    <td>Croissants</td>
+                    <td id="croissantsbeingsold"></td>
+                </tr>
+                <tr>
+                    <td>Cakes</td>
+                    <td id="cakesbeingsold"></td>
+                </tr>
+            </table> <hr />
+
+            <div class="h2">
+                <u>Upgrades Bought:</u>
+                <ul id="upgradesboughtlist"></ul>
+            </div> <hr />
+        </div>
+        <div id="confirmationbuttons" class="display-2" style="text-align:center">
+            <input type="button" id="gobacktobakeviewbutton" value="GO BACK" />
+            <input type="button" id="reallyendturnbutton" value="END TURN" />
+        </div>
+        <div class="h2" id="readylist" style="display:none">
+            <u>Players Ready:</u>
+            <ul id="playerreadylist"></ul> <hr />
+            <u>Waiting For:</u>
+            <ul id="playerwaitinglist"></ul> <hr />
         </div>
     </div>
 

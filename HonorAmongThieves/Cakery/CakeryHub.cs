@@ -184,10 +184,24 @@ namespace HonorAmongThieves.Cakery
                             player.CurrentBakedGoods);
                     break;
                 case CakeryPlayer.Status.SettingUpShop:
+                    var readyPlayerNames = from readyPlayer
+                                           in room.Players.Values
+                                           where readyPlayer.CurrentStatus != CakeryPlayer.Status.Producing
+                                           select readyPlayer.Name;
+
+                    var notReadyPlayerNames = from notReadyPlayer
+                                           in room.Players.Values
+                                              where notReadyPlayer.CurrentStatus == CakeryPlayer.Status.Producing
+                                              select notReadyPlayer.Name;
+
                     await Clients.Caller.SendAsync("SetUpShop",
+                            room.CurrentPrices,
+                            room.CurrentMarket,
                             player.CurrentResources,
                             player.CurrentUpgrades,
-                            player.CurrentBakedGoods);
+                            player.CurrentBakedGoods,
+                            readyPlayerNames,
+                            notReadyPlayerNames);
                     break;
                 case CakeryPlayer.Status.MarketReport:
                     await Clients.Caller.SendAsync("MarketReport",
@@ -238,6 +252,15 @@ namespace HonorAmongThieves.Cakery
             {
                 await ShowError("Error baking goods.");
             }
+        }
+
+        // Player decides to set up shop
+        public async Task SetUpShop(string roomId, string playerName)
+        {
+            var room = this.lobby.Rooms[roomId];
+            var player = room.Players[playerName];
+
+            await room.EndPlayerTurn(player);
         }
     }
 }
