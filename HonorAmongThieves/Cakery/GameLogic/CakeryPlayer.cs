@@ -1,4 +1,6 @@
-﻿namespace HonorAmongThieves.Cakery.GameLogic
+﻿using System;
+
+namespace HonorAmongThieves.Cakery.GameLogic
 {
     public class CakeryPlayer : Player
     {
@@ -107,6 +109,19 @@
             this.CurrentBakedGoods.Cakes = this.CurrentBakedGoods.Cakes + cakesBaked;
 
             return true;
+        }
+
+        internal void SellGoods(CakeryRoom.MarketReport marketReport)
+        {
+            marketReport.PlayerSalesData[this] = (this.CurrentBakedGoods.Cookies, this.CurrentBakedGoods.Croissants, this.CurrentBakedGoods.Cakes);
+            this.CurrentResources.Money = this.CurrentResources.Money
+                + this.CurrentBakedGoods.Cookies * marketReport.Prices.cookiePrice
+                + this.CurrentBakedGoods.Croissants * marketReport.Prices.croissantPrice
+                + this.CurrentBakedGoods.Cakes * marketReport.Prices.cakePrice;
+
+            this.CurrentBakedGoods.Cookies = 0;
+            this.CurrentBakedGoods.Croissants = 0;
+            this.CurrentBakedGoods.Cakes = 0;
         }
     }
 }

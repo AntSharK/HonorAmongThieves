@@ -21,7 +21,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             // Sell-price of baked goods
             public double Cookies = 200f; // Costs 130 to make
             public double Croissants = 400f; // Costs 250 to make
-            public double Cakes = 2000f; // Costs 2250 to make
+            public double Cakes = 2500f; // Costs 2250 to make
 
             // Buy-price of upgrades
         }
@@ -46,7 +46,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
         public Prices CurrentPrices { get; } = new Prices();
         public Market CurrentMarket { get; } = new Market();
         public MarketReport[] MarketReports;
-        public int CashInGame = 0;
+        public double CashInGame = 0;
 
         public override void Destroy()
         {
@@ -114,7 +114,6 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
             foreach (var player in this.Players.Values)
             {
-                marketReport.PlayerSalesData[player] = (player.CurrentBakedGoods.Cookies, player.CurrentBakedGoods.Croissants, player.CurrentBakedGoods.Cakes);
                 marketReport.TotalSales = (marketReport.TotalSales.cookiesSold + player.CurrentBakedGoods.Cookies,
                     marketReport.TotalSales.croissantsSold + player.CurrentBakedGoods.Croissants,
                     marketReport.TotalSales.cakesSold + player.CurrentBakedGoods.Cakes);
@@ -131,9 +130,9 @@ namespace HonorAmongThieves.Cakery.GameLogic
             this.CurrentPrices.Cakes = this.CurrentPrices.Cakes * random.Next(800, 1200) * 0.001f;
 
             // Then, adjust current cost based on number of goods in the market
-            double expectedCookies = this.CashInGame / 130;
-            double expectedCroissants = this.CashInGame / 250;
-            double expectedCakes = this.CashInGame / 2250;
+            double expectedCookies = this.CashInGame / 150;
+            double expectedCroissants = this.CashInGame / 300;
+            double expectedCakes = this.CashInGame / 3000;
 
             // Cookies - 200% at 0, 120% at quarter, 80% at expected quantity, 40% at double expected quantity
             marketReport.Prices.cookiePrice = this.CurrentPrices.Cookies * 
@@ -148,17 +147,18 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 ComputeMultiplier(expectedCakes, marketReport.TotalSales.cakesSold, 4.0, 2.0, 1.0, 0.5);
 
             // Then, sell all goods baked
+            this.CashInGame = 0;
             foreach (var player in this.Players.Values)
             {
-                // TODO
                 player.SellGoods(marketReport);
+                this.CashInGame = this.CashInGame + player.CurrentResources.Money;
             }
 
             // Then, finalize upgrades
             foreach (var player in this.Players.Values)
             {
                 // TODO
-                player.FinalizeUpgrades();
+                // player.FinalizeUpgrades();
             }
 
             // Finally, broadcast this year's report
