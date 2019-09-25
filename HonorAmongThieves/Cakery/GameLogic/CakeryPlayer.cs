@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace HonorAmongThieves.Cakery.GameLogic
+﻿namespace HonorAmongThieves.Cakery.GameLogic
 {
     public class CakeryPlayer : Player
     {
