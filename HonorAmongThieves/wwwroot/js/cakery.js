@@ -533,9 +533,23 @@ connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices,
     document.getElementById("salestabletitle").textContent = "YEAR: " + gameState.currentMarket.currentYear + "/"
         + gameState.currentMarket.maxYears + " SALES REPORT";
 
-    document.getElementById("marketreportcookieprice").textContent = (goodPrices.item1 / 100).toFixed(2)
-    document.getElementById("marketreportcookieamount").textContent = playerSales.item1;
-    document.getElementById("marketreportcookierevenue").textContent = (playerSales.item1 * goodPrices.item1 / 100).toFixed(2);
+    if (playerSales.item1 > 0) {
+        document.getElementById("marketreportcookieprice").textContent = "$" + (goodPrices.item1 / 100).toFixed(2)
+        document.getElementById("marketreportcookieamount").textContent = playerSales.item1;
+        document.getElementById("marketreportcookierevenue").textContent = "$" + (playerSales.item1 * goodPrices.item1 / 100).toFixed(2);
+    }
+
+    if (playerSales.item2 > 0) {
+        document.getElementById("marketreportcroissantprice").textContent = "$" + (goodPrices.item2 / 100).toFixed(2)
+        document.getElementById("marketreportcroissantamount").textContent = playerSales.item2;
+        document.getElementById("marketreportcroissantrevenue").textContent = "$" + (playerSales.item2 * goodPrices.item2 / 100).toFixed(2);
+    }
+
+    if (playerSales.item3 > 0) {
+        document.getElementById("marketreportcakeprice").textContent = "$" + (goodPrices.item3 / 100).toFixed(2)
+        document.getElementById("marketreportcakeamount").textContent = playerSales.item3;
+        document.getElementById("marketreportcakerevenue").textContent = "$" + (playerSales.item3 * goodPrices.item3 / 100).toFixed(2);
+    }
 
     document.getElementById("salestablesummary").textContent = "TOTAL REVENUE: $" + (playerProfit / 100).toFixed(2);
 });

@@ -68,19 +68,19 @@ namespace HonorAmongThieves.Cakery.GameLogic
             return newsReport.ToString();
         }
 
-        private static string cookiesVeryLow => "Cookie in short supply! Cookies sell for record high prices!";
+        private static string cookiesVeryLow => "CookieS in short supply! Cookies sell for record high prices!";
         private static string cookiesQuiteLow => "Cookie prices rice as cookies become more and more scarce.";
         private static string cookiesQuiteHigh => "The widespread proliferation of cookies cause prices to drop.";
         private static string cookiesVeryHigh => "Cookie prices drastically drop as cookies flood into the market.";
 
         private static string croissantsVeryLow => "Croissants in short supply! Croissants sell for record high prices!";
-        private static string croissantsQuiteLow => "Croissants prices rice as croissants become more and more scarce.";
+        private static string croissantsQuiteLow => "Croissant prices rice as croissants become more and more scarce.";
         private static string croissantsQuiteHigh => "The widespread proliferation of croissants cause prices to drop.";
-        private static string croissantsVeryHigh => "Croissants prices drastically drop as croissants flood into the market.";
+        private static string croissantsVeryHigh => "Croissant prices drastically drop as croissants flood into the market.";
 
         private static string cakesVeryLow => "Cakes in short supply! Cakes sell for record high prices!";
-        private static string cakesQuiteLow => "Cakes prices rice as cakes become more and more scarce.";
+        private static string cakesQuiteLow => "Cake prices rice as cakes become more and more scarce.";
         private static string cakesQuiteHigh => "The widespread proliferation of cakes cause prices to drop.";
-        private static string cakesVeryHigh => "Cakes prices drastically drop as cakes flood into the market.";
+        private static string cakesVeryHigh => "Cake prices drastically drop as cakes flood into the market.";
     }
 }
