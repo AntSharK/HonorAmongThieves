@@ -176,12 +176,7 @@ namespace HonorAmongThieves.Cakery
                     await this.JoinRoom_UpdateView(room, player);
                     break;
                 case CakeryPlayer.Status.Producing:
-                    await Clients.Caller.SendAsync("UpdateProductionState",
-                            room.CurrentPrices,
-                            room.CurrentMarket,
-                            player.CurrentResources,
-                            player.CurrentUpgrades,
-                            player.CurrentBakedGoods);
+                    await UpdateProductionState(room, player);
                     break;
                 case CakeryPlayer.Status.SettingUpShop:
                     var readyPlayerNames = from readyPlayer
@@ -204,12 +199,25 @@ namespace HonorAmongThieves.Cakery
                             notReadyPlayerNames);
                     break;
                 case CakeryPlayer.Status.MarketReport:
-                    await Clients.Caller.SendAsync("MarketReport",
-                            room.CurrentPrices,
-                            room.CurrentMarket,
-                            player.CurrentBakedGoods);
+                    var yearToDisplay = room.CurrentMarket.CurrentYear - 1;
+                    var marketReport = room.MarketReports[yearToDisplay];
+                    await room.DisplayMarketReport(player, marketReport);
+                    break;
+                case CakeryPlayer.Status.CleaningUp:
+                    // await Clients.Caller.SendAsync("ScoreScreen");
+                    // TODO: Send the player enough data to render the score screen
                     break;
             }
+        }
+
+        private async Task UpdateProductionState(CakeryRoom room, CakeryPlayer player)
+        {
+            await Clients.Caller.SendAsync("UpdateProductionState",
+                    room.CurrentPrices,
+                    room.CurrentMarket,
+                    player.CurrentResources,
+                    player.CurrentUpgrades,
+                    player.CurrentBakedGoods);
         }
 
         // Buying ingredients for a player
@@ -220,12 +228,7 @@ namespace HonorAmongThieves.Cakery
 
             if (player.MakePurchase(butterBought, flourBought, sugarBought))
             {
-                await Clients.Caller.SendAsync("UpdateProductionState",
-                        room.CurrentPrices,
-                        room.CurrentMarket,
-                        player.CurrentResources,
-                        player.CurrentUpgrades,
-                        player.CurrentBakedGoods);
+                await UpdateProductionState(room, player);
             }
             else
             {
@@ -241,12 +244,7 @@ namespace HonorAmongThieves.Cakery
 
             if (player.BakeGoods(cookiesBaked, croissantsBaked, cakesBaked))
             {
-                await Clients.Caller.SendAsync("UpdateProductionState",
-                        room.CurrentPrices,
-                        room.CurrentMarket,
-                        player.CurrentResources,
-                        player.CurrentUpgrades,
-                        player.CurrentBakedGoods);
+                await UpdateProductionState(room, player);
             }
             else
             {
@@ -261,6 +259,24 @@ namespace HonorAmongThieves.Cakery
             var player = room.Players[playerName];
 
             await room.EndPlayerTurn(player);
+        }
+
+        // Player ends market report
+        public async Task EndMarketReport(string roomId, string playerName)
+        {
+            var room = this.lobby.Rooms[roomId];
+            var player = room.Players[playerName];
+
+            if (room.CurrentMarket.CurrentYear <= room.CurrentMarket.MaxYears)
+            {
+                player.CurrentStatus = CakeryPlayer.Status.Producing;
+                await UpdateProductionState(room, player);
+            }
+            else
+            {
+                player.CurrentStatus = CakeryPlayer.Status.CleaningUp;
+                // TODO: Show end game screen
+            }
         }
     }
 }

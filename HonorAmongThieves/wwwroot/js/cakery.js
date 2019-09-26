@@ -523,8 +523,27 @@ function updatePlayerList(readyPlayers, slowBastards) {
     }
 }
 
-// TODO: Show market report
-connection.on("MarketReport", function (currentPrices, currentMarket, playerBakedGoods) {
+// Show market report
+connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices, playerProfit, currentMarket) {
+    gameState.currentMarket = currentMarket;
+    baking = true;
+    changeUiState("MARKET REPORT", "marketreport");
 
-    // Do stuff
+    document.getElementById("marketreportnews").textContent = newsReport;
+    document.getElementById("salestabletitle").textContent = "YEAR: " + gameState.currentMarket.currentYear + "/"
+        + gameState.currentMarket.maxYears + " SALES REPORT";
+
+    document.getElementById("marketreportcookieprice").textContent = (goodPrices.item1 / 100).toFixed(2)
+    document.getElementById("marketreportcookieamount").textContent = playerSales.item1;
+    document.getElementById("marketreportcookierevenue").textContent = (playerSales.item1 * goodPrices.item1 / 100).toFixed(2);
+
+    document.getElementById("salestablesummary").textContent = "TOTAL REVENUE: $" + (playerProfit / 100).toFixed(2);
+});
+
+// Stop viewing market report
+document.getElementById("endmarketreportbutton").addEventListener("click", function (event) {
+    connection.invoke("EndMarketReport", roomId, userName).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
 });

@@ -114,10 +114,12 @@ namespace HonorAmongThieves.Cakery.GameLogic
         internal void SellGoods(CakeryRoom.MarketReport marketReport)
         {
             marketReport.PlayerSalesData[this] = (this.CurrentBakedGoods.Cookies, this.CurrentBakedGoods.Croissants, this.CurrentBakedGoods.Cakes);
-            this.CurrentResources.Money = this.CurrentResources.Money
-                + this.CurrentBakedGoods.Cookies * marketReport.Prices.cookiePrice
+            var profits = this.CurrentBakedGoods.Cookies * marketReport.Prices.cookiePrice
                 + this.CurrentBakedGoods.Croissants * marketReport.Prices.croissantPrice
                 + this.CurrentBakedGoods.Cakes * marketReport.Prices.cakePrice;
+
+            this.CurrentResources.Money = this.CurrentResources.Money + profits;
+            marketReport.PlayerProfits[this] = profits;
 
             this.CurrentBakedGoods.Cookies = 0;
             this.CurrentBakedGoods.Croissants = 0;

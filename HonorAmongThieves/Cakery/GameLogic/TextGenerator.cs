@@ -4,10 +4,10 @@ namespace HonorAmongThieves.Cakery.GameLogic
 {
     public static class TextGenerator
     {
-        public static string GetNewsReport(double cashInGame, CakeryRoom.MarketReport marketReport)
+        public static string GetNewsReport(CakeryRoom.MarketReport marketReport)
         {
             (var cookiesSold, var croissantsSold, var cakesSold) = marketReport.TotalSales;
-            (var expectedCookies, var expectedCroissants, var expectedCakes) = CakeryRoom.ComputeExpectedSales(cashInGame);
+            (var expectedCookies, var expectedCroissants, var expectedCakes) = CakeryRoom.ComputeExpectedSales(marketReport.CashInPreviousRound);
 
             var cookiePercentageSold = cookiesSold / (expectedCookies != 0 ? expectedCookies : 0.1);
             var croissantPercentageSold = croissantsSold / (expectedCroissants != 0 ? expectedCroissants : 0.1);

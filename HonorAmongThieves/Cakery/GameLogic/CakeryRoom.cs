@@ -39,8 +39,9 @@ namespace HonorAmongThieves.Cakery.GameLogic
         {
             public (double cookiePrice, double croissantPrice, double cakePrice) Prices;
             public Dictionary<Player, (long cookiesSold, long croissantsSold, long cakesSold)> PlayerSalesData = new Dictionary<Player, (long cookiesSold, long croissantsSold, long cakesSold)>();
-            public Dictionary<Player, long> PlayerProfits = new Dictionary<Player, long>();
+            public Dictionary<Player, double> PlayerProfits = new Dictionary<Player, double>();
             public (long cookiesSold, long croissantsSold, long cakesSold) TotalSales;
+            public double CashInPreviousRound;
         }
 
         public Prices CurrentPrices { get; } = new Prices();
@@ -123,8 +124,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             ComputeMarketPrices(this.CurrentPrices, this.CashInGame, marketReport);
 
             // Sell all goods baked
-            var lastRoundCashInGame = this.CashInGame;
-            this.CashInGame = 0;
+            marketReport.CashInPreviousRound = this.CashInGame;
             foreach (var player in this.Players.Values)
             {
                 player.SellGoods(marketReport);
@@ -139,24 +139,24 @@ namespace HonorAmongThieves.Cakery.GameLogic
             }
 
             // Finally, broadcast this year's report to each player
-            var newsReport = TextGenerator.GetNewsReport(lastRoundCashInGame, marketReport);
-
+            this.MarketReports[this.CurrentMarket.CurrentYear] = marketReport;
             this.CurrentMarket.CurrentYear++;
-            if (this.CurrentMarket.CurrentYear > this.CurrentMarket.MaxYears)
+            foreach (var player in this.Players.Values)
             {
-                // TODO: End the game
+                player.CurrentStatus = CakeryPlayer.Status.MarketReport;
+                await this.DisplayMarketReport(player, marketReport);
             }
-            else
-            {
-                foreach (var player in this.Players.Values)
-                {
-                    player.CurrentStatus = CakeryPlayer.Status.Producing;
-                    var playerSales = marketReport.PlayerSalesData[player];
-                    var goodPrices = marketReport.Prices;
-                    await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("ShowMarketReport",
-                        newsReport, playerSales, goodPrices);
-                }
-            }
+        }
+
+        public async Task DisplayMarketReport(CakeryPlayer player, MarketReport marketReport)
+        {
+            var newsReport = TextGenerator.GetNewsReport(marketReport);
+            var playerSales = marketReport.PlayerSalesData[player];
+            var playerProfit = marketReport.PlayerProfits[player];
+            var goodPrices = marketReport.Prices;
+            await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("ShowMarketReport",
+                newsReport, playerSales, goodPrices,
+                playerProfit, this.CurrentMarket);
         }
 
         public static (double, double, double) ComputeExpectedSales(double cashInGame)
@@ -172,7 +172,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
         {
             // First, re-calculate baked goods cost
             // Cookie base cost can go up or down by up to 10%
-            currentPrices.Cookies = currentPrices.Cookies * random.Next(900, 1100) * 0.1f;
+            currentPrices.Cookies = currentPrices.Cookies * random.Next(900, 1100) * 0.001f;
 
             // Croissant base cost goes up or down by up to 5%
             currentPrices.Croissants = currentPrices.Croissants * random.Next(950, 1050) * 0.001f;
@@ -199,7 +199,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
         private static double ComputeMultiplier(double expectedSales, double actualSales,
             double zeroPoint, double quarterPoint, double expectedPoint, double doublePoint)
         {
-            var percentageOfExpectedSales = actualSales / (expectedSales != 0 ? expectedSales : 0.001);
+            var percentageOfExpectedSales = actualSales / (expectedSales != 0 ? expectedSales : 0.1);
             if (percentageOfExpectedSales <= 0.25)
             {
                 return zeroPoint + (percentageOfExpectedSales - 0) * (quarterPoint - zeroPoint) / (0.25 - 0);
