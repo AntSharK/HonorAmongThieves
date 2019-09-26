@@ -581,25 +581,50 @@ document.getElementById("endmarketreportbutton").addEventListener("click", funct
 connection.on("EndGame", function (totalSales, playerSales) {
     changeUiState("END OF GAME", "endgame");
 
+    // TODO: Fix display bug
     var leaderboard = document.getElementById("endgameleaderboard");
     for (var i = 0; i < totalSales.length; i++) {
         var tr = document.createElement("TR");
-        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item1)));
-        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item2)));
-        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item3)));
-        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item4)));
-        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode((totalSales[i].item5/100).toFixed(2))));
+
+        var name = document.createElement("TD");
+        name.appendChild(document.createTextNode(totalSales[i].item1));
+        tr.appendChild(name);
+        var cookies = document.createElement("TD");
+        cookies.appendChild(document.createTextNode(totalSales[i].item2));
+        tr.appendChild(cookies);
+        var croissants = document.createElement("TD");
+        croissants.appendChild(document.createTextNode(totalSales[i].item3));
+        tr.appendChild(croissants);
+        var cakes = document.createElement("TD");
+        cakes.appendChild(document.createTextNode(totalSales[i].item4));
+        tr.appendChild(cakes);
+        var total = document.createElement("TD");
+        total.appendChild(document.createTextNode("$" + (totalSales[i].item5 / 100).toFixed(2)));
+        tr.appendChild(total);
         leaderboard.appendChild(tr);
     }
 
     var annualreport = document.getElementById("annualreport");
-    for (var i = 0; i < playerSales.length; i++) {
+    for (var i = 0; i <= playerSales.length; i++) {
         var tr = document.createElement("TR");
-        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(i + 1)));
-        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item1)));
-        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item2)));
-        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item3)));
-        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode((totalSales[i].item4/100).toFixed(2))));
+
+        var year = document.createElement("TD");
+        year.appendChild(document.createTextNode(i + 1));
+        tr.appendChild(year);
+
+        var cookies = document.createElement("TD");
+        cookies.appendChild(document.createTextNode(playerSales[i].item1));
+        tr.appendChild(cookies);
+        var croissants = document.createElement("TD");
+        croissants.appendChild(document.createTextNode(playerSales[i].item2));
+        tr.appendChild(croissants);
+        var cakes = document.createElement("TD");
+        cakes.appendChild(document.createTextNode(playerSales[i].item3));
+        tr.appendChild(cakes);
+        var total = document.createElement("TD");
+        total.appendChild(document.createTextNode("$" + (playerSales[i].item4 / 100).toFixed(2)));
+        tr.appendChild(total);
+
         annualreport.appendChild(tr);
     }
 
