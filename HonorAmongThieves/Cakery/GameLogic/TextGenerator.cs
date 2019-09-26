@@ -14,53 +14,53 @@ namespace HonorAmongThieves.Cakery.GameLogic
             var cakePercentageSold = cakesSold / (expectedCakes != 0 ? expectedCakes : 0.1);
 
             StringBuilder newsReport = new StringBuilder();
-            if (cookiePercentageSold < 0.3)
+            if (cookiePercentageSold < 0.3 && marketReport.TotalSales.cookiesSold > 0)
             {
                 newsReport.AppendLine(cookiesVeryLow);
             }
-            else if (cookiePercentageSold < 0.6)
+            else if (cookiePercentageSold < 0.6 && marketReport.TotalSales.cookiesSold > 0)
             {
                 newsReport.AppendLine(cookiesQuiteLow);
             }
-            else if (cookiePercentageSold > 1.3)
+            else if (cookiePercentageSold > 1.3 && marketReport.TotalSales.cookiesSold > 0)
             {
                 newsReport.Append(cookiesQuiteHigh);
             }
-            else if (cookiePercentageSold > 1.8)
+            else if (cookiePercentageSold > 1.8 && marketReport.TotalSales.cookiesSold > 0)
             {
                 newsReport.Append(cookiesVeryHigh);
             }
 
-            if (croissantPercentageSold < 0.3)
+            if (croissantPercentageSold < 0.3 && marketReport.TotalSales.croissantsSold > 0)
             {
                 newsReport.AppendLine(croissantsVeryLow);
             }
-            else if (croissantPercentageSold < 0.6)
+            else if (croissantPercentageSold < 0.6 && marketReport.TotalSales.croissantsSold > 0)
             {
                 newsReport.AppendLine(croissantsQuiteLow);
             }
-            else if (croissantPercentageSold > 1.3)
+            else if (croissantPercentageSold > 1.3 && marketReport.TotalSales.croissantsSold > 0)
             {
                 newsReport.Append(croissantsQuiteHigh);
             }
-            else if (croissantPercentageSold > 1.8)
+            else if (croissantPercentageSold > 1.8 && marketReport.TotalSales.croissantsSold > 0)
             {
                 newsReport.Append(croissantsVeryHigh);
             }
 
-            if (cakePercentageSold < 0.3)
+            if (cakePercentageSold < 0.3 && marketReport.TotalSales.cakesSold > 0)
             {
                 newsReport.AppendLine(cakesVeryLow);
             }
-            else if (cakePercentageSold < 0.6)
+            else if (cakePercentageSold < 0.6 && marketReport.TotalSales.cakesSold > 0)
             {
                 newsReport.AppendLine(cakesQuiteLow);
             }
-            else if (cakePercentageSold > 1.3)
+            else if (cakePercentageSold > 1.3 && marketReport.TotalSales.cakesSold > 0)
             {
                 newsReport.Append(cakesQuiteHigh);
             }
-            else if (cakePercentageSold > 1.8)
+            else if (cakePercentageSold > 1.8 && marketReport.TotalSales.cakesSold > 0)
             {
                 newsReport.Append(cakesVeryHigh);
             }
