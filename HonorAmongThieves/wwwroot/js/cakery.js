@@ -538,17 +538,32 @@ connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices,
         document.getElementById("marketreportcookieamount").textContent = playerSales.item1;
         document.getElementById("marketreportcookierevenue").textContent = "$" + (playerSales.item1 * goodPrices.item1 / 100).toFixed(2);
     }
+    else {
+        document.getElementById("marketreportcookieprice").textContent = ""
+        document.getElementById("marketreportcookieamount").textContent = ""
+        document.getElementById("marketreportcookierevenue").textContent = ""
+    }
 
     if (playerSales.item2 > 0) {
         document.getElementById("marketreportcroissantprice").textContent = "$" + (goodPrices.item2 / 100).toFixed(2)
         document.getElementById("marketreportcroissantamount").textContent = playerSales.item2;
         document.getElementById("marketreportcroissantrevenue").textContent = "$" + (playerSales.item2 * goodPrices.item2 / 100).toFixed(2);
     }
+    else {
+        document.getElementById("marketreportcroissantprice").textContent = ""
+        document.getElementById("marketreportcroissantamount").textContent = ""
+        document.getElementById("marketreportcroissantrevenue").textContent = ""
+    }
 
     if (playerSales.item3 > 0) {
         document.getElementById("marketreportcakeprice").textContent = "$" + (goodPrices.item3 / 100).toFixed(2)
         document.getElementById("marketreportcakeamount").textContent = playerSales.item3;
         document.getElementById("marketreportcakerevenue").textContent = "$" + (playerSales.item3 * goodPrices.item3 / 100).toFixed(2);
+    }
+    else {
+        document.getElementById("marketreportcakeprice").textContent = ""
+        document.getElementById("marketreportcakeamount").textContent = ""
+        document.getElementById("marketreportcakerevenue").textContent = ""
     }
 
     document.getElementById("salestablesummary").textContent = "TOTAL REVENUE: $" + (playerProfit / 100).toFixed(2);
@@ -566,13 +581,27 @@ document.getElementById("endmarketreportbutton").addEventListener("click", funct
 connection.on("EndGame", function (totalSales, playerSales) {
     changeUiState("END OF GAME", "endgame");
 
-    // TODO: Change displayed elements
     var leaderboard = document.getElementById("endgameleaderboard");
-    var tr = document.createElement("TR");
-    var td = document.createElement("TD");
-    td.appendChild(document.createTextNode("thing"));
-    tr.appendChild(td);
-    leaderboard.appendChild(tr);
+    for (var i = 0; i < totalSales.length; i++) {
+        var tr = document.createElement("TR");
+        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item1)));
+        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item2)));
+        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item3)));
+        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item4)));
+        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode((totalSales[i].item5/100).toFixed(2))));
+        leaderboard.appendChild(tr);
+    }
+
+    var annualreport = document.getElementById("annualreport");
+    for (var i = 0; i < playerSales.length; i++) {
+        var tr = document.createElement("TR");
+        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(i + 1)));
+        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item1)));
+        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item2)));
+        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode(totalSales[i].item3)));
+        tr.appendChild(document.createElement("TD").appendChild(document.createTextNode((totalSales[i].item4/100).toFixed(2))));
+        annualreport.appendChild(tr);
+    }
 
     sessionStorage.removeItem("username");
     sessionStorage.removeItem("roomid");

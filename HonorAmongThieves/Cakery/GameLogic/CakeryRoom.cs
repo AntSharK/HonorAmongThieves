@@ -49,7 +49,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
         public MarketReport[] MarketReports;
         public double CashInGame = 0;
 
-        public IOrderedEnumerable<KeyValuePair<string, (double, double, double, double)>> FinalTotalSalesData;
+        public IEnumerable<(string, double, double, double, double)> FinalTotalSalesData;
         public Dictionary<Player, (double cookiesSold, double croissantsSold, double cakesSold, double totalProfit)[]> FinalYearlySalesData = new Dictionary<Player, (double cookiesSold, double croissantsSold, double cakesSold, double totalProfit)[]>();
 
         public override void Destroy()
@@ -195,15 +195,15 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 year++;
             }
 
-            var finalTotalSalesData = new Dictionary<string, (double cookiesSold, double croissantsSold, double cakesSold, double totalProfit)>();
+            var finalTotalSalesData = new List<(string, double cookiesSold, double croissantsSold, double cakesSold, double totalProfit)>();
             foreach (var player in this.Players.Values)
             {
-                finalTotalSalesData[player.Name] = (AllCookiesSold[player], AllCroissantsSold[player], AllCakesSold[player], AllProfits[player]);
+                finalTotalSalesData.Add((player.Name, AllCookiesSold[player], AllCroissantsSold[player], AllCakesSold[player], AllProfits[player]));
             }
 
-            FinalTotalSalesData = from pair in finalTotalSalesData
-                        orderby pair.Value.totalProfit ascending
-                        select pair;
+            FinalTotalSalesData = from entry in finalTotalSalesData
+                        orderby entry.totalProfit ascending
+                        select entry;
         }
 
         public async Task DisplayMarketReport(CakeryPlayer player, MarketReport marketReport)
