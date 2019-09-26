@@ -110,8 +110,9 @@ namespace HonorAmongThieves.Cakery.GameLogic
         public async Task EndRound()
         {
             var marketReport = new MarketReport();
-            marketReport.TotalSales = (0, 0, 0);
 
+            // Get total sales and compute the prices of baked goods
+            marketReport.TotalSales = (0, 0, 0);
             foreach (var player in this.Players.Values)
             {
                 marketReport.TotalSales = (marketReport.TotalSales.cookiesSold + player.CurrentBakedGoods.Cookies,
@@ -119,34 +120,10 @@ namespace HonorAmongThieves.Cakery.GameLogic
                     marketReport.TotalSales.cakesSold + player.CurrentBakedGoods.Cakes);
             }
 
-            // First, re-calculate baked goods cost
-            // Cookie base cost can go up or down by up to 10%
-            this.CurrentPrices.Cookies = this.CurrentPrices.Cookies * random.Next(900, 1100) * 0.001f;
+            ComputeMarketPrices(this.CurrentPrices, this.CashInGame, marketReport);
 
-            // Croissant base cost goes up or down by up to 5%
-            this.CurrentPrices.Croissants = this.CurrentPrices.Croissants * random.Next(950, 1050) * 0.001f;
-
-            // Cake base cost goes up or down by up to 20%
-            this.CurrentPrices.Cakes = this.CurrentPrices.Cakes * random.Next(800, 1200) * 0.001f;
-
-            // Then, adjust current cost based on number of goods in the market
-            double expectedCookies = this.CashInGame / 150;
-            double expectedCroissants = this.CashInGame / 300;
-            double expectedCakes = this.CashInGame / 3000;
-
-            // Cookies - 200% at 0, 120% at quarter, 80% at expected quantity, 40% at double expected quantity
-            marketReport.Prices.cookiePrice = this.CurrentPrices.Cookies * 
-                ComputeMultiplier(expectedCookies, marketReport.TotalSales.cookiesSold, 2.0, 1.2, 0.8, 0.4);
-
-            // Croissants - 130% at 0, 100% at quarter, 90% at expected quantity, 75% at double expected quantity
-            marketReport.Prices.croissantPrice = this.CurrentPrices.Croissants *
-                ComputeMultiplier(expectedCroissants, marketReport.TotalSales.croissantsSold, 1.4, 1.0, 0.9, 0.75);
-
-            // Cakes - 400% at 0, 200% at quarter, 100% at expected quantity, 50% at double expected quantity
-            marketReport.Prices.cakePrice = this.CurrentPrices.Cakes *
-                ComputeMultiplier(expectedCakes, marketReport.TotalSales.cakesSold, 4.0, 2.0, 1.0, 0.5);
-
-            // Then, sell all goods baked
+            // Sell all goods baked
+            var lastRoundCashInGame = this.CashInGame;
             this.CashInGame = 0;
             foreach (var player in this.Players.Values)
             {
@@ -161,14 +138,68 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 // player.FinalizeUpgrades();
             }
 
-            // Finally, broadcast this year's report
-            // TODO
+            // Finally, broadcast this year's report to each player
+            var newsReport = TextGenerator.GetNewsReport(lastRoundCashInGame, marketReport);
+
+            this.CurrentMarket.CurrentYear++;
+            if (this.CurrentMarket.CurrentYear > this.CurrentMarket.MaxYears)
+            {
+                // TODO: End the game
+            }
+            else
+            {
+                foreach (var player in this.Players.Values)
+                {
+                    player.CurrentStatus = CakeryPlayer.Status.Producing;
+                    var playerSales = marketReport.PlayerSalesData[player];
+                    var goodPrices = marketReport.Prices;
+                    await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("ShowMarketReport",
+                        newsReport, playerSales, goodPrices);
+                }
+            }
+        }
+
+        public static (double, double, double) ComputeExpectedSales(double cashInGame)
+        {
+            double expectedCookies = cashInGame / 150;
+            double expectedCroissants = cashInGame / 300;
+            double expectedCakes = cashInGame / 3000;
+
+            return (expectedCookies, expectedCroissants, expectedCookies);
+        }
+
+        private static void ComputeMarketPrices(Prices currentPrices, double cashInGame, MarketReport marketReport)
+        {
+            // First, re-calculate baked goods cost
+            // Cookie base cost can go up or down by up to 10%
+            currentPrices.Cookies = currentPrices.Cookies * random.Next(900, 1100) * 0.1f;
+
+            // Croissant base cost goes up or down by up to 5%
+            currentPrices.Croissants = currentPrices.Croissants * random.Next(950, 1050) * 0.001f;
+
+            // Cake base cost goes up or down by up to 20%
+            currentPrices.Cakes = currentPrices.Cakes * random.Next(800, 1200) * 0.001f;
+
+            // Then, adjust current cost based on number of goods in the market
+            (var expectedCookies, var expectedCroissants, var expectedCakes) = ComputeExpectedSales(cashInGame);
+
+            // Cookies - 200% at 0, 120% at quarter, 80% at expected quantity, 40% at double expected quantity
+            marketReport.Prices.cookiePrice = currentPrices.Cookies *
+                ComputeMultiplier(expectedCookies, marketReport.TotalSales.cookiesSold, 2.0, 1.2, 0.8, 0.4);
+
+            // Croissants - 130% at 0, 100% at quarter, 90% at expected quantity, 75% at double expected quantity
+            marketReport.Prices.croissantPrice = currentPrices.Croissants *
+                ComputeMultiplier(expectedCroissants, marketReport.TotalSales.croissantsSold, 1.4, 1.0, 0.9, 0.75);
+
+            // Cakes - 400% at 0, 200% at quarter, 100% at expected quantity, 50% at double expected quantity
+            marketReport.Prices.cakePrice = currentPrices.Cakes *
+                ComputeMultiplier(expectedCakes, marketReport.TotalSales.cakesSold, 4.0, 2.0, 1.0, 0.5);
         }
 
         private static double ComputeMultiplier(double expectedSales, double actualSales,
             double zeroPoint, double quarterPoint, double expectedPoint, double doublePoint)
         {
-            var percentageOfExpectedSales = actualSales / expectedSales;
+            var percentageOfExpectedSales = actualSales / (expectedSales != 0 ? expectedSales : 0.001);
             if (percentageOfExpectedSales <= 0.25)
             {
                 return zeroPoint + (percentageOfExpectedSales - 0) * (quarterPoint - zeroPoint) / (0.25 - 0);
