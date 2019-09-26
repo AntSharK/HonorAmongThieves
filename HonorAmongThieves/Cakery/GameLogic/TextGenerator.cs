@@ -14,11 +14,11 @@ namespace HonorAmongThieves.Cakery.GameLogic
             var cakePercentageSold = cakesSold / (expectedCakes != 0 ? expectedCakes : 0.1);
 
             StringBuilder newsReport = new StringBuilder();
-            if (cookiePercentageSold < 0.3 && marketReport.TotalSales.cookiesSold > 0)
+            if (cookiePercentageSold < 0.2 && marketReport.TotalSales.cookiesSold > 0)
             {
                 newsReport.AppendLine(cookiesVeryLow);
             }
-            else if (cookiePercentageSold < 0.6 && marketReport.TotalSales.cookiesSold > 0)
+            else if (cookiePercentageSold < 0.45 && marketReport.TotalSales.cookiesSold > 0)
             {
                 newsReport.AppendLine(cookiesQuiteLow);
             }
@@ -31,11 +31,11 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 newsReport.Append(cookiesVeryHigh);
             }
 
-            if (croissantPercentageSold < 0.3 && marketReport.TotalSales.croissantsSold > 0)
+            if (croissantPercentageSold < 0.2 && marketReport.TotalSales.croissantsSold > 0)
             {
                 newsReport.AppendLine(croissantsVeryLow);
             }
-            else if (croissantPercentageSold < 0.6 && marketReport.TotalSales.croissantsSold > 0)
+            else if (croissantPercentageSold < 0.45 && marketReport.TotalSales.croissantsSold > 0)
             {
                 newsReport.AppendLine(croissantsQuiteLow);
             }
@@ -48,11 +48,11 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 newsReport.Append(croissantsVeryHigh);
             }
 
-            if (cakePercentageSold < 0.3 && marketReport.TotalSales.cakesSold > 0)
+            if (cakePercentageSold < 0.2 && marketReport.TotalSales.cakesSold > 0)
             {
                 newsReport.AppendLine(cakesVeryLow);
             }
-            else if (cakePercentageSold < 0.6 && marketReport.TotalSales.cakesSold > 0)
+            else if (cakePercentageSold < 0.45 && marketReport.TotalSales.cakesSold > 0)
             {
                 newsReport.AppendLine(cakesQuiteLow);
             }
