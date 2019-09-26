@@ -267,7 +267,7 @@ namespace HonorAmongThieves.Cakery
             var room = this.lobby.Rooms[roomId];
             var player = room.Players[playerName];
 
-            if (room.CurrentMarket.CurrentYear <= room.CurrentMarket.MaxYears)
+            if (room.CurrentMarket.CurrentYear < room.CurrentMarket.MaxYears)
             {
                 player.CurrentStatus = CakeryPlayer.Status.Producing;
                 await UpdateProductionState(room, player);
@@ -275,7 +275,7 @@ namespace HonorAmongThieves.Cakery
             else
             {
                 player.CurrentStatus = CakeryPlayer.Status.CleaningUp;
-                // TODO: Show end game screen
+                await Clients.Caller.SendAsync("EndGame", room.FinalTotalSalesData, room.FinalYearlySalesData[player]);
             }
         }
     }

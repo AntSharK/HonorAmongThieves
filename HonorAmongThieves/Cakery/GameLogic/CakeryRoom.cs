@@ -23,7 +23,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             public double Croissants = 400f; // Costs 250 to make
             public double Cakes = 2500f; // Costs 2250 to make
 
-            // Buy-price of upgrades
+            // TODO (Upgrades) Buy-price of upgrades
         }
 
         public class Market
@@ -48,6 +48,9 @@ namespace HonorAmongThieves.Cakery.GameLogic
         public Market CurrentMarket { get; } = new Market();
         public MarketReport[] MarketReports;
         public double CashInGame = 0;
+
+        public IOrderedEnumerable<KeyValuePair<string, (double, double, double, double)>> FinalTotalSalesData;
+        public Dictionary<Player, (double cookiesSold, double croissantsSold, double cakesSold, double totalProfit)[]> FinalYearlySalesData = new Dictionary<Player, (double cookiesSold, double croissantsSold, double cakesSold, double totalProfit)[]>();
 
         public override void Destroy()
         {
@@ -141,11 +144,66 @@ namespace HonorAmongThieves.Cakery.GameLogic
             // Finally, broadcast this year's report to each player
             this.MarketReports[this.CurrentMarket.CurrentYear] = marketReport;
             this.CurrentMarket.CurrentYear++;
+
+            if (this.CurrentMarket.CurrentYear >= this.CurrentMarket.MaxYears)
+            {
+                this.GenerateEndGameReport();
+            }
+
             foreach (var player in this.Players.Values)
             {
                 player.CurrentStatus = CakeryPlayer.Status.MarketReport;
                 await this.DisplayMarketReport(player, marketReport);
             }
+        }
+
+        public void GenerateEndGameReport()
+        {
+            var year = 0;
+            var AllCookiesSold = new Dictionary<Player, double>();
+            var AllCroissantsSold = new Dictionary<Player, double>();
+            var AllCakesSold = new Dictionary<Player, double>();
+            var AllProfits = new Dictionary<Player, double>();
+
+            foreach (var player in this.Players.Values)
+            {
+                this.FinalYearlySalesData[player] = new (double, double, double, double)[this.CurrentMarket.MaxYears];
+                AllCookiesSold[player] = 0;
+                AllCroissantsSold[player] = 0;
+                AllCakesSold[player] = 0;
+                AllProfits[player] = 0;
+            }
+
+            foreach (var report in this.MarketReports)
+            {
+                foreach (var goodsSold in report.PlayerSalesData)
+                {
+                    AllCookiesSold[goodsSold.Key] += goodsSold.Value.cookiesSold;
+                    AllCroissantsSold[goodsSold.Key] += goodsSold.Value.croissantsSold;
+                    AllCakesSold[goodsSold.Key] += goodsSold.Value.cakesSold;
+                }
+
+                foreach (var profits in report.PlayerProfits)
+                {
+                    AllProfits[profits.Key] += profits.Value;
+
+                    this.FinalYearlySalesData[profits.Key][year] =
+                        (report.PlayerSalesData[profits.Key].cookiesSold, report.PlayerSalesData[profits.Key].croissantsSold,
+                        report.PlayerSalesData[profits.Key].cakesSold, profits.Value);
+                }
+
+                year++;
+            }
+
+            var finalTotalSalesData = new Dictionary<string, (double cookiesSold, double croissantsSold, double cakesSold, double totalProfit)>();
+            foreach (var player in this.Players.Values)
+            {
+                finalTotalSalesData[player.Name] = (AllCookiesSold[player], AllCroissantsSold[player], AllCakesSold[player], AllProfits[player]);
+            }
+
+            FinalTotalSalesData = from pair in finalTotalSalesData
+                        orderby pair.Value.totalProfit ascending
+                        select pair;
         }
 
         public async Task DisplayMarketReport(CakeryPlayer player, MarketReport marketReport)

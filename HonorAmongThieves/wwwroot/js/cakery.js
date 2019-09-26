@@ -561,3 +561,19 @@ document.getElementById("endmarketreportbutton").addEventListener("click", funct
     });
     event.preventDefault();
 });
+
+// End of game
+connection.on("EndGame", function (totalSales, playerSales) {
+    changeUiState("END OF GAME", "endgame");
+
+    // TODO: Change displayed elements
+    var leaderboard = document.getElementById("endgameleaderboard");
+    var tr = document.createElement("TR");
+    var td = document.createElement("TD");
+    td.appendChild(document.createTextNode("thing"));
+    tr.appendChild(td);
+    leaderboard.appendChild(tr);
+
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("roomid");
+});
