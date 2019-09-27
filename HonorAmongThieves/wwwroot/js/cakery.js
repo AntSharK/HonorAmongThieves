@@ -581,7 +581,6 @@ document.getElementById("endmarketreportbutton").addEventListener("click", funct
 connection.on("EndGame", function (totalSales, playerSales) {
     changeUiState("END OF GAME", "endgame");
 
-    // TODO: Fix display bug
     var leaderboard = document.getElementById("endgameleaderboard");
     for (var i = 0; i < totalSales.length; i++) {
         var tr = document.createElement("TR");
@@ -605,7 +604,7 @@ connection.on("EndGame", function (totalSales, playerSales) {
     }
 
     var annualreport = document.getElementById("annualreport");
-    for (var i = 0; i <= playerSales.length; i++) {
+    for (var i = 0; i < playerSales.length; i++) {
         var tr = document.createElement("TR");
 
         var year = document.createElement("TD");
@@ -627,7 +626,12 @@ connection.on("EndGame", function (totalSales, playerSales) {
 
         annualreport.appendChild(tr);
     }
+});
 
+// Stop viewing market report
+document.getElementById("exitgamebutton").addEventListener("click", function (event) {
     sessionStorage.removeItem("username");
     sessionStorage.removeItem("roomid");
+    location.reload();
+    event.preventDefault();
 });

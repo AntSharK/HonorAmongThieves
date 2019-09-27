@@ -113,6 +113,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
         public async Task EndRound()
         {
+            this.UpdatedTime = DateTime.UtcNow;
             var marketReport = new MarketReport();
 
             // Get total sales and compute the prices of baked goods

@@ -204,8 +204,7 @@ namespace HonorAmongThieves.Cakery
                     await room.DisplayMarketReport(player, marketReport);
                     break;
                 case CakeryPlayer.Status.CleaningUp:
-                    // await Clients.Caller.SendAsync("ScoreScreen");
-                    // TODO: Send the player enough data to render the score screen
+                    await Clients.Caller.SendAsync("EndGame", room.FinalTotalSalesData, room.FinalYearlySalesData[player]);
                     break;
             }
         }
