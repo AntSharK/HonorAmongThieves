@@ -197,7 +197,9 @@ function showBakeMenu() {
 
     // Reset the input forms
     document.getElementById("buyingredientsbutton").disabled = true;
+    document.getElementById("buyingredientsbutton").value = "BUY INGREDIENTS";
     document.getElementById("bakethingsbutton").disabled = true;
+    document.getElementById("bakethingsbutton").value = "BAKE THINGS";
     updateIngredientsCost();
     updateBakingCost();
 
@@ -319,6 +321,7 @@ function updateIngredientsCost() {
     if (ingredientsCost <= 0) {
         document.getElementById("ingredientcost").textContent = "";
         document.getElementById("buyingredientsbutton").disabled = true;
+        document.getElementById("buyingredientsbutton").value = "BUY INGREDIENTS";
         return;
     }
 
@@ -327,10 +330,12 @@ function updateIngredientsCost() {
     if (ingredientsCost > playerState.resources.money) {
         document.getElementById("ingredientcost").style.color = "red";
         document.getElementById("buyingredientsbutton").disabled = true;
+        document.getElementById("buyingredientsbutton").value = "NOT ENOUGH MONEY";
     }
     else {
         document.getElementById("ingredientcost").style.color = "blue";
         document.getElementById("buyingredientsbutton").disabled = false;
+        document.getElementById("buyingredientsbutton").value = "BUY INGREDIENTS";
     }
 }
 
@@ -421,6 +426,7 @@ function updateBakingCost() {
     // Early abort if nothing is being baked
     if (cookiesBaked + croissantsBaked + cakesBaked <= 0) {
         document.getElementById("bakethingsbutton").disabled = true;
+        document.getElementById("bakethingsbutton").value = "BAKE THINGS";
         document.getElementById("moneyforbaking").textContent = "";
         document.getElementById("flourforbaking").textContent = "";
         document.getElementById("sugarforbaking").textContent = "";
@@ -447,6 +453,7 @@ function updateBakingCost() {
 
     if (butterUsed > playerState.resources.butter) {
         document.getElementById("butterforbaking").style.color = "red";
+        document.getElementById("bakethingsbutton").value = "NOT ENOUGH BUTTER";
         bakingEnabled = false;
     }
     else {
@@ -455,6 +462,7 @@ function updateBakingCost() {
 
     if (flourUsed > playerState.resources.flour) {
         document.getElementById("flourforbaking").style.color = "red";
+        document.getElementById("bakethingsbutton").value = "NOT ENOUGH FLOUR";
         bakingEnabled = false;
     }
     else {
@@ -463,6 +471,7 @@ function updateBakingCost() {
 
     if (sugarUsed > playerState.resources.sugar) {
         document.getElementById("sugarforbaking").style.color = "red";
+        document.getElementById("bakethingsbutton").value = "NOT ENOUGH SUGAR";
         bakingEnabled = false;
     }
     else {
@@ -471,6 +480,7 @@ function updateBakingCost() {
 
     if (moneyUsed > playerState.resources.money) {
         document.getElementById("moneyforbaking").style.color = "red";
+        document.getElementById("bakethingsbutton").value = "NOT ENOUGH MONEY";
         bakingEnabled = false;
     }
     else {
@@ -478,6 +488,7 @@ function updateBakingCost() {
     }
 
     if (bakingEnabled) {
+        document.getElementById("bakethingsbutton").value = "BAKE THINGS";
         document.getElementById("bakethingsbutton").disabled = false;
     }
     else {
