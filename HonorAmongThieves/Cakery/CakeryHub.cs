@@ -220,7 +220,7 @@ namespace HonorAmongThieves.Cakery
         }
 
         // Buying ingredients for a player
-        public async Task BuyIngredients(string roomId, string playerName, int butterBought, int flourBought, int sugarBought)
+        public async Task BuyIngredients(string roomId, string playerName, double butterBought, double flourBought, double sugarBought)
         {
             var room = this.lobby.Rooms[roomId];
             var player = room.Players[playerName];

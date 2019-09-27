@@ -249,9 +249,9 @@ document.getElementById("buyingredientsbutton").addEventListener("click", functi
             + " but you only have $" + (playerState.resources.money / 100).toFixed(2));
     }
     else {
-        document.getElementById("buybutteramount").value = 0;
-        document.getElementById("buyflouramount").value = 0;
-        document.getElementById("buysugaramount").value = 0;
+        document.getElementById("buybutteramount").value = "0.0";
+        document.getElementById("buyflouramount").value = "0.0";
+        document.getElementById("buysugaramount").value = "0.0";
         document.getElementById("ingredientcost").textContent = "";
         document.getElementById("buyingredientsbutton").disabled = true;
 
@@ -264,37 +264,9 @@ document.getElementById("buyingredientsbutton").addEventListener("click", functi
 });
 
 function getIngredientsCost() {
-    var butterbought = document.getElementById("buybutteramount").value;
-    var flourbought = document.getElementById("buyflouramount").value;
-    var sugarbought = document.getElementById("buysugaramount").value;
-
-    // Do bounds checking and reflect changes in UI
-    if (sugarbought.length == 0 || sugarbought < 0) {
-        sugarbought = 0;
-        document.getElementById("buysugaramount").value = sugarbought;
-    }
-    else if (sugarbought % 1 != 0) {
-        sugarbought = sugarbought - sugarbought % 1;
-        document.getElementById("buysugaramount").value = sugarbought;
-    }
-
-    if (flourbought.length == 0 || flourbought < 0) {
-        flourbought = 0;
-        document.getElementById("buyflouramount").value = flourbought;
-    }
-    else if (flourbought % 1 != 0) {
-        flourbought = flourbought - flourbought % 1;
-        document.getElementById("buyflouramount").value = flourbought;
-    }
-
-    if (butterbought.length == 0 || butterbought < 0) {
-        butterbought = 0;
-        document.getElementById("buybutteramount").value = butterbought;
-    }
-    else if (butterbought % 1 != 0) {
-        butterbought = butterbought - butterbought % 1;
-        document.getElementById("buybutteramount").value = butterbought;
-    }
+    var butterbought = getNumber("buybutteramount", false /*Don't round down*/);
+    var flourbought = getNumber("buyflouramount", false /*Don't round down*/);
+    var sugarbought = getNumber("buysugaramount", false /*Don't round down*/);
 
     // Client-side check to make sure this is possible
     var moneySpent = gameState.currentPrices.butter * butterbought
@@ -313,6 +285,27 @@ document.getElementById("buysugaramount").addEventListener("change", function (e
 document.getElementById("buybutteramount").addEventListener("change", function (event) {
     updateIngredientsCost();
 });
+
+function getNumber(elementId, roundDown) {
+    var number = document.getElementById(elementId).value;
+
+    // Do bounds checking and reflect changes in UI
+    if (number.length == 0 || number < 0) {
+        number = 0;
+        if (roundDown) {
+            document.getElementById(elementId).value = number;
+        }
+        else {
+            document.getElementById(elementId).value = "0.0";
+        }
+    }
+    else if (roundDown && number % 1 != 0) {
+        number = number - number % 1;
+        document.getElementById(elementId).value = number;
+    }
+
+    return number;
+}
 
 function updateIngredientsCost() {
     var ingredientsCost = getIngredientsCost();
@@ -391,9 +384,9 @@ document.getElementById("bakecakesamount").addEventListener("change", function (
 
 function updateBakingCost() {
     // Portions of this are copy+pasted from a function that exists when clicking the "Bake" button
-    var cookiesBaked = document.getElementById("bakecookiesamount").value;
-    var croissantsBaked = document.getElementById("bakecroissantsamount").value;
-    var cakesBaked = document.getElementById("bakecakesamount").value;
+    var cookiesBaked = getNumber("bakecookiesamount", true);
+    var croissantsBaked = getNumber("bakecroissantsamount", true);
+    var cakesBaked = getNumber("bakecakesamount", true);
 
     // Validate input and change UI
     if (cookiesBaked.length == 0 || cookiesBaked < 0) {

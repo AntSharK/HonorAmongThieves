@@ -55,7 +55,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             this.Room = room;
         }
 
-        internal bool MakePurchase(int butterBought, int flourBought, int sugarBought)
+        internal bool MakePurchase(double butterBought, double flourBought, double sugarBought)
         {
             var totalCost = butterBought * Room.CurrentPrices.Butter
                 + flourBought * Room.CurrentPrices.Flour
