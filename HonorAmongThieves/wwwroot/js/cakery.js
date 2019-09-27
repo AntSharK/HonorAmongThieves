@@ -270,6 +270,34 @@ function getIngredientsCost() {
     var flourbought = document.getElementById("buyflouramount").value;
     var sugarbought = document.getElementById("buysugaramount").value;
 
+    // Do bounds checking and reflect changes in UI
+    if (sugarbought.length == 0 || sugarbought < 0) {
+        sugarbought = 0;
+        document.getElementById("buysugaramount").value = sugarbought;
+    }
+    else if (sugarbought % 1 != 0) {
+        sugarbought = sugarbought - sugarbought % 1;
+        document.getElementById("buysugaramount").value = sugarbought;
+    }
+
+    if (flourbought.length == 0 || flourbought < 0) {
+        flourbought = 0;
+        document.getElementById("buyflouramount").value = flourbought;
+    }
+    else if (flourbought % 1 != 0) {
+        flourbought = flourbought - flourbought % 1;
+        document.getElementById("buyflouramount").value = flourbought;
+    }
+
+    if (butterbought.length == 0 || butterbought < 0) {
+        butterbought = 0;
+        document.getElementById("buybutteramount").value = butterbought;
+    }
+    else if (butterbought % 1 != 0) {
+        butterbought = butterbought - butterbought % 1;
+        document.getElementById("buybutteramount").value = butterbought;
+    }
+
     // Client-side check to make sure this is possible
     var moneySpent = gameState.currentPrices.butter * butterbought
         + gameState.currentPrices.flour * flourbought
@@ -353,10 +381,38 @@ document.getElementById("bakecakesamount").addEventListener("change", function (
 });
 
 function updateBakingCost() {
-    // This is a copy+paste of a function that exists when clicking the "Bake" button
+    // Portions of this are copy+pasted from a function that exists when clicking the "Bake" button
     var cookiesBaked = document.getElementById("bakecookiesamount").value;
     var croissantsBaked = document.getElementById("bakecroissantsamount").value;
     var cakesBaked = document.getElementById("bakecakesamount").value;
+
+    // Validate input and change UI
+    if (cookiesBaked.length == 0 || cookiesBaked < 0) {
+        cookiesBaked = 0;
+        document.getElementById("bakecookiesamount").value = cookiesBaked;
+    }
+    else if (cookiesBaked % 1 != 0) {
+        cookiesBaked = cookiesBaked - cookiesBaked % 1;
+        document.getElementById("bakecookiesamount").value = cookiesBaked;
+    }
+
+    if (croissantsBaked.length == 0 || croissantsBaked < 0) {
+        croissantsBaked = 0;
+        document.getElementById("bakecroissantsamount").value = croissantsBaked;
+    }
+    else if (croissantsBaked % 1 != 0) {
+        croissantsBaked = croissantsBaked - croissantsBaked % 1;
+        document.getElementById("bakecroissantsamount").value = croissantsBaked;
+    }
+
+    if (cakesBaked.length == 0 || cakesBaked < 0) {
+        cakesBaked = 0;
+        document.getElementById("bakecakesamount").value = cakesBaked;
+    }
+    else if (cakesBaked % 1 != 0) {
+        cakesBaked = cakesBaked - cakesBaked % 1;
+        document.getElementById("bakecakesamount").value = cakesBaked;
+    }
 
     // Early abort if nothing is being baked
     if (cookiesBaked + croissantsBaked + cakesBaked <= 0) {
