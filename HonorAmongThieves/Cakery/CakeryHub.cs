@@ -201,7 +201,7 @@ namespace HonorAmongThieves.Cakery
                 case CakeryPlayer.Status.MarketReport:
                     var yearToDisplay = room.CurrentMarket.CurrentYear - 1;
                     var marketReport = room.MarketReports[yearToDisplay];
-                    await room.DisplayMarketReport(player, marketReport);
+                    await room.DisplayMarketReport(player, marketReport, room.CurrentPrices);
                     break;
                 case CakeryPlayer.Status.CleaningUp:
                     await Clients.Caller.SendAsync("EndGame", room.FinalTotalSalesData, room.FinalYearlySalesData[player]);

@@ -154,7 +154,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             foreach (var player in this.Players.Values)
             {
                 player.CurrentStatus = CakeryPlayer.Status.MarketReport;
-                await this.DisplayMarketReport(player, marketReport);
+                await this.DisplayMarketReport(player, marketReport, this.CurrentPrices);
             }
         }
 
@@ -207,9 +207,9 @@ namespace HonorAmongThieves.Cakery.GameLogic
                         select entry;
         }
 
-        public async Task DisplayMarketReport(CakeryPlayer player, MarketReport marketReport)
+        public async Task DisplayMarketReport(CakeryPlayer player, MarketReport marketReport, Prices currentPrices)
         {
-            var newsReport = TextGenerator.GetNewsReport(marketReport);
+            var newsReport = TextGenerator.GetNewsReport(marketReport, currentPrices);
             var playerSales = marketReport.PlayerSalesData[player];
             var playerProfit = marketReport.PlayerProfits[player];
             var goodPrices = marketReport.Prices;

@@ -4,7 +4,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
 {
     public static class TextGenerator
     {
-        public static string GetNewsReport(CakeryRoom.MarketReport marketReport)
+        public static string GetNewsReport(CakeryRoom.MarketReport marketReport, CakeryRoom.Prices prices)
         {
             (var cookiesSold, var croissantsSold, var cakesSold) = marketReport.TotalSales;
             (var expectedCookies, var expectedCroissants, var expectedCakes) = CakeryRoom.ComputeExpectedSales(marketReport.CashInPreviousRound);
@@ -65,22 +65,26 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 newsReport.Append(cakesVeryHigh);
             }
 
+            newsReport.Append($" Cookie Prices: {(int)(marketReport.Prices.cookiePrice * 100 / prices.Cookies)}%, " +
+                $"Croissant Prices: {(int)(marketReport.Prices.croissantPrice * 100 / prices.Croissants)}% " +
+                $"Cake Prices: {(int)(marketReport.Prices.cakePrice * 100 / prices.Cakes)}% ");
+
             return newsReport.ToString();
         }
 
-        private static string cookiesVeryLow => "Cookies sell for record high prices as a cookie drought hits the market!";
-        private static string cookiesQuiteLow => "Cookie prices rise as cookies become more and more scarce.";
-        private static string cookiesQuiteHigh => "The proliferation of cookies cause prices to dip.";
-        private static string cookiesVeryHigh => "Cookie prices drastically drop as cookies flood into the market.";
+        private static string cookiesVeryLow => "Cookies sell for record high prices as a cookie drought hits the market! ";
+        private static string cookiesQuiteLow => "Cookie prices rise as cookies become more and more scarce. ";
+        private static string cookiesQuiteHigh => "The proliferation of cookies cause prices to dip. ";
+        private static string cookiesVeryHigh => "Cookie prices drastically drop as cookies flood into the market. ";
 
-        private static string croissantsVeryLow => "Connoiseurs pay top-dollar for croissants as they become almost impossible to find!";
-        private static string croissantsQuiteLow => "Pastry afficionados pay premium rates for croissants as croissant shortage hits market.";
-        private static string croissantsQuiteHigh => "Croissant prices drop as they become more accessible and readily available.";
-        private static string croissantsVeryHigh => "The market becomes saturated with croissants, causing prices to plummet.";
+        private static string croissantsVeryLow => "Connoiseurs pay top-dollar for croissants as they become almost impossible to find! ";
+        private static string croissantsQuiteLow => "Pastry afficionados pay premium rates for croissants as croissant shortage hits market. ";
+        private static string croissantsQuiteHigh => "Croissant prices drop as they become more accessible and readily available. ";
+        private static string croissantsVeryHigh => "The market becomes saturated with croissants, causing prices to plummet. ";
 
-        private static string cakesVeryLow => "Cakes classified as rare luxury items, selling for exorbitant prices.";
-        private static string cakesQuiteLow => "Customers wait in line and pay top-dollar to taste cakes as shortage hits the market.";
-        private static string cakesQuiteHigh => "Cakes become commonplace. Prices dip slightly as customers no longer willing to pay top-dollar for cakes.";
-        private static string cakesVeryHigh => "The immense amount of cakes in the market cause prices to drop when they are deemed 'plebian food'.";
+        private static string cakesVeryLow => "Cakes classified as rare luxury items, selling for exorbitant prices. ";
+        private static string cakesQuiteLow => "Customers wait in line and pay top-dollar to taste cakes as shortage hits the market. ";
+        private static string cakesQuiteHigh => "Cakes become commonplace. Prices dip slightly as customers no longer willing to pay top-dollar for cakes. ";
+        private static string cakesVeryHigh => "The immense amount of cakes in the market cause prices to drop when they are deemed 'plebian food'. ";
     }
 }
