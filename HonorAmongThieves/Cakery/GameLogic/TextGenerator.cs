@@ -4,6 +4,40 @@ namespace HonorAmongThieves.Cakery.GameLogic
 {
     public static class TextGenerator
     {
+        public static string GetExactMarketReport(CakeryRoom.MarketReport marketReport, CakeryRoom.Prices prices)
+        {
+            StringBuilder newsReport = new StringBuilder();
+            (var cookiesSold, var croissantsSold, var cakesSold) = marketReport.TotalSales;
+            (var expectedCookies, var expectedCroissants, var expectedCakes) = CakeryRoom.ComputeExpectedSales(marketReport.CashInPreviousRound);
+
+            var cookiePercentageSold = cookiesSold / (expectedCookies != 0 ? expectedCookies : 0.1);
+            var croissantPercentageSold = croissantsSold / (expectedCroissants != 0 ? expectedCroissants : 0.1);
+            var cakePercentageSold = cakesSold / (expectedCakes != 0 ? expectedCakes : 0.1);
+
+            if (cookiesSold > 0)
+            {
+                newsReport.AppendLine($"{cookiesSold} Cookies " +
+                    $"sold for {(marketReport.Prices.cookiePrice/100).ToString("C")}" +
+                    $" ({(int)(marketReport.Prices.cookiePrice * 100 / prices.Cookies)}%). ");
+            }
+
+            if (croissantsSold > 0)
+            {
+                newsReport.AppendLine($"{croissantsSold} Croissants " +
+                    $"sold for {(marketReport.Prices.croissantPrice / 100).ToString("C")}" +
+                    $" ({(int)(marketReport.Prices.croissantPrice * 100 / prices.Croissants)}%). ");
+            }
+
+            if (cakesSold > 0)
+            {
+                newsReport.AppendLine($"{cakesSold} Cakes " +
+                    $"sold for {(marketReport.Prices.cakePrice / 100).ToString("C")}" +
+                    $" ({(int)(marketReport.Prices.cakePrice * 100 / prices.Cakes)}%). ");
+            }
+
+            return newsReport.ToString();
+        }
+
         public static string GetNewsReport(CakeryRoom.MarketReport marketReport, CakeryRoom.Prices prices)
         {
             (var cookiesSold, var croissantsSold, var cakesSold) = marketReport.TotalSales;

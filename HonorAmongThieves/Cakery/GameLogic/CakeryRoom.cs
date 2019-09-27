@@ -88,12 +88,12 @@ namespace HonorAmongThieves.Cakery.GameLogic
             
             var readyPlayerNames = from player 
                                    in this.Players.Values
-                                   where player.CurrentStatus != CakeryPlayer.Status.Producing
+                                   where player.CurrentStatus == CakeryPlayer.Status.SettingUpShop
                                    select player.Name;
 
             var notReadyPlayerNames = from player
                                    in this.Players.Values
-                                   where player.CurrentStatus == CakeryPlayer.Status.Producing
+                                   where player.CurrentStatus != CakeryPlayer.Status.SettingUpShop
                                    select player.Name;
 
             var readyPlayers = this.Players.Values.Where(p => p.CurrentStatus != CakeryPlayer.Status.Producing);
@@ -209,7 +209,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
         public async Task DisplayMarketReport(CakeryPlayer player, MarketReport marketReport, Prices currentPrices)
         {
-            var newsReport = TextGenerator.GetNewsReport(marketReport, currentPrices);
+            var newsReport = TextGenerator.GetExactMarketReport(marketReport, currentPrices);
             var playerSales = marketReport.PlayerSalesData[player];
             var playerProfit = marketReport.PlayerProfits[player];
             var goodPrices = marketReport.Prices;
