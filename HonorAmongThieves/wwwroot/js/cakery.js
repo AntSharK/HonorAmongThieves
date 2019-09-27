@@ -196,20 +196,10 @@ function showBakeMenu() {
     changeUiState("BAKE!!", "bakegoods");
 
     // Reset the input forms
-    document.getElementById("buybutteramount").value = 0;
-    document.getElementById("buyflouramount").value = 0;
-    document.getElementById("buysugaramount").value = 0;
-    document.getElementById("ingredientcost").textContent = "";
     document.getElementById("buyingredientsbutton").disabled = true;
-
-    document.getElementById("bakecookiesamount").value = 0;
-    document.getElementById("bakecroissantsamount").value = 0;
-    document.getElementById("bakecakesamount").value = 0;
-    document.getElementById("moneyforbaking").textContent = "";
-    document.getElementById("flourforbaking").textContent = "";
-    document.getElementById("sugarforbaking").textContent = "";
-    document.getElementById("butterforbaking").textContent = "";
     document.getElementById("bakethingsbutton").disabled = true;
+    updateIngredientsCost();
+    updateBakingCost();
 
     // Update the available resources and current prices
     var cakeCost = playerState.bakedGoods.cakeCost;
@@ -257,6 +247,12 @@ document.getElementById("buyingredientsbutton").addEventListener("click", functi
             + " but you only have $" + (playerState.resources.money / 100).toFixed(2));
     }
     else {
+        document.getElementById("buybutteramount").value = 0;
+        document.getElementById("buyflouramount").value = 0;
+        document.getElementById("buysugaramount").value = 0;
+        document.getElementById("ingredientcost").textContent = "";
+        document.getElementById("buyingredientsbutton").disabled = true;
+
         connection.invoke("BuyIngredients", roomId, userName, butterbought, flourbought, sugarbought).catch(function (err) {
             return console.error(err.toString());
         });
@@ -362,6 +358,14 @@ document.getElementById("bakethingsbutton").addEventListener("click", function (
             + ", " + butterUsed + "g butter, " + flourUsed + "g flour, " + sugarUsed + "g sugar.");
     }
     else {
+        document.getElementById("bakecookiesamount").value = 0;
+        document.getElementById("bakecroissantsamount").value = 0;
+        document.getElementById("bakecakesamount").value = 0;
+        document.getElementById("moneyforbaking").textContent = "";
+        document.getElementById("flourforbaking").textContent = "";
+        document.getElementById("sugarforbaking").textContent = "";
+        document.getElementById("butterforbaking").textContent = "";
+
         connection.invoke("BakeGoods", roomId, userName, cookiesBaked, croissantsBaked, cakesBaked).catch(function (err) {
             return console.error(err.toString());
         });
