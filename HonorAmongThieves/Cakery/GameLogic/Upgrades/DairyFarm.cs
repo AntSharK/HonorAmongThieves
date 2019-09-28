@@ -2,7 +2,7 @@
 {
     public class DairyFarm : Upgrade
     {
-        public const string UpgradeName = "DairyFarm";
+        public const string UpgradeName = "Dairy Farm";
 
         public override string Name => UpgradeName;
 
@@ -18,7 +18,7 @@
 
         public override void OnNextRound(CakeryRoom room)
         {
-            this.owner.CurrentResources.Butter = this.owner.CurrentResources.Butter + 1000;
+            this.owner.CurrentResources.Butter = this.owner.CurrentResources.Butter + (1000 * this.AmountOwned);
         }
     }
 }

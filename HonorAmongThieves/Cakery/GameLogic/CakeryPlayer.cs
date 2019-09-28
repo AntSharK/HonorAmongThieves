@@ -136,13 +136,11 @@ namespace HonorAmongThieves.Cakery.GameLogic
             {
                 var upgrade = upgradePair.Value;
                 var upgradeName = upgradePair.Key;
-                upgrade.OnPurchase(room);
+                upgrade.OnPurchaseFinalized(room);
 
                 CurrentUpgrades[upgradeName].AmountOwned = CurrentUpgrades[upgradeName].AmountOwned + upgrade.AmountOwned;
                 upgrade.AmountOwned = 0;
             }
-
-            this.JustPurchasedUpgrades.Clear();
 
             // Trigger persistent effects for owned upgrades
             foreach (var upgrade in this.CurrentUpgrades.Values)

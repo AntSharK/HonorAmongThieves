@@ -208,15 +208,16 @@ namespace HonorAmongThieves.Cakery
         {
             var collatedUpgradeList = from newUpgrades
                                         in player.JustPurchasedUpgrades.Values
-                                        where newUpgrades.AmountOwned > 0
                                       select new KeyValuePair<string, int>(newUpgrades.Name, newUpgrades.AmountOwned);
+
+            var collatedDictionary = collatedUpgradeList.ToDictionary(x => x.Key.ToLower(), x => x.Value);
 
             await Clients.Caller.SendAsync("UpdateProductionState",
                     room.CurrentPrices,
                     room.CurrentMarket,
                     player.CurrentResources,
-                    player.CurrentUpgrades,
-                    collatedUpgradeList,
+                    player.CurrentUpgrades.Values,
+                    collatedDictionary,
                     player.CurrentBakedGoods);
         }
 

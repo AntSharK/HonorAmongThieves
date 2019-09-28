@@ -18,7 +18,12 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
             this.owner = owner;
         }
 
-        public virtual void OnPurchase(CakeryRoom room)
+        public virtual void OnJustPurchased(CakeryRoom room)
+        {
+            // Normally does nothing
+        }
+
+        public virtual void OnPurchaseFinalized(CakeryRoom room)
         {
             // Normally does nothing
         }
@@ -38,7 +43,8 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
         {
             return new Dictionary<string, Upgrade>()
             {
-                { DairyFarm.UpgradeName, new DairyFarm(player) }
+                { DairyFarm.UpgradeName, new DairyFarm(player) },
+                { SugarSubstitute.UpgradeName, new SugarSubstitute(player) },
             };
         }
     }

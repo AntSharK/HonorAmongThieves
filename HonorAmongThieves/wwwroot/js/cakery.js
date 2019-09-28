@@ -494,7 +494,6 @@ document.getElementById("switchtoupgradeviewbutton").addEventListener("click", f
     event.preventDefault();
 });
 
-// TODO (Upgrades): Show the actual list of upgrades upgrade menu
 function showUpgradeMenu() {
     baking = false;
     changeUiState("UPGRADE!!", "upgrademenu");
@@ -507,6 +506,41 @@ function showUpgradeMenu() {
     document.getElementById("cookiesbaked2").textContent = playerState.bakedGoods.cookies;
     document.getElementById("croissantsbaked2").textContent = playerState.bakedGoods.croissants;
     document.getElementById("cakesbaked2").textContent = playerState.bakedGoods.cakes;
+
+    // List every upgrade
+    var upgradeTable = document.getElementById("upgradetable");
+    for (var i = upgradeTable.rows.length - 1; i > 1; i--) {
+        upgradeTable.deleteRow(i);
+    }
+
+    for (var i = 0; i < playerState.upgrades.length; i++) {
+        var upgrade = playerState.upgrades[i];
+        var tr = document.createElement("TR");
+
+        var name = document.createElement("TD");
+        name.appendChild(document.createTextNode(upgrade.name));
+        tr.appendChild(name);
+
+        var cost = document.createElement("TD");
+        cost.appendChild(document.createTextNode("$" + (upgrade.cost / 100).toFixed(2)));
+        tr.appendChild(cost);
+
+        var description = document.createElement("TD");
+        description.appendChild(document.createTextNode(upgrade.description));
+        tr.appendChild(description);
+
+        var alreadyowned = document.createElement("TD");
+        alreadyowned.appendChild(document.createTextNode(upgrade.amountOwned));
+        tr.appendChild(alreadyowned);
+
+        var justpurchased = document.createElement("TD");
+        justpurchased.appendChild(document.createTextNode(playerState.justPurchasedUpgrades[upgrade.name.toLowerCase()]));
+        tr.appendChild(justpurchased);
+
+        // TODO (Upgrades): Figure out some way to actually buy and use upgrades
+
+        upgradeTable.appendChild(tr);
+    }
 }
 
 // Switch back to "Baking" view
@@ -538,7 +572,16 @@ function summarizeGoodsBaked() {
     document.getElementById("croissantsbeingsold").textContent = playerState.bakedGoods.croissants;
     document.getElementById("cakesbeingsold").textContent = playerState.bakedGoods.cakes;
 
-    // TODO (Upgrades): List upgrades
+    var upgradesBoughtList = document.getElementById("upgradesboughtlist");
+    upgradesBoughtList.innerHTML = "";
+    for (var justPurchasedUpgrade in playerState.justPurchasedUpgrades) {
+        var amountPurchased = playerState.justPurchasedUpgrades[justPurchasedUpgrade];
+        if (amountPurchased > 0) {
+            var li = document.createElement("li");
+            li.textContent = amountPurchased + "x " + justPurchasedUpgrade;
+            upgradesBoughtList.appendChild(li);
+        }
+    }
 }
 
 // Confirm ending of turn
@@ -645,6 +688,7 @@ connection.on("EndGame", function (totalSales, playerSales) {
     changeUiState("END OF GAME", "endgame");
 
     var leaderboard = document.getElementById("endgameleaderboard");
+
     for (var i = 0; i < totalSales.length; i++) {
         var tr = document.createElement("TR");
 
