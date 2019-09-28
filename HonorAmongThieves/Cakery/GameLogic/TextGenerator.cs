@@ -14,6 +14,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             var croissantPercentageSold = croissantsSold / (expectedCroissants != 0 ? expectedCroissants : 0.1);
             var cakePercentageSold = cakesSold / (expectedCakes != 0 ? expectedCakes : 0.1);
 
+            newsReport.Append("All goods sold this year: ");
             if (cookiesSold > 0)
             {
                 newsReport.AppendLine($"{cookiesSold} Cookies " +

@@ -234,6 +234,10 @@ function showBakeMenu() {
     document.getElementById("croissantsbaked").textContent = playerState.bakedGoods.croissants;
     document.getElementById("cakesbaked").textContent = playerState.bakedGoods.cakes;
 
+    document.getElementById("cookierevenue").textContent = "$" + (gameState.currentPrices.cookies / 100).toFixed(2);
+    document.getElementById("croissantrevenue").textContent = "$" + (gameState.currentPrices.croissants / 100).toFixed(2);
+    document.getElementById("cakerevenue").textContent = "$" + (gameState.currentPrices.cakes / 100).toFixed(2);
+
     document.getElementById("currentyear").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
 }
 

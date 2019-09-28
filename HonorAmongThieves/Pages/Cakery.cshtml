@@ -51,7 +51,7 @@
         <div class="display-4" style="text-align:center">
             <div id="currentyear" class="h3"></div>
             <input type="button" id="switchtoupgradeviewbutton" value="VIEW UPGRADES" /> <hr />
-            <table align="center" class="h2" border="1px solid black" cellpadding="3%">
+            <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center">
                 <tr>
                     <td id="moneyowned" colspan="4"></td>
                 </tr>
@@ -88,15 +88,19 @@
                 </tr>
             </table> <hr />
 
-            <table align="center" class="h2" border="1px solid black" cellpadding="3%">
+            <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center">
                 <tr>
                     <th></th>
-                    <th>Production Cost</th>
+                    <th>Production
+                    Cost</th>
                     <th>Flour</th>
                     <th>Sugar</th>
                     <th>Butter</th>
                     <th>Amount</th>
-                    <th>On Hand</th>
+                    <th>On
+                    Hand</th>
+                    <th>Estimated 
+                    Revenue</th>
                 </tr>
                 <tr>
                     <td>Cookie</td>
@@ -106,6 +110,7 @@
                     <td id="cookiepricebutter"></td>
                     <td><input type="number" step="1" min="0" max="9999" value="0" id="bakecookiesamount" /></td>
                     <td id="cookiesbaked"></td>
+                    <td id="cookierevenue"></td>
                 </tr>
                 <tr>
                     <td>Croissant</td>
@@ -115,6 +120,7 @@
                     <td id="croissantpricebutter"></td>
                     <td><input type="number" step="1" min="0" max="9999" value="0" id="bakecroissantsamount" /></td>
                     <td id="croissantsbaked"></td>
+                    <td id="croissantrevenue"></td>
                 </tr>
                 <tr>
                     <td>Cake</td>
@@ -124,6 +130,7 @@
                     <td id="cakepricebutter"></td>
                     <td><input type="number" step="1" min="0" max="9999" value="0" id="bakecakesamount" /></td>
                     <td id="cakesbaked"></td>
+                    <td id="cakerevenue"></td>
                 </tr>
                 <tr>
                     <td>Total</td>
