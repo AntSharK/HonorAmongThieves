@@ -153,7 +153,8 @@ connection.on("JoinRoom_CreateStartButton", function () {
 document.getElementById("startbutton").addEventListener("click", function (event) {
     var gamelength = document.getElementById("gamelength").value;
     var startingcash = document.getElementById("startingcash").value;
-    connection.invoke("StartRoom", roomId, gamelength, startingcash).catch(function (err) {
+    var annualallowance = document.getElementById("annualallowance").value;
+    connection.invoke("StartRoom", roomId, gamelength, startingcash, annualallowance).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

@@ -33,6 +33,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             public long Cakes = 0;
             public int CurrentYear = 0;
             public int MaxYears = 10;
+            public int AnnualAllowance = 0;
         }
 
         public class MarketReport
@@ -68,9 +69,10 @@ namespace HonorAmongThieves.Cakery.GameLogic
             return new CakeryPlayer(playerName, this);
         }
 
-        public void StartGame(int gameLength, int startingCash)
+        public void StartGame(int gameLength, int startingCash, int annualallowance)
         {
             this.CurrentMarket.MaxYears = gameLength;
+            this.CurrentMarket.AnnualAllowance = annualallowance;
             foreach (var player in this.Players.Values)
             {
                 player.CurrentStatus = CakeryPlayer.Status.Producing;
@@ -132,6 +134,10 @@ namespace HonorAmongThieves.Cakery.GameLogic
             foreach (var player in this.Players.Values)
             {
                 player.SellGoods(marketReport);
+
+                // Give the player his allowance
+                player.CurrentResources.Money = player.CurrentResources.Money + this.CurrentMarket.AnnualAllowance;
+
                 this.CashInGame = this.CashInGame + player.CurrentResources.Money;
             }
 
