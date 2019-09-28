@@ -22,8 +22,6 @@ namespace HonorAmongThieves.Cakery.GameLogic
             public double Cookies = 250f; // Costs 130 to make
             public double Croissants = 450f; // Costs 250 to make
             public double Cakes = 2750f; // Costs 2250 to make
-
-            // TODO (Upgrades) Buy-price of upgrades
         }
 
         public class Market

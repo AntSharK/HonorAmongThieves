@@ -206,12 +206,17 @@ namespace HonorAmongThieves.Cakery
 
         private async Task UpdateProductionState(CakeryRoom room, CakeryPlayer player)
         {
+            var collatedUpgradeList = from newUpgrades
+                                        in player.JustPurchasedUpgrades.Values
+                                        where newUpgrades.AmountOwned > 0
+                                      select new KeyValuePair<string, int>(newUpgrades.Name, newUpgrades.AmountOwned);
+
             await Clients.Caller.SendAsync("UpdateProductionState",
                     room.CurrentPrices,
                     room.CurrentMarket,
                     player.CurrentResources,
                     player.CurrentUpgrades,
-                    player.JustPurchasedUpgrades,
+                    collatedUpgradeList,
                     player.CurrentBakedGoods);
         }
 
