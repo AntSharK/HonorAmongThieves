@@ -10,8 +10,6 @@
 
         public override bool Usable => false;
 
-        public override (double, double, double, double) UseCost => (0, 0, 0, 0);
-
         public override string Description => "Lowers Sugar Cost by 20%";
 
         public SugarSubstitute(CakeryPlayer player) : base(player) { }

@@ -584,6 +584,49 @@ function showUpgradeMenu() {
     bottomRow.appendChild(buyupgradebuttonsquare);
 
     upgradeTable.appendChild(bottomRow);
+
+    // Remove the upgrade rows
+    var useUpgradeTable = document.getElementById("useupgradetable");
+    for (var i = useUpgradeTable.rows.length - 1; i > 1; i--) {
+        useUpgradeTable.deleteRow(i);
+    }
+
+    // List upgrades to use
+    for (var i = 0; i < playerState.upgrades.length; i++) {
+        var upgrade = playerState.upgrades[i];
+        if (upgrade.usable && upgrade.amountOwned > 0) {
+            var tr = document.createElement("TR");
+
+            var name = document.createElement("TD");
+            name.appendChild(document.createTextNode(upgrade.name));
+            tr.appendChild(name);
+
+            var totalowned = document.createElement("TD");
+            totalowned.appendChild(document.createTextNode(upgrade.amountOwned));
+            tr.appendChild(totalowned);
+
+            var usesleft = document.createElement("TD");
+            if (upgrade.usesLeft < 0) {
+                usesleft.appendChild(document.createTextNode("Infinite"));
+            } else {
+                usesleft.appendChild(document.createTextNode(upgrade.amountOwned - upgrade.amountUsed));
+            }
+            tr.appendChild(usesleft);
+
+            var upgradecost = document.createElement("TD");
+            // TODO: Nicely display the cost in all 7 dimensions
+            // If there are 0 things being used, display cost per unit
+            // Otherwise, display total cost
+            upgradecost.appendChild(document.createTextNode("TODO (UPGRADES)"));
+            tr.appendChild(upgradecost);
+
+            var upgradeeffect = document.createElement("TD");
+            upgradeeffect.appendChild(document.createTextNode(upgrade.usageEffect));
+            tr.appendChild(upgradeeffect);
+
+            useUpgradeTable.appendChild(tr);
+        }
+    }
 }
 
 function buyUpgrades() {
@@ -666,7 +709,7 @@ function summarizeGoodsBaked() {
         var amountPurchased = playerState.justPurchasedUpgrades[justPurchasedUpgrade];
         if (amountPurchased > 0) {
             var li = document.createElement("li");
-            li.textContent = amountPurchased + "x " + justPurchasedUpgrade;
+            li.textContent = amountPurchased + "x " + justPurchasedUpgrade.toUpperCase();
             upgradesBoughtList.appendChild(li);
         }
     }

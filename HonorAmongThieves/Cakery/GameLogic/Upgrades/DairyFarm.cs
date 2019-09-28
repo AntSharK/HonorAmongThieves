@@ -10,8 +10,6 @@
 
         public override bool Usable => false;
 
-        public override (double, double, double, double) UseCost => (0, 0, 0, 0);
-
         public override string Description => "Generates 1kg of butter per year";
 
         public DairyFarm(CakeryPlayer player) : base(player) { }
