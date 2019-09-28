@@ -11,7 +11,8 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
         public abstract string Description { get; }
 
         public int AmountOwned = 0;
-        public int AmountUsed = 0;
+        public int AmountUsed = 0; // A negative number means this is infinitely re-usable
+        public virtual string UsageEffect { get; set; } // A description of the usage of this upgrade in its current state
 
         protected CakeryPlayer owner;
 
@@ -35,7 +36,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
             this.AmountUsed = 0;
         }
 
-        public virtual void OnUse()
+        public virtual void OnUse(int upgradesUsed)
         {
             // Normally does nothing
             // Should check that amount used is less than amount owned
@@ -47,8 +48,8 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
         {
             return new Dictionary<string, Upgrade>()
             {
-                { DairyFarm.UpgradeName, new DairyFarm(player) },
-                { SugarSubstitute.UpgradeName, new SugarSubstitute(player) },
+                { DairyFarm.UpgradeName.ToLower(), new DairyFarm(player) },
+                { SugarSubstitute.UpgradeName.ToLower(), new SugarSubstitute(player) },
             };
         }
     }

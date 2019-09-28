@@ -148,5 +148,35 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 upgrade.OnNextRound(room);
             }
         }
+
+        internal bool BuyUpgrades(IDictionary<string, int> upgradesBought)
+        {
+            // Compute total cost
+            var totalCost = 0;
+            foreach (var upgradeBought in upgradesBought)
+            {
+                if (!this.JustPurchasedUpgrades.ContainsKey(upgradeBought.Key))
+                {
+                    return false;
+                }
+
+                totalCost = totalCost + this.JustPurchasedUpgrades[upgradeBought.Key].Cost * upgradeBought.Value;
+            }
+
+            if (totalCost > this.CurrentResources.Money)
+            {
+                return false;
+            }
+
+            this.CurrentResources.Money = this.CurrentResources.Money - totalCost;
+
+            // Finalize the upgrade purchases
+            foreach (var upgradeBought in upgradesBought)
+            {
+                this.JustPurchasedUpgrades[upgradeBought.Key].AmountOwned = this.JustPurchasedUpgrades[upgradeBought.Key].AmountOwned + upgradeBought.Value;
+            }
+
+            return true;
+        }
     }
 }

@@ -574,7 +574,7 @@ function showUpgradeMenu() {
     upgradebuttoninput.type = "button";
     upgradebuttoninput.id = "buyupgradesbutton";
     upgradebuttoninput.value = "BUY UPGRADES";
-    upgradebuttoninput.disabled = false;
+    upgradebuttoninput.disabled = true;
     upgradebuttoninput.addEventListener("click", function (event) {
         buyUpgrades();
         event.preventDefault();
@@ -587,35 +587,48 @@ function showUpgradeMenu() {
 }
 
 function buyUpgrades() {
-    // TODO (Upgrades)
+    var upgradesBought = {};
+    for (var i = 0; i < playerState.upgrades.length; i++) {
+        var upgrade = playerState.upgrades[i];
+        var amountBought = getNumber(upgrade.name.toLowerCase() + "buyamount", true);
+        if (amountBought > 0) {
+            upgradesBought[upgrade.name.toLowerCase()] = amountBought;
+        }
+    }
+
+    connection.invoke("BuyUpgrades", roomId, userName, upgradesBought).catch(function (err) {
+        return console.error(err.toString());
+    });
 }
 
 function updateUpgradeCost() {
-    getNumber("dairy farmbuyamount", true);
-    getNumber("sugar substitutebuyamount", true);
-    // TODO (Upgrades)
-    // var ingredientsCost = getIngredientsCost();
+    var upgradeCost = 0;
+    for (var i = 0; i < playerState.upgrades.length; i++) {
+        var upgrade = playerState.upgrades[i];
+        var amountBought = getNumber(upgrade.name.toLowerCase() + "buyamount", true);
+        upgradeCost = upgradeCost + amountBought * upgrade.cost;
+    }
 
     // Early abort if nothing is being bought
-    // if (ingredientsCost <= 0) {
-    //     document.getElementById("ingredientcost").textContent = "";
-    //     document.getElementById("buyingredientsbutton").disabled = true;
-    //     document.getElementById("buyingredientsbutton").value = "BUY INGREDIENTS";
-    //     return;
-    // }
-    // 
-    // document.getElementById("ingredientcost").textContent = "$" + (ingredientsCost / 100).toFixed(2) + "/$" + (playerState.resources.money / 100).toFixed(2);
-    // 
-    // if (ingredientsCost > playerState.resources.money) {
-    //     document.getElementById("ingredientcost").style.color = "red";
-    //     document.getElementById("buyingredientsbutton").disabled = true;
-    //     document.getElementById("buyingredientsbutton").value = "NOT ENOUGH MONEY";
-    // }
-    // else {
-    //     document.getElementById("ingredientcost").style.color = "blue";
-    //     document.getElementById("buyingredientsbutton").disabled = false;
-    //     document.getElementById("buyingredientsbutton").value = "BUY INGREDIENTS";
-    // }
+    if (upgradeCost <= 0) {
+        document.getElementById("buyupgradeprice").textContent = "";
+        document.getElementById("buyupgradesbutton").disabled = true;
+        document.getElementById("buyupgradesbutton").value = "BUY UPGRADES";
+        return;
+    }
+     
+    document.getElementById("buyupgradeprice").textContent = "$" + (upgradeCost / 100).toFixed(2) + "/$" + (playerState.resources.money / 100).toFixed(2);
+
+    if (upgradeCost > playerState.resources.money) {
+        document.getElementById("buyupgradeprice").style.color = "red";
+        document.getElementById("buyupgradesbutton").disabled = true;
+        document.getElementById("buyupgradesbutton").value = "NOT ENOUGH MONEY";
+    }
+    else {
+        document.getElementById("buyupgradeprice").style.color = "blue";
+        document.getElementById("buyupgradesbutton").disabled = false;
+        document.getElementById("buyupgradesbutton").value = "BUY UPGRADES";
+    }
 }
 
 // Switch back to "Baking" view
