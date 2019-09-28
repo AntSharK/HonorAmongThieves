@@ -10,9 +10,9 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
         public abstract string Description { get; }
 
         public int AmountOwned = 0;
-        public int AmountUsed = 0; // A negative number means this is infinitely re-usable
-        public string UsageEffect { get; set; } // A description of the usage of this upgrade in its current state
+        public int UsesLeft = 0; // A negative number means this is infinitely re-usable
         public (double money, double butter, double flour, double sugar, double cookies, double croissants, double cakes) UseCost { get; set; } = (0, 0, 0, 0, 0, 0, 0);
+        public (double money, double butter, double flour, double sugar, double cookies, double croissants, double cakes) UseEffect { get; set; } = (0, 0, 0, 0, 0, 0, 0);
 
         protected CakeryPlayer owner;
 
@@ -33,14 +33,14 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 
         public virtual void OnNextRound(CakeryRoom room)
         {
-            this.AmountUsed = 0;
+            // Reset the amount of uses
         }
 
         public virtual bool OnUse(int upgradesUsed)
         {
             // Normally does nothing
             // Should check that amount used is less than amount owned
-            // Should increment the "AmountUsed" number
+            // Should increment the "UsesLeft" number
             return true;
         }
 

@@ -308,6 +308,11 @@ function getNumber(elementId, roundDown) {
         document.getElementById(elementId).value = number;
     }
 
+    if (number > element.max) {
+        number = element.max;
+        document.getElementById(elementId).value = number;
+    }
+
     return number;
 }
 
@@ -607,25 +612,61 @@ function showUpgradeMenu() {
             totalowned.appendChild(document.createTextNode(upgrade.amountOwned));
             tr.appendChild(totalowned);
 
-            var upgradeusesleft = upgrade.amountOwned - upgrade.amountUsed;
             var usesleft = document.createElement("TD");
             if (upgrade.usesLeft < 0) {
                 usesleft.appendChild(document.createTextNode("Infinite"));
             } else {
-                usesleft.appendChild(document.createTextNode(upgradeusesleft));
+                usesleft.appendChild(document.createTextNode(upgrade.usesLeft));
             }
             tr.appendChild(usesleft);
 
             var upgradecost = document.createElement("TD");
-            // TODO: Nicely display the cost in all 7 dimensions
-            // If there are 0 things being used, display cost per unit
-            // Otherwise, display total cost
-            upgradecost.appendChild(document.createTextNode("TODO (UPGRADES)"));
+            upgradecost.id = upgrade.name.toLowerCase() + "usagecost";
+            upgradecost.appendChild(document.createTextNode(getUpgradeCostText(upgrade.name.toLowerCase())));
             tr.appendChild(upgradecost);
 
             var upgradeeffect = document.createElement("TD");
-            upgradeeffect.appendChild(document.createTextNode(upgrade.usageEffect));
+            upgradeeffect.id = upgrade.name.toLowerCase() + "usageeffect";
+            upgradeeffect.appendChild(document.createTextNode(getUpgradeEffectText(upgrade.name.toLowerCase())));
             tr.appendChild(upgradeeffect);
+
+            if (upgrade.usesLeft != 0) {
+                var amounttouse = document.createElement("TD");
+                var amounttouseinput = document.createElement("input");
+                amounttouseinput.type = "number";
+                amounttouseinput.step = 1;
+                amounttouseinput.min = 0;
+
+                if (upgrade.usesLeft >= 0) {
+                    amounttouseinput.max = upgrade.usesLeft;
+                }
+                else {
+                    amounttouseinput.max = 999;
+                }
+
+                amounttouseinput.value = 0;
+                amounttouseinput.id = upgrade.name.toLowerCase() + "useamount";
+                amounttouseinput.addEventListener("change", function (event) {
+                    updateUpgradeUse(upgrade.name.toLowerCase(), upgrade.useCost, upgrade.useEffect);
+                });
+
+                amounttouse.appendChild(amounttouseinput);
+                tr.appendChild(amounttouse);
+
+                var useupgradebuttonsquare = document.createElement("TD");
+                var useupgradebuttoninput = document.createElement("input");
+                useupgradebuttoninput.type = "button";
+                useupgradebuttoninput.id = upgrade.name.toLowerCase() + "use";
+                useupgradebuttoninput.value = "USE";
+                useupgradebuttoninput.disabled = true;
+                useupgradebuttoninput.addEventListener("click", function (event) {
+                    useUpgrade(upgrade.name.toLowerCase());
+                    event.preventDefault();
+                });
+
+                useupgradebuttonsquare.appendChild(useupgradebuttoninput);
+                tr.appendChild(useupgradebuttonsquare);
+            }
 
             useUpgradeTable.appendChild(tr);
         }
@@ -639,6 +680,55 @@ function showUpgradeMenu() {
         buyupgradetousemessage.appendChild(document.createTextNode("You don't have any usable upgrades. Buy some above. Upgrades only come into play the year after they are purchased."));
         tr.appendChild(buyupgradetousemessage);
         useUpgradeTable.appendChild(tr);
+    }
+}
+
+function useUpgrade(upgrade) {
+    var numberOfUses = getNumber(upgrade + "useamount", true);
+
+    // Don't check costs here
+    connection.invoke("UseUpgrade", roomId, userName, upgrade, numberOfUses).catch(function (err) {
+        return console.error(err.toString());
+    });
+}
+
+function getUpgradeCostText(cost) {
+    // TODO (Upgrades)
+    return "SOME OTHER THING";
+}
+
+function getUpgradeEffectText(effect) {
+    // TODO (Upgrades)
+    return "SOMETHING";
+}
+
+function updateUpgradeUse(upgrade, useCost, useEffect) {
+    var numberOfUses = getNumber(upgrade + "useamount", true);
+
+    if (numberOfUses == 0) {
+        document.getElementById(upgrade + "usagecost").textContent = getUpgradeCostText(useCost);
+        document.getElementById(upgrade + "usageeffect").textContent = getUpgradeEffectText(useEffect);
+        document.getElementById(upgrade + "usagecost").style.color = "blue";
+        document.getElementById(upgrade + "usageeffect").style.color = "blue";
+        document.getElementById(upgrade + "use").disabled = true;
+        return;
+    }
+
+    var usable = true;
+
+    // TODO (Upgrades)
+    // Calculate whether there are enough resources
+    // Change the content of the costs and effects
+
+    if (usable) {
+        document.getElementById(upgrade + "usagecost").style.color = "blue";
+        document.getElementById(upgrade + "usageeffect").style.color = "blue";
+        document.getElementById(upgrade + "use").disabled = false;
+    }
+    else {
+        document.getElementById(upgrade + "usagecost").style.color = "red";
+        document.getElementById(upgrade + "usageeffect").style.color = "red";
+        document.getElementById(upgrade + "use").disabled = true;
     }
 }
 

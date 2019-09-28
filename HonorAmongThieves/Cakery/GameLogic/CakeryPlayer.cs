@@ -178,5 +178,16 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
             return true;
         }
+
+        internal bool UseUpgrade(string upgradeName, int amountToUse)
+        {
+            if (!this.CurrentUpgrades.ContainsKey(upgradeName))
+            {
+                return false;
+            }
+
+            var upgrade = this.CurrentUpgrades[upgradeName];
+            return upgrade.OnUse(amountToUse);
+        }
     }
 }

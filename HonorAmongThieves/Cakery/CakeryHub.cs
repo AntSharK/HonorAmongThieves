@@ -269,6 +269,23 @@ namespace HonorAmongThieves.Cakery
             }
         }
 
+        // Using upgrades for player
+        public async Task UseUpgrade(string roomId, string playerName, string upgradeName, int amountToUse)
+        {
+
+            var room = this.lobby.Rooms[roomId];
+            var player = room.Players[playerName];
+
+            if (player.UseUpgrade(upgradeName, amountToUse))
+            {
+                await UpdateProductionState(room, player);
+            }
+            else
+            {
+                await ShowError("Error using upgrades.");
+            }
+        }
+
         // Player decides to set up shop
         public async Task SetUpShop(string roomId, string playerName)
         {

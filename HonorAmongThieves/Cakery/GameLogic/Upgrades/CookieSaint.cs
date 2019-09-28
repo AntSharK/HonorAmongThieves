@@ -13,13 +13,19 @@
         public override string Description => "Converts 2 cookies into 1 croissant";
 
         public CookieSaint(CakeryPlayer player) : base(player) {
-            this.UsageEffect = "Gain 1 Croissant.";
+            this.UseEffect = (0, 0, 0, 0, 0, 1, 0);
             this.UseCost = (0, 0, 0, 0, 2, 0, 0);
+        }
+
+        public override void OnNextRound(CakeryRoom room)
+        {
+            base.OnNextRound(room);
+            this.UsesLeft = this.AmountOwned * 2; // 2 uses per purchase
         }
 
         public override bool OnUse(int upgradesUsed)
         {
-            if (this.AmountUsed + upgradesUsed > this.AmountOwned)
+            if (this.UsesLeft - upgradesUsed < 0)
             {
                 return false;
             }
@@ -31,7 +37,7 @@
 
             this.owner.CurrentBakedGoods.Cookies = this.owner.CurrentBakedGoods.Cookies - upgradesUsed * 2;
             this.owner.CurrentBakedGoods.Croissants = this.owner.CurrentBakedGoods.Croissants + upgradesUsed;
-            this.AmountUsed = this.AmountUsed + upgradesUsed;
+            this.UsesLeft = this.UsesLeft - upgradesUsed;
             return true;
         }
     }
