@@ -592,9 +592,11 @@ function showUpgradeMenu() {
     }
 
     // List upgrades to use
+    var hasUpgradesToUse = false;
     for (var i = 0; i < playerState.upgrades.length; i++) {
         var upgrade = playerState.upgrades[i];
         if (upgrade.usable && upgrade.amountOwned > 0) {
+            hasUpgradesToUse = true;
             var tr = document.createElement("TR");
 
             var name = document.createElement("TD");
@@ -605,11 +607,12 @@ function showUpgradeMenu() {
             totalowned.appendChild(document.createTextNode(upgrade.amountOwned));
             tr.appendChild(totalowned);
 
+            var upgradeusesleft = upgrade.amountOwned - upgrade.amountUsed;
             var usesleft = document.createElement("TD");
             if (upgrade.usesLeft < 0) {
                 usesleft.appendChild(document.createTextNode("Infinite"));
             } else {
-                usesleft.appendChild(document.createTextNode(upgrade.amountOwned - upgrade.amountUsed));
+                usesleft.appendChild(document.createTextNode(upgradeusesleft));
             }
             tr.appendChild(usesleft);
 
@@ -626,6 +629,16 @@ function showUpgradeMenu() {
 
             useUpgradeTable.appendChild(tr);
         }
+    }
+
+    if (!hasUpgradesToUse) {
+        var tr = document.createElement("TR");
+
+        var buyupgradetousemessage = document.createElement("TD");
+        buyupgradetousemessage.colSpan = 5;
+        buyupgradetousemessage.appendChild(document.createTextNode("You don't have any usable upgrades. Buy some above. Upgrades only come into play the year after they are purchased."));
+        tr.appendChild(buyupgradetousemessage);
+        useUpgradeTable.appendChild(tr);
     }
 }
 
@@ -804,6 +817,17 @@ connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices,
     }
 
     document.getElementById("salestablesummary").textContent = "TOTAL REVENUE: $" + (playerProfit / 100).toFixed(2);
+
+    var upgradesBoughtList = document.getElementById("upgradesboughtlistmarketreport");
+    upgradesBoughtList.innerHTML = "";
+    for (var justPurchasedUpgrade in playerState.justPurchasedUpgrades) {
+        var amountPurchased = playerState.justPurchasedUpgrades[justPurchasedUpgrade];
+        if (amountPurchased > 0) {
+            var li = document.createElement("li");
+            li.textContent = amountPurchased + "x " + justPurchasedUpgrade.toUpperCase();
+            upgradesBoughtList.appendChild(li);
+        }
+    }
 });
 
 // Stop viewing market report
