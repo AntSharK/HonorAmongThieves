@@ -11,6 +11,8 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
         public abstract string Description { get; }
 
         public int AmountOwned = 0;
+        public int AmountUsed = 0;
+
         protected CakeryPlayer owner;
 
         public Upgrade(CakeryPlayer owner)
@@ -30,12 +32,14 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 
         public virtual void OnNextRound(CakeryRoom room)
         {
-            // Normally does nothing
+            this.AmountUsed = 0;
         }
 
         public virtual void OnUse()
         {
             // Normally does nothing
+            // Should check that amount used is less than amount owned
+            // Should increment the "AmountUsed" number
         }
 
         // Initializes an empty dictionary with every single upgrade constructed

@@ -286,7 +286,12 @@ document.getElementById("buybutteramount").addEventListener("change", function (
 });
 
 function getNumber(elementId, roundDown) {
-    var number = document.getElementById(elementId).value;
+    var element = document.getElementById(elementId);
+    if (element == null) {
+        return;
+    }
+
+    var number = element.value;
 
     // Do bounds checking and reflect changes in UI
     if (number.length == 0 || number < 0) {
@@ -507,12 +512,13 @@ function showUpgradeMenu() {
     document.getElementById("croissantsbaked2").textContent = playerState.bakedGoods.croissants;
     document.getElementById("cakesbaked2").textContent = playerState.bakedGoods.cakes;
 
-    // List every upgrade
+    // Remove the upgrade rows
     var upgradeTable = document.getElementById("upgradetable");
     for (var i = upgradeTable.rows.length - 1; i > 1; i--) {
         upgradeTable.deleteRow(i);
     }
 
+    // List upgrades to buy
     for (var i = 0; i < playerState.upgrades.length; i++) {
         var upgrade = playerState.upgrades[i];
         var tr = document.createElement("TR");
@@ -529,18 +535,87 @@ function showUpgradeMenu() {
         description.appendChild(document.createTextNode(upgrade.description));
         tr.appendChild(description);
 
-        var alreadyowned = document.createElement("TD");
-        alreadyowned.appendChild(document.createTextNode(upgrade.amountOwned));
-        tr.appendChild(alreadyowned);
+        var totalowned = document.createElement("TD");
+        totalowned.appendChild(document.createTextNode(upgrade.amountOwned + playerState.justPurchasedUpgrades[upgrade.name.toLowerCase()]));
+        tr.appendChild(totalowned);
 
-        var justpurchased = document.createElement("TD");
-        justpurchased.appendChild(document.createTextNode(playerState.justPurchasedUpgrades[upgrade.name.toLowerCase()]));
-        tr.appendChild(justpurchased);
+        var amounttobuy = document.createElement("TD");
+        var amounttobuyinput = document.createElement("input");
+        amounttobuyinput.type = "number";
+        amounttobuyinput.step = 1;
+        amounttobuyinput.min = 0;
+        amounttobuyinput.max = 999;
+        amounttobuyinput.value = 0;
+        amounttobuyinput.id = upgrade.name.toLowerCase() + "buyamount";
+        amounttobuyinput.addEventListener("change", function (event) {
+            updateUpgradeCost();
+        });
 
-        // TODO (Upgrades): Figure out some way to actually buy and use upgrades
+        amounttobuy.appendChild(amounttobuyinput);
+        tr.appendChild(amounttobuy);
 
         upgradeTable.appendChild(tr);
     }
+
+    // Add the upgrade buttons
+    var bottomRow = document.createElement("TR");
+
+    var blanksquare = document.createElement("TD");
+    bottomRow.appendChild(blanksquare);
+
+    var upgradepricesquare = document.createElement("TD");
+    upgradepricesquare.colSpan = 2;
+    upgradepricesquare.id = "buyupgradeprice";
+    bottomRow.appendChild(upgradepricesquare);
+
+    var buyupgradebuttonsquare = document.createElement("TD");
+    buyupgradebuttonsquare.colSpan = 2;
+    var upgradebuttoninput = document.createElement("input");
+    upgradebuttoninput.type = "button";
+    upgradebuttoninput.id = "buyupgradesbutton";
+    upgradebuttoninput.value = "BUY UPGRADES";
+    upgradebuttoninput.disabled = false;
+    upgradebuttoninput.addEventListener("click", function (event) {
+        buyUpgrades();
+        event.preventDefault();
+    });
+
+    buyupgradebuttonsquare.appendChild(upgradebuttoninput);
+    bottomRow.appendChild(buyupgradebuttonsquare);
+
+    upgradeTable.appendChild(bottomRow);
+}
+
+function buyUpgrades() {
+    // TODO (Upgrades)
+}
+
+function updateUpgradeCost() {
+    getNumber("dairy farmbuyamount", true);
+    getNumber("sugar substitutebuyamount", true);
+    // TODO (Upgrades)
+    // var ingredientsCost = getIngredientsCost();
+
+    // Early abort if nothing is being bought
+    // if (ingredientsCost <= 0) {
+    //     document.getElementById("ingredientcost").textContent = "";
+    //     document.getElementById("buyingredientsbutton").disabled = true;
+    //     document.getElementById("buyingredientsbutton").value = "BUY INGREDIENTS";
+    //     return;
+    // }
+    // 
+    // document.getElementById("ingredientcost").textContent = "$" + (ingredientsCost / 100).toFixed(2) + "/$" + (playerState.resources.money / 100).toFixed(2);
+    // 
+    // if (ingredientsCost > playerState.resources.money) {
+    //     document.getElementById("ingredientcost").style.color = "red";
+    //     document.getElementById("buyingredientsbutton").disabled = true;
+    //     document.getElementById("buyingredientsbutton").value = "NOT ENOUGH MONEY";
+    // }
+    // else {
+    //     document.getElementById("ingredientcost").style.color = "blue";
+    //     document.getElementById("buyingredientsbutton").disabled = false;
+    //     document.getElementById("buyingredientsbutton").value = "BUY INGREDIENTS";
+    // }
 }
 
 // Switch back to "Baking" view
