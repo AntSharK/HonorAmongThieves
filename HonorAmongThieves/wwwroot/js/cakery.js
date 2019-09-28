@@ -8,20 +8,13 @@ var baking = true;
 // -------------------------
 // ----- GAME OBJECTS ------
 // -------------------------
-// The player 
-var roundActions = {
-    goldSpent: 0,
-    cakesBaked: 0,
-    croissantsBaked: 0,
-    cookiesBaked: 0,
-    // TODO (Upgrades): Upgrades purchased
-}
 
 // The player state currently, not including this round's purchases
 var playerState = {
     resources: {},
     upgrades: {},
     bakedGoods: {},
+    justPurchasedUpgrades: {},
 }
 
 var gameState = {
@@ -178,11 +171,12 @@ function changeUiState(title, stateToChange) {
 // ----- STATE: BAKING -----
 // -------------------------
 // Entering the baking menu
-connection.on("UpdateProductionState", function (currentPrices, currentMarket, playerResources, playerUpgrades, playerBakedGoods) {
+connection.on("UpdateProductionState", function (currentPrices, currentMarket, playerResources, playerUpgrades, playerJustPurchasedUpgrades, playerBakedGoods) {
     gameState.currentPrices = currentPrices;
     gameState.currentMarket = currentMarket;
     playerState.resources = playerResources;
     playerState.upgrades = playerUpgrades;
+    playerState.justPurchasedUpgrades = playerJustPurchasedUpgrades;
     playerState.bakedGoods = playerBakedGoods;
     if (baking) {
         showBakeMenu();

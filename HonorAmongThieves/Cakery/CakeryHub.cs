@@ -139,12 +139,7 @@ namespace HonorAmongThieves.Cakery
             // All calculations for costs should be done by now
             foreach (var player in room.Players.Values)
             {
-                await Clients.Client(player.ConnectionId).SendAsync("UpdateProductionState",
-                    room.CurrentPrices,
-                    room.CurrentMarket,
-                    player.CurrentResources,
-                    player.CurrentUpgrades,
-                    player.CurrentBakedGoods);
+                await this.UpdateProductionState(room, player);
             }
         }
 
@@ -216,6 +211,7 @@ namespace HonorAmongThieves.Cakery
                     room.CurrentMarket,
                     player.CurrentResources,
                     player.CurrentUpgrades,
+                    player.JustPurchasedUpgrades,
                     player.CurrentBakedGoods);
         }
 

@@ -36,6 +36,11 @@ namespace HonorAmongThieves.Cakery.GameLogic
                     $" ({(int)(marketReport.Prices.cakePrice * 100 / prices.Cakes)}%). ");
             }
 
+            if (cakesSold == 0 && cookiesSold == 0 && croissantsSold == 0)
+            {
+                return "No goods were sold this year.";
+            }
+
             return newsReport.ToString();
         }
 

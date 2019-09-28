@@ -144,8 +144,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             // Then, finalize upgrades
             foreach (var player in this.Players.Values)
             {
-                // TODO
-                // player.FinalizeUpgrades();
+                player.FinalizeUpgrades(this);
             }
 
             // Finally, broadcast this year's report to each player

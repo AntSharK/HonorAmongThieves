@@ -1,4 +1,6 @@
-﻿using System;
+﻿using HonorAmongThieves.Cakery.GameLogic.Upgrades;
+using System;
+using System.Collections.Generic;
 
 namespace HonorAmongThieves.Cakery.GameLogic
 {
@@ -34,25 +36,26 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 (2500d, 2500d, 2500d, 1500d);
         }
 
-        public class Upgrades
-        {
-            // TODO (Upgrades)
-        }
-
         public CakeryRoom Room { get; set; }
 
         public Status CurrentStatus { get; set; } = Status.WaitingForGameStart;
 
+        // Does not include upgrades that are just purchased this round - should include an empty list of all upgrades
+        public Dictionary<string, Upgrade> CurrentUpgrades;
+
+        // Does not include upgrades that are just purchased this round - should include the list of every single upgrade
+        public Dictionary<string, Upgrade> JustPurchasedUpgrades;
+
         public Resources CurrentResources { get; set; } = new Resources();
         public BakedGoods CurrentBakedGoods { get; set; } = new BakedGoods();
-        public Upgrades CurrentUpgrades { get; set; } = new Upgrades(); // Does not include upgrades that are just purchased this round
-        public Upgrades JustPurchasedUpgrades { get; set; } = new Upgrades(); // Upgrades take into effect only in the round after you purchase them
         public long TotalSales { get; set; } = 0;
 
         public CakeryPlayer(string playerName, CakeryRoom room)
             : base(playerName)
         {
             this.Room = room;
+            this.CurrentUpgrades = Upgrade.Initialize(this);
+            this.JustPurchasedUpgrades = Upgrade.Initialize(this);
         }
 
         internal bool MakePurchase(double butterBought, double flourBought, double sugarBought)
@@ -124,6 +127,28 @@ namespace HonorAmongThieves.Cakery.GameLogic
             this.CurrentBakedGoods.Cookies = 0;
             this.CurrentBakedGoods.Croissants = 0;
             this.CurrentBakedGoods.Cakes = 0;
+        }
+
+        internal void FinalizeUpgrades(CakeryRoom room)
+        {
+            // Trigger one-time effects for purchased upgrades
+            foreach (var upgradePair in this.JustPurchasedUpgrades)
+            {
+                var upgrade = upgradePair.Value;
+                var upgradeName = upgradePair.Key;
+                upgrade.OnPurchase(room);
+
+                CurrentUpgrades[upgradeName].AmountOwned = CurrentUpgrades[upgradeName].AmountOwned + upgrade.AmountOwned;
+                upgrade.AmountOwned = 0;
+            }
+
+            this.JustPurchasedUpgrades.Clear();
+
+            // Trigger persistent effects for owned upgrades
+            foreach (var upgrade in this.CurrentUpgrades.Values)
+            {
+                upgrade.OnNextRound(room);
+            }
         }
     }
 }
