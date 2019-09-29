@@ -170,15 +170,6 @@ function changeUiState(title, stateToChange) {
 // -------------------------
 // ----- UTILITY METHODS ---
 // -------------------------
-function showCommonMenuButtons() {
-    document.getElementById("currentyear").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
-
-    var elements = document.getElementsByClassName("commonmenubutton");
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].style.display = "block";
-    }
-}
-
 function getNumber(elementId, roundDown) {
     var element = document.getElementById(elementId);
     if (element == null) {
@@ -224,6 +215,24 @@ connection.on("UpdateProductionState", function (currentPrices, currentMarket, p
     showMenu();
 });
 
+function showCommonMenuButtons() {
+    document.getElementById("currentyear").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
+
+    var elements = document.getElementsByClassName("commonmenubutton");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "block";
+    }
+
+    document.getElementById("moneyowned2").textContent = "Cash Available: $" + (playerState.resources.money / 100).toFixed(2);
+    document.getElementById("flourowned2").textContent = (playerState.resources.flour) + "g";
+    document.getElementById("sugarowned2").textContent = (playerState.resources.sugar) + "g";
+    document.getElementById("butterowned2").textContent = (playerState.resources.butter) + "g";
+
+    document.getElementById("cookiesbaked2").textContent = playerState.bakedGoods.cookies;
+    document.getElementById("croissantsbaked2").textContent = playerState.bakedGoods.croissants;
+    document.getElementById("cakesbaked2").textContent = playerState.bakedGoods.cakes;
+}
+
 function showMenu() {
     if (bakingMenuState == "baking") {
         showBakeMenu();
@@ -231,10 +240,11 @@ function showMenu() {
     else if (bakingMenuState == "upgrading") {
         showUpgradeMenu();
     }
+
+    showCommonMenuButtons();
 }
 
 function showBakeMenu() {
-    bakingMenuState = "baking";
     changeUiState("BAKE!!", "bakegoods");
 
     // Reset the input forms
@@ -262,28 +272,13 @@ function showBakeMenu() {
     document.getElementById("cakepricesugar").textContent = cakeCost.item3 + "g";
     document.getElementById("cakepricemoney").textContent = "$" + (cakeCost.item4 / 100).toFixed(2);
 
-    document.getElementById("moneyowned").textContent = "Cash Available: $" + (playerState.resources.money / 100).toFixed(2);
-    document.getElementById("flourowned").textContent = playerState.resources.flour + "g";
-    document.getElementById("sugarowned").textContent = playerState.resources.sugar + "g";
-    document.getElementById("butterowned").textContent = playerState.resources.butter + "g";
-
     document.getElementById("flourprice").textContent = "$" + (gameState.currentPrices.flour / 100).toFixed(2);
     document.getElementById("butterprice").textContent = "$" + (gameState.currentPrices.butter / 100).toFixed(2);
     document.getElementById("sugarprice").textContent = "$" + (gameState.currentPrices.sugar / 100).toFixed(2);
 
-    document.getElementById("bakethingsmoneydisplay").textContent = "$" + (playerState.resources.money / 100).toFixed(2);
-    document.getElementById("bakethingsflourdisplay").textContent = playerState.resources.flour + "g";
-    document.getElementById("bakethingssugardisplay").textContent = playerState.resources.sugar + "g";
-    document.getElementById("bakethingsbutterdisplay").textContent = playerState.resources.butter + "g";
-
-    document.getElementById("cookiesbaked").textContent = playerState.bakedGoods.cookies;
-    document.getElementById("croissantsbaked").textContent = playerState.bakedGoods.croissants;
-    document.getElementById("cakesbaked").textContent = playerState.bakedGoods.cakes;
-
     document.getElementById("cookierevenue").textContent = "$" + (gameState.currentPrices.cookies / 100).toFixed(2);
     document.getElementById("croissantrevenue").textContent = "$" + (gameState.currentPrices.croissants / 100).toFixed(2);
     document.getElementById("cakerevenue").textContent = "$" + (gameState.currentPrices.cakes / 100).toFixed(2);
-    showCommonMenuButtons();
 }
 
 // Click on buying ingredients
@@ -520,7 +515,8 @@ function updateBakingCost() {
 
 // Click on "Upgrade" view
 document.getElementById("switchtoupgradeviewbutton").addEventListener("click", function (event) {
-    showUpgradeMenu();
+    bakingMenuState = "upgrading";
+    showMenu();
     event.preventDefault();
 });
 
@@ -528,17 +524,7 @@ document.getElementById("switchtoupgradeviewbutton").addEventListener("click", f
 // ----- STATE: MENU (UPGRADE) ----
 // --------------------------------
 function showUpgradeMenu() {
-    bakingMenuState = "upgrading";
     changeUiState("UPGRADE!!", "upgrademenu");
-
-    document.getElementById("moneyowned2").textContent = "Cash Available: $" + (playerState.resources.money / 100).toFixed(2);
-    document.getElementById("flourowned2").textContent = (playerState.resources.flour / 1000) + "kg";
-    document.getElementById("sugarowned2").textContent = (playerState.resources.sugar / 1000) + "kg";
-    document.getElementById("butterowned2").textContent = (playerState.resources.butter / 1000) + "kg";
-
-    document.getElementById("cookiesbaked2").textContent = playerState.bakedGoods.cookies;
-    document.getElementById("croissantsbaked2").textContent = playerState.bakedGoods.croissants;
-    document.getElementById("cakesbaked2").textContent = playerState.bakedGoods.cakes;
 
     // Remove the upgrade rows
     var upgradeTable = document.getElementById("upgradetable");
@@ -588,20 +574,18 @@ function showUpgradeMenu() {
     // Add the upgrade buttons
     var bottomRow = document.createElement("TR");
 
-    var blanksquare = document.createElement("TD");
-    bottomRow.appendChild(blanksquare);
-
     var upgradepricesquare = document.createElement("TD");
     upgradepricesquare.colSpan = 2;
     upgradepricesquare.id = "buyupgradeprice";
     bottomRow.appendChild(upgradepricesquare);
 
     var buyupgradebuttonsquare = document.createElement("TD");
-    buyupgradebuttonsquare.colSpan = 2;
+    buyupgradebuttonsquare.colSpan = 3;
     var upgradebuttoninput = document.createElement("input");
     upgradebuttoninput.type = "button";
     upgradebuttoninput.id = "buyupgradesbutton";
     upgradebuttoninput.value = "BUY UPGRADES";
+    upgradebuttoninput.className = "display-4";
     upgradebuttoninput.disabled = true;
     upgradebuttoninput.addEventListener("click", function (event) {
         buyUpgrades();
@@ -707,8 +691,6 @@ function showUpgradeMenu() {
         tr.appendChild(buyupgradetousemessage);
         useUpgradeTable.appendChild(tr);
     }
-
-    showCommonMenuButtons();
 }
 
 function useUpgrade(upgrade) {
@@ -865,7 +847,8 @@ function updateUpgradeCost() {
 
 // Switch back to "Baking" view
 document.getElementById("switchtobakeviewbutton").addEventListener("click", function (event) {
-    showBakeMenu();
+    bakingMenuState = "baking";
+    showMenu();
     event.preventDefault();
 });
 
