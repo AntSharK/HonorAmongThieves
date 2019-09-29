@@ -217,6 +217,13 @@ namespace HonorAmongThieves.Cakery.GameLogic
             var playerProfit = marketReport.PlayerProfits[player];
             var goodPrices = marketReport.Prices;
             var playerUpgradeReport = player.GetUpgradeReport();
+
+            // Special text for the first year
+            if (this.CurrentMarket.CurrentYear == 1)
+            {
+                newsReport = newsReport + "Every year, the price of a good is determined by its total supply. The more of one good in the market, the lower it sells for.";
+            }
+
             await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("ShowMarketReport",
                 newsReport, playerSales, goodPrices,
                 playerProfit, this.CurrentMarket, playerUpgradeReport);
