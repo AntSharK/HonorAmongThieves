@@ -762,12 +762,12 @@ function showUseUpgradeMenu() {
 
             var upgradecost = document.createElement("TD");
             upgradecost.id = upgrade.name.toLowerCase() + "usagecost";
-            upgradecost.appendChild(document.createTextNode("Costs " + getUpgradeCostText(upgrade.useCost, 1) + " Per Use"));
+            upgradecost.appendChild(document.createTextNode(getUpgradeCostText(upgrade.useCost, 1) + "/Use"));
             tr.appendChild(upgradecost);
 
             var upgradeeffect = document.createElement("TD");
             upgradeeffect.id = upgrade.name.toLowerCase() + "usageeffect";
-            upgradeeffect.appendChild(document.createTextNode("Gives: " + getUpgradeCostText(upgrade.useEffect, 1) + " Per Use"));
+            upgradeeffect.appendChild(document.createTextNode(getUpgradeCostText(upgrade.useEffect, 1) + "/Use"));
             tr.appendChild(upgradeeffect);
 
             var amounttouse = document.createElement("TD");
@@ -840,8 +840,8 @@ function updateUpgradeUse(upgrade, useCost, useEffect) {
     var numberOfUses = getNumber(upgrade + "useamount", true);
 
     if (numberOfUses == 0) {
-        document.getElementById(upgrade + "usagecost").textContent = "Costs: " + getUpgradeCostText(useCost, 1) + " Per Use";
-        document.getElementById(upgrade + "usageeffect").textContent = "Gives: " + getUpgradeCostText(useEffect, 1) + " Per Use";
+        document.getElementById(upgrade + "usagecost").textContent = getUpgradeCostText(useCost, 1) + " /Use";
+        document.getElementById(upgrade + "usageeffect").textContent = getUpgradeCostText(useEffect, 1) + "/Use";
         document.getElementById(upgrade + "usagecost").style.color = "black";
         document.getElementById(upgrade + "usageeffect").style.color = "black";
         document.getElementById(upgrade + "use").disabled = true;
