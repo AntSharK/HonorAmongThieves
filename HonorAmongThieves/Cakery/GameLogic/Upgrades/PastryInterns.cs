@@ -16,13 +16,11 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 
         public PastryInterns(CakeryPlayer player) : base(player) { }
 
-        private int amountJustPurchased = 0;
         public override void OnPurchaseFinalized(CakeryRoom room, int amountPurchased)
         {
             base.OnPurchaseFinalized(room, amountPurchased);
             for (var i = 0; i < amountPurchased; i++)
             {
-                amountJustPurchased++;
                 this.owner.CurrentBakedGoods.CroissantCost.money = this.owner.CurrentBakedGoods.CroissantCost.money * 0.9;
                 this.owner.CurrentBakedGoods.CakeCost.money = this.owner.CurrentBakedGoods.CakeCost.money * 0.9;
             }
@@ -30,11 +28,10 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 
         public override string OnMarketReport()
         {
-            if (amountJustPurchased > 0)
+            if (this.amountJustPurchased > 0)
             {
-                var percentageReduction = Math.Floor(100 - (Math.Pow(0.9, amountJustPurchased) * 100));
-                amountJustPurchased = 0;
-                return $"Your hiring of cheap pastry-making interns has reduced the monetary cost of producing Cakes and Croissants by {percentageReduction}%. ";
+                var percentageReduction = Math.Floor(100 - (Math.Pow(0.9, this.amountJustPurchased) * 100));
+                return $"Your hiring of cheap Pastry-Making Interns has reduced the monetary cost of producing Cakes and Croissants by {percentageReduction}%. ";
             }
 
             return string.Empty;

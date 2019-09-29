@@ -50,5 +50,22 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
             this.owner.CurrentResources.Flour = this.owner.CurrentResources.Flour + upgradesUsed * this.UseEffect.flour;
             return true;
         }
+
+        public override string OnMarketReport()
+        {
+            if (this.amountJustPurchased > 0)
+            {
+                if (this.amountJustPurchased == this.AmountOwned)
+                {
+                    return $"You have discovered a portal, and after much experimentation, you find out that if you feed it a Cake, it gives you Flour. ";
+                }
+                else
+                {
+                    return $"After more research, you have increased the efficiency of your Cake-consuming portal, making it give you {this.UseEffect.flour}g of Flour per Cake. ";
+                }
+            }
+
+            return string.Empty;
+        }
     }
 }

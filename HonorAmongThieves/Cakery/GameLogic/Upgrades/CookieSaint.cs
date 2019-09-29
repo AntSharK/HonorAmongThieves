@@ -40,5 +40,22 @@
             this.UsesLeft = this.UsesLeft - upgradesUsed;
             return true;
         }
+
+        public override string OnMarketReport()
+        {            
+            if (this.amountJustPurchased > 0)
+            {
+                if (this.amountJustPurchased == this.AmountOwned)
+                {
+                    return $"You have discovered the technique of creating Croissants from Cookies, and dub this new creation the 'Cookiesaint'. ";
+                }
+                else
+                {
+                    return $"You buy more Cookiesaint machines, letting you to produce {this.amountJustPurchased * this.UseEffect.croissants} more Cookie-Croissaints per year. ";
+                }
+            }
+
+            return string.Empty;
+        }
     }
 }

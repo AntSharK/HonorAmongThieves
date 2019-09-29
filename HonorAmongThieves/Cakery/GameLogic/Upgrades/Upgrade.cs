@@ -15,6 +15,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
         public (double money, double butter, double flour, double sugar, double cookies, double croissants, double cakes) UseEffect { get; set; } = (0, 0, 0, 0, 0, 0, 0);
 
         protected CakeryPlayer owner;
+        protected int amountJustPurchased;
 
         public Upgrade(CakeryPlayer owner)
         {
@@ -24,6 +25,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
         public virtual void OnPurchaseFinalized(CakeryRoom room, int amountPurchased)
         {
             this.AmountOwned = this.AmountOwned + amountPurchased;
+            this.amountJustPurchased = amountPurchased;
         }
 
         public virtual void OnNextRound(CakeryRoom room)
