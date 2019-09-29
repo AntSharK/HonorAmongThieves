@@ -3,7 +3,7 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/cakeryHub").build();
 var userName;
 var roomId;
-var baking = true;
+var bakingMenuState = "baking"; // Can be: 'baking', 'upgrading'
 
 // -------------------------
 // ----- GAME OBJECTS ------
@@ -167,6 +167,13 @@ function changeUiState(title, stateToChange) {
     bakingmenu.style.display = "block";
 }
 
+function showCommonMenuButtons() {
+    var elements = document.getElementsByClassName("commonmenubutton");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "block";
+    }
+}
+
 // -------------------------
 // ----- STATE: BAKING -----
 // -------------------------
@@ -178,16 +185,16 @@ connection.on("UpdateProductionState", function (currentPrices, currentMarket, p
     playerState.upgrades = playerUpgrades;
     playerState.justPurchasedUpgrades = playerJustPurchasedUpgrades;
     playerState.bakedGoods = playerBakedGoods;
-    if (baking) {
+    if (bakingMenuState == "baking") {
         showBakeMenu();
     }
-    else {
+    else if (bakingMenuState == "upgrading") {
         showUpgradeMenu();
     }
 });
 
 function showBakeMenu() {
-    baking = true;
+    bakingMenuState = "baking";
     changeUiState("BAKE!!", "bakegoods");
 
     // Reset the input forms
@@ -233,6 +240,7 @@ function showBakeMenu() {
     document.getElementById("cakerevenue").textContent = "$" + (gameState.currentPrices.cakes / 100).toFixed(2);
 
     document.getElementById("currentyear").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
+    showCommonMenuButtons();
 }
 
 // Click on buying ingredients
@@ -505,7 +513,7 @@ document.getElementById("switchtoupgradeviewbutton").addEventListener("click", f
 });
 
 function showUpgradeMenu() {
-    baking = false;
+    bakingMenuState = "upgrading";
     changeUiState("UPGRADE!!", "upgrademenu");
 
     document.getElementById("moneyowned2").textContent = "Cash Available: $" + (playerState.resources.money / 100).toFixed(2);
@@ -630,43 +638,46 @@ function showUpgradeMenu() {
             upgradeeffect.appendChild(document.createTextNode("Gives: " + getUpgradeCostText(upgrade.useEffect, 1) + " Per Use"));
             tr.appendChild(upgradeeffect);
 
-            //if (upgrade.usesLeft != 0) {
-                var amounttouse = document.createElement("TD");
-                var amounttouseinput = document.createElement("input");
-                amounttouseinput.type = "number";
-                amounttouseinput.step = 1;
-                amounttouseinput.min = 0;
+            var amounttouse = document.createElement("TD");
+            var amounttouseinput = document.createElement("input");
+            amounttouseinput.type = "number";
+            amounttouseinput.step = 1;
+            amounttouseinput.min = 0;
 
-                if (upgrade.usesLeft >= 0) {
-                    amounttouseinput.max = upgrade.usesLeft;
-                }
-                else {
-                    amounttouseinput.max = 999;
-                }
+            if (upgrade.usesLeft >= 0) {
+                amounttouseinput.max = upgrade.usesLeft;
+            }
+            else {
+                amounttouseinput.max = 999;
+            }
 
-                amounttouseinput.value = 0;
-                amounttouseinput.id = upgrade.name.toLowerCase() + "useamount";
-                amounttouseinput.addEventListener("change", function (event) {
-                    updateUpgradeUse(upgrade.name.toLowerCase(), upgrade.useCost, upgrade.useEffect);
-                });
+            amounttouseinput.value = 0;
+            amounttouseinput.id = upgrade.name.toLowerCase() + "useamount";
+            amounttouseinput.upgradeName = upgrade.name.toLowerCase();
+            amounttouseinput.useCost = upgrade.useCost;
+            amounttouseinput.useEffect = upgrade.useEffect;
 
-                amounttouse.appendChild(amounttouseinput);
-                tr.appendChild(amounttouse);
+            amounttouseinput.addEventListener("change", function () {
+                updateUpgradeUse(this.upgradeName, this.useCost, this.useEffect);
+            });
 
-                var useupgradebuttonsquare = document.createElement("TD");
-                var useupgradebuttoninput = document.createElement("input");
-                useupgradebuttoninput.type = "button";
-                useupgradebuttoninput.id = upgrade.name.toLowerCase() + "use";
-                useupgradebuttoninput.value = "USE";
-                useupgradebuttoninput.disabled = true;
-                useupgradebuttoninput.addEventListener("click", function (event) {
-                    useUpgrade(upgrade.name.toLowerCase());
-                    event.preventDefault();
-                });
+            amounttouse.appendChild(amounttouseinput);
+            tr.appendChild(amounttouse);
 
-                useupgradebuttonsquare.appendChild(useupgradebuttoninput);
-                tr.appendChild(useupgradebuttonsquare);
-            //}
+            var useupgradebuttonsquare = document.createElement("TD");
+            var useupgradebuttoninput = document.createElement("input");
+            useupgradebuttoninput.type = "button";
+            useupgradebuttoninput.id = upgrade.name.toLowerCase() + "use";
+            useupgradebuttoninput.value = "USE";
+            useupgradebuttoninput.disabled = true;
+            useupgradebuttoninput.upgradeName = upgrade.name.toLowerCase();
+            useupgradebuttoninput.addEventListener("click", function () {
+                useUpgrade(this.upgradeName);
+                event.preventDefault();
+            });
+
+            useupgradebuttonsquare.appendChild(useupgradebuttoninput);
+            tr.appendChild(useupgradebuttonsquare);
 
             useUpgradeTable.appendChild(tr);
         }
@@ -681,6 +692,8 @@ function showUpgradeMenu() {
         tr.appendChild(buyupgradetousemessage);
         useUpgradeTable.appendChild(tr);
     }
+
+    showCommonMenuButtons();
 }
 
 function useUpgrade(upgrade) {
@@ -820,7 +833,7 @@ function updateUpgradeCost() {
         document.getElementById("buyupgradesbutton").value = "BUY UPGRADES";
         return;
     }
-     
+
     document.getElementById("buyupgradeprice").textContent = "$" + (upgradeCost / 100).toFixed(2) + "/$" + (playerState.resources.money / 100).toFixed(2);
 
     if (upgradeCost > playerState.resources.money) {
@@ -842,7 +855,13 @@ document.getElementById("switchtobakeviewbutton").addEventListener("click", func
 });
 
 document.getElementById("gobacktobakeviewbutton").addEventListener("click", function (event) {
-    showBakeMenu();
+    if (bakingMenuState == "baking") {
+        showBakeMenu();
+    }
+    else if (bakingMenuState == "upgrading") {
+        showUpgradeMenu();
+    }
+
     event.preventDefault();
 });
 
@@ -932,7 +951,7 @@ function updatePlayerList(readyPlayers, slowBastards) {
 // Show market report
 connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices, playerProfit, currentMarket, playerUpgradeReport) {
     gameState.currentMarket = currentMarket;
-    baking = true;
+    bakingMenuState = "baking";
     changeUiState("MARKET REPORT", "marketreport");
 
     document.getElementById("marketreportnews").textContent = newsReport;

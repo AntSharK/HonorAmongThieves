@@ -91,16 +91,22 @@
             <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center">
                 <tr>
                     <th></th>
-                    <th>Production
-                    Cost</th>
+                    <th>
+                        Production
+                        Cost
+                    </th>
                     <th>Flour</th>
                     <th>Sugar</th>
                     <th>Butter</th>
                     <th>Amount</th>
-                    <th>On
-                    Hand</th>
-                    <th>Estimated 
-                    Revenue</th>
+                    <th>
+                        On
+                        Hand
+                    </th>
+                    <th>
+                        Estimated
+                        Revenue
+                    </th>
                 </tr>
                 <tr>
                     <td>Cookie</td>
@@ -143,10 +149,6 @@
                     <td colspan="5"><input type="button" id="bakethingsbutton" value="BAKE THINGS" /></td>
                 </tr>
             </table> <hr />
-        </div>
-        <hr />
-        <div style="text-align:center" class="display-1">
-            <input type="button" id="endturnbutton" value="END TURN" />
         </div>
     </div>
 
@@ -206,13 +208,21 @@
                 <tr>
                     <th>Name</th>
                     <th>Owned</th>
-                    <th>Uses
-                    Left</th>
+                    <th>
+                        Uses
+                        Left
+                    </th>
                     <th>Cost</th>
                     <th>Gain</th>
                 </tr>
-            </table> <hr />
+            </table>
         </div>
+    </div>
+
+    <!----- COMMON FOOTER FOR MENU ----->
+    <div style="text-align:center; display:none" class="state commonmenubutton display-1">
+        <hr />
+        <input type="button" id="endturnbutton" value="END TURN" />
     </div>
 
     <!------ YOUR MARKET SUMMARY --------->
@@ -295,14 +305,14 @@
                     <td colspan="4" id="salestablesummary"></td>
                 </tr>
             </table> <hr />
-                     <div class="h2" style="text-align:left">
-                         <div id="upgradesboughtlistmarketreportdiv">
-                             <u>Upgrades Bought:</u>
-                             <ul id="upgradesboughtlistmarketreport"></ul>
-                             <br />
-                         </div>
-                         <div id="upgradesmarketreport" class="h3"></div>
-                     </div> <hr />
+            <div class="h2" style="text-align:left">
+                <div id="upgradesboughtlistmarketreportdiv">
+                    <u>Upgrades Bought:</u>
+                    <ul id="upgradesboughtlistmarketreport"></ul>
+                    <br />
+                </div>
+                <div id="upgradesmarketreport" class="h3"></div>
+            </div> <hr />
             <input type="button" id="endmarketreportbutton" value="CLOSE REPORT" />
         </div>
     </div>
