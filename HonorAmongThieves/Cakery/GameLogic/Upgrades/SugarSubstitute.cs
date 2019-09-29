@@ -23,9 +23,9 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
             for (var i = 0; i < amountPurchased; i++)
             {
                 amountJustPurchased++;
-                this.owner.CurrentBakedGoods.CookieCost.butter = this.owner.CurrentBakedGoods.CookieCost.butter * 0.8;
-                this.owner.CurrentBakedGoods.CroissantCost.butter = this.owner.CurrentBakedGoods.CroissantCost.butter * 0.8;
-                this.owner.CurrentBakedGoods.CakeCost.butter = this.owner.CurrentBakedGoods.CakeCost.butter * 0.8;
+                this.owner.CurrentBakedGoods.CookieCost.sugar = this.owner.CurrentBakedGoods.CookieCost.sugar * 0.8;
+                this.owner.CurrentBakedGoods.CroissantCost.sugar = this.owner.CurrentBakedGoods.CroissantCost.sugar * 0.8;
+                this.owner.CurrentBakedGoods.CakeCost.sugar = this.owner.CurrentBakedGoods.CakeCost.sugar * 0.8;
             }
         }
 
