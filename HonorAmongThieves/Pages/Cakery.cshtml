@@ -52,6 +52,7 @@
         <input type="button" id="switchtogroceryviewbutton" value="SHOP" />
         <input type="button" id="switchtobakeviewbutton" value="BAKE" />
         <input type="button" id="switchtoupgradeviewbutton" value="UPGRADE" />
+        <input type="button" id="switchtouseupgradeviewbutton" value="USE" />
         <hr />
 
         <!---- The resources for current player --->
@@ -116,7 +117,7 @@
                 <tr>
                     <td colspan="3"><input type="button" id="buyingredientsbutton" value="BUY INGREDIENTS" class="display-4" /></td>
                 </tr>
-            </table> <hr />
+            </table>
         </div>
     </div>
 
@@ -177,14 +178,12 @@
                     <td colspan="5"><input type="button" id="bakethingsbutton" value="BAKE THINGS" class="display-4" /></td>
                 </tr>
             </table>
-            <hr />
         </div>
     </div>
 
     <!------ BUY UPGRADES --------->
     <div class="state" id="upgrademenu" style="display:none">
         <div class="display-4" style="text-align:center">
-
             <table align="center" class="h4" border="1px solid black" cellpadding="3%" style="text-align:center" id="upgradetable">
                 <tr>
                     <th colspan="4">BUY UPGRADES</th>
@@ -199,9 +198,13 @@
                         Amount
                     </th>
                 </tr>
-            </table> <hr />
+            </table>
+        </div>
+    </div>
 
-            <!------ USE UPGRADES --------->
+    <!------ USE UPGRADES --------->
+    <div class="state" id="useupgradesmenu" style="display:none">
+        <div class="display-4" style="text-align:center">
             <table align="center" class="h4" border="1px solid black" cellpadding="3%" style="text-align:center" id="useupgradetable">
                 <tr>
                     <th colspan="5">USE UPGRADES</th>

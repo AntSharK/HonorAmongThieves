@@ -274,6 +274,13 @@ document.getElementById("switchtoupgradeviewbutton").addEventListener("click", f
     event.preventDefault();
 });
 
+// Click on "Use Upgrades" view
+document.getElementById("switchtouseupgradeviewbutton").addEventListener("click", function (event) {
+    bakingMenuState = "usingupgrades";
+    showMenu();
+    event.preventDefault();
+});
+
 // ---------------------------------
 // ----- STATE: MENU (GROCERIES) ---
 // ---------------------------------
@@ -555,13 +562,13 @@ function updateBakingCost() {
     }
 }
 
-// --------------------------------
-// ----- STATE: MENU (UPGRADE) ----
-// --------------------------------
+// -------------------------------------
+// ----- STATE: MENU (BUY UPGRADES) ----
+// -------------------------------------
 function showUpgradeMenu() {
-    changeUiState("UPGRADE!!", "upgrademenu");
+    changeUiState("BUY UPGRADES", "upgrademenu");
 
-    // Remove the upgrade rows
+    // Clear table
     var upgradeTable = document.getElementById("upgradetable");
     for (var i = upgradeTable.rows.length - 1; i > 1; i--) {
         upgradeTable.deleteRow(i);
@@ -606,7 +613,7 @@ function showUpgradeMenu() {
         upgradeTable.appendChild(tr);
     }
 
-    // Add the upgrade buttons
+    // Add the button to buy upgrades
     var bottomRow = document.createElement("TR");
 
     var upgradepricesquare = document.createElement("TD");
@@ -631,8 +638,99 @@ function showUpgradeMenu() {
     bottomRow.appendChild(buyupgradebuttonsquare);
 
     upgradeTable.appendChild(bottomRow);
+}
 
-    // Remove the upgrade rows
+function getUpgradeCostText(cost, quantity) {
+    var costText = "";
+    if (cost.item1 > 0) {
+        costText = costText + "$" + (cost.item1 * quantity / 100).toFixed(2) + ", ";
+    }
+    if (cost.item2 > 0) {
+        costText = costText + cost.item2 * quantity + "g Butter, ";
+    }
+    if (cost.item3 > 0) {
+        costText = costText + cost.item3 * quantity + "g Flour, ";
+    }
+    if (cost.item4 > 0) {
+        costText = costText + cost.item4 * quantity + "g Sugar, ";
+    }
+    if (cost.item5 > 0) {
+        if (cost.item5 == 1 && quantity == 1) {
+            costText = costText + cost.item5 + " Cookie, ";
+        } else {
+            costText = costText + cost.item5 * quantity + " Cookies, ";
+        }
+    }
+    if (cost.item6 > 0) {
+        if (cost.item6 == 1 && quantity == 1) {
+            costText = costText + cost.item6 + " Croissant, ";
+        } else {
+            costText = costText + cost.item6 * quantity + " Croissants, ";
+        }
+    }
+    if (cost.item7 > 0) {
+        if (cost.item7 == 1 && quantity == 1) {
+            costText = costText + cost.item7 + " Cake, ";
+        } else {
+            costText = costText + cost.item7 * quantity + " Cakes, ";
+        }
+    }
+
+    return costText.substring(0, costText.length - 2);
+}
+
+function buyUpgrades() {
+    var upgradesBought = {};
+    for (var i = 0; i < playerState.upgrades.length; i++) {
+        var upgrade = playerState.upgrades[i];
+        var amountBought = getNumber(upgrade.name.toLowerCase() + "buyamount", true);
+        if (amountBought > 0) {
+            upgradesBought[upgrade.name.toLowerCase()] = amountBought;
+        }
+    }
+
+    connection.invoke("BuyUpgrades", roomId, userName, upgradesBought).catch(function (err) {
+        return console.error(err.toString());
+    });
+}
+
+function updateUpgradeCost() {
+    var upgradeCost = 0;
+    for (var i = 0; i < playerState.upgrades.length; i++) {
+        var upgrade = playerState.upgrades[i];
+        var amountBought = getNumber(upgrade.name.toLowerCase() + "buyamount", true);
+        upgradeCost = upgradeCost + amountBought * upgrade.cost;
+    }
+
+    // Early abort if nothing is being bought
+    if (upgradeCost <= 0) {
+        document.getElementById("buyupgradeprice").textContent = "";
+        document.getElementById("buyupgradesbutton").disabled = true;
+        document.getElementById("buyupgradesbutton").value = "BUY UPGRADES";
+        return;
+    }
+
+    document.getElementById("buyupgradeprice").textContent = "$" + (upgradeCost / 100).toFixed(2) + "/$" + (playerState.resources.money / 100).toFixed(2);
+
+    if (upgradeCost > playerState.resources.money) {
+        document.getElementById("buyupgradeprice").style.color = "red";
+        document.getElementById("buyupgradesbutton").disabled = true;
+        document.getElementById("buyupgradesbutton").value = "NOT ENOUGH MONEY";
+    }
+    else {
+        document.getElementById("buyupgradeprice").style.color = "blue";
+        document.getElementById("buyupgradesbutton").disabled = false;
+        document.getElementById("buyupgradesbutton").value = "BUY UPGRADES";
+    }
+}
+
+// -------------------------------------
+// ----- STATE: MENU (USE UPGRADES) ----
+// -------------------------------------
+function showUseUpgradeMenu() {
+    changeUiState("USE UPGRADES", "useupgradesmenu");
+
+    // Clear the table
     var useUpgradeTable = document.getElementById("useupgradetable");
     for (var i = useUpgradeTable.rows.length - 1; i > 1; i--) {
         useUpgradeTable.deleteRow(i);
@@ -717,6 +815,7 @@ function showUpgradeMenu() {
         }
     }
 
+    // List message when there are no upgrades that are usable
     if (!hasUpgradesToUse) {
         var tr = document.createElement("TR");
 
@@ -735,45 +834,6 @@ function useUpgrade(upgrade) {
     connection.invoke("UseUpgrade", roomId, userName, upgrade, numberOfUses).catch(function (err) {
         return console.error(err.toString());
     });
-}
-
-function getUpgradeCostText(cost, quantity) {
-    var costText = "";
-    if (cost.item1 > 0) {
-        costText = costText + "$" + (cost.item1 * quantity / 100).toFixed(2) + ", ";
-    }
-    if (cost.item2 > 0) {
-        costText = costText + cost.item2 * quantity + "g Butter, ";
-    }
-    if (cost.item3 > 0) {
-        costText = costText + cost.item3 * quantity + "g Flour, ";
-    }
-    if (cost.item4 > 0) {
-        costText = costText + cost.item4 * quantity + "g Sugar, ";
-    }
-    if (cost.item5 > 0) {
-        if (cost.item5 == 1 && quantity == 1) {
-            costText = costText + cost.item5 + " Cookie, ";
-        } else {
-            costText = costText + cost.item5 * quantity + " Cookies, ";
-        }
-    }
-    if (cost.item6 > 0) {
-        if (cost.item6 == 1 && quantity == 1) {
-            costText = costText + cost.item6 + " Croissant, ";
-        } else {
-            costText = costText + cost.item6 * quantity + " Croissants, ";
-        }
-    }
-    if (cost.item7 > 0) {
-        if (cost.item7 == 1 && quantity == 1) {
-            costText = costText + cost.item7 + " Cake, ";
-        } else {
-            costText = costText + cost.item7 * quantity + " Cakes, ";
-        }
-    }
-
-    return costText.substring(0, costText.length - 2);
 }
 
 function updateUpgradeUse(upgrade, useCost, useEffect) {
@@ -832,51 +892,6 @@ function updateUpgradeUse(upgrade, useCost, useEffect) {
         document.getElementById(upgrade + "usagecost").style.color = "red";
         document.getElementById(upgrade + "usageeffect").style.color = "red";
         document.getElementById(upgrade + "use").disabled = true;
-    }
-}
-
-function buyUpgrades() {
-    var upgradesBought = {};
-    for (var i = 0; i < playerState.upgrades.length; i++) {
-        var upgrade = playerState.upgrades[i];
-        var amountBought = getNumber(upgrade.name.toLowerCase() + "buyamount", true);
-        if (amountBought > 0) {
-            upgradesBought[upgrade.name.toLowerCase()] = amountBought;
-        }
-    }
-
-    connection.invoke("BuyUpgrades", roomId, userName, upgradesBought).catch(function (err) {
-        return console.error(err.toString());
-    });
-}
-
-function updateUpgradeCost() {
-    var upgradeCost = 0;
-    for (var i = 0; i < playerState.upgrades.length; i++) {
-        var upgrade = playerState.upgrades[i];
-        var amountBought = getNumber(upgrade.name.toLowerCase() + "buyamount", true);
-        upgradeCost = upgradeCost + amountBought * upgrade.cost;
-    }
-
-    // Early abort if nothing is being bought
-    if (upgradeCost <= 0) {
-        document.getElementById("buyupgradeprice").textContent = "";
-        document.getElementById("buyupgradesbutton").disabled = true;
-        document.getElementById("buyupgradesbutton").value = "BUY UPGRADES";
-        return;
-    }
-
-    document.getElementById("buyupgradeprice").textContent = "$" + (upgradeCost / 100).toFixed(2) + "/$" + (playerState.resources.money / 100).toFixed(2);
-
-    if (upgradeCost > playerState.resources.money) {
-        document.getElementById("buyupgradeprice").style.color = "red";
-        document.getElementById("buyupgradesbutton").disabled = true;
-        document.getElementById("buyupgradesbutton").value = "NOT ENOUGH MONEY";
-    }
-    else {
-        document.getElementById("buyupgradeprice").style.color = "blue";
-        document.getElementById("buyupgradesbutton").disabled = false;
-        document.getElementById("buyupgradesbutton").value = "BUY UPGRADES";
     }
 }
 
