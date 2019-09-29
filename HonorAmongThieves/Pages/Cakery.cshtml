@@ -50,13 +50,13 @@
     <div style="text-align:center; display:none" class="state commonmenubutton display-1">
         <div id="currentyear" class="h3"></div>
         <input type="button" id="switchtoupgradeviewbutton" value="UPGRADES" />
-        <input type="button" id="switchtobakeviewbutton" value="BAKERY" /> 
+        <input type="button" id="switchtobakeviewbutton" value="BAKERY" />
         <hr />
     </div>
 
-    <!------ BAKE THINGS --------->
+    <!------ BUY GROCERIES --------->
     <div class="state" id="bakegoods" style="display:none">
-        <div class="display-4" style="text-align:center">            
+        <div class="display-4" style="text-align:center">
             <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center">
                 <tr>
                     <td id="moneyowned" colspan="4"></td>
@@ -94,6 +94,24 @@
                 </tr>
             </table> <hr />
 
+<!------ BAKE THINGS --------->
+            <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center">
+                <tr>
+                    <th colspan="4">RESOURCES OWNED</th>
+                </tr>
+                <tr>
+                    <th>Money</th>
+                    <th>Flour</th>
+                    <th>Sugar</th>
+                    <th>Butter</th>
+                </tr>
+                <tr>
+                    <td id="bakethingsmoneydisplay"></td>
+                    <td id="bakethingsflourdisplay"></td>
+                    <td id="bakethingssugardisplay"></td>
+                    <td id="bakethingsbutterdisplay"></td>
+                </tr>
+            </table><hr />
             <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center">
                 <tr>
                     <th></th>
@@ -154,7 +172,8 @@
                 <tr>
                     <td colspan="5"><input type="button" id="bakethingsbutton" value="BAKE THINGS" /></td>
                 </tr>
-            </table> <hr />
+            </table>
+            <hr />
         </div>
     </div>
 

@@ -271,6 +271,11 @@ function showBakeMenu() {
     document.getElementById("butterprice").textContent = "$" + (gameState.currentPrices.butter / 100).toFixed(2);
     document.getElementById("sugarprice").textContent = "$" + (gameState.currentPrices.sugar / 100).toFixed(2);
 
+    document.getElementById("bakethingsmoneydisplay").textContent = "$" + (playerState.resources.money / 100).toFixed(2);
+    document.getElementById("bakethingsflourdisplay").textContent = playerState.resources.flour + "g";
+    document.getElementById("bakethingssugardisplay").textContent = playerState.resources.sugar + "g";
+    document.getElementById("bakethingsbutterdisplay").textContent = playerState.resources.butter + "g";
+
     document.getElementById("cookiesbaked").textContent = playerState.bakedGoods.cookies;
     document.getElementById("croissantsbaked").textContent = playerState.bakedGoods.croissants;
     document.getElementById("cakesbaked").textContent = playerState.bakedGoods.cakes;
