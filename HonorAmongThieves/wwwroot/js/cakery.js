@@ -878,7 +878,7 @@ function updateUpgradeUse(upgrade, useCost, useEffect) {
         usable = false;
         document.getElementById(upgrade + "use").value = "NEED CROISSANTS";
     }
-    else if (useCost.item6 > 0 && useCost.item6 * numberOfUses > playerState.bakedGoods.cakes) {
+    else if (useCost.item7 > 0 && useCost.item7 * numberOfUses > playerState.bakedGoods.cakes) {
         usable = false;
         document.getElementById(upgrade + "use").value = "NEED CAKES";
     }
