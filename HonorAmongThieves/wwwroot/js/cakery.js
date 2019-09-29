@@ -748,8 +748,35 @@ function updateUpgradeUse(upgrade, useCost, useEffect) {
     document.getElementById(upgrade + "usagecost").textContent = getUpgradeCostText(useCost, numberOfUses);
     document.getElementById(upgrade + "usageeffect").textContent = getUpgradeCostText(useEffect, numberOfUses);
 
-    // TODO (Upgrades)
     // Calculate whether there are enough resources and reflect changes in UI color and button text
+    if (useCost.item1 > 0 && useCost.item1 * numberOfUses > playerState.resources.money) {
+        usable = false;
+        document.getElementById(upgrade + "use").value = "LACK MONEY";
+    }
+    else if (useCost.item2 > 0 && useCost.item2 * numberOfUses > playerState.resources.butter) {
+        usable = false;
+        document.getElementById(upgrade + "use").value = "LACK BUTTER";
+    }
+    else if (useCost.item3 > 0 && useCost.item3 * numberOfUses > playerState.resources.flour) {
+        usable = false;
+        document.getElementById(upgrade + "use").value = "LACK FLOUR";
+    }
+    else if (useCost.item4 > 0 && useCost.item4 * numberOfUses > playerState.resources.sugar) {
+        usable = false;
+        document.getElementById(upgrade + "use").value = "LACK SUGAR";
+    }
+    else if (useCost.item5 > 0 && useCost.item5 * numberOfUses > playerState.bakedGoods.cookies) {
+        usable = false;
+        document.getElementById(upgrade + "use").value = "NEED COOKIES";
+    }
+    else if (useCost.item6 > 0 && useCost.item6 * numberOfUses > playerState.bakedGoods.croissants) {
+        usable = false;
+        document.getElementById(upgrade + "use").value = "NEED CROISSANTS";
+    }
+    else if (useCost.item6 > 0 && useCost.item6 * numberOfUses > playerState.bakedGoods.cakes) {
+        usable = false;
+        document.getElementById(upgrade + "use").value = "NEED CAKES";
+    }
 
     if (usable) {
         document.getElementById(upgrade + "usagecost").style.color = "blue";
