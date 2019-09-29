@@ -28,13 +28,13 @@ namespace HonorAmongThieves.Cakery.GameLogic
         {
             public long Cookies = 0;
             public (double butter, double flour, double sugar, double money) CookieCost =
-                (100d, 100d, 100d, 100d);
+                (300d, 300d, 300d, 100d);
             public long Croissants = 0;
             public (double butter, double flour, double sugar, double money) CroissantCost =
-                (500d, 500d, 500d, 100d);
+                (900d, 900d, 900d, 100d);
             public long Cakes = 0;
             public (double butter, double flour, double sugar, double money) CakeCost =
-                (2500d, 2500d, 2500d, 1500d);
+                (8250d, 8250d, 8250d, 900d);
         }
 
         public CakeryRoom Room { get; set; }

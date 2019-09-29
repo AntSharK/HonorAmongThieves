@@ -19,9 +19,9 @@ namespace HonorAmongThieves.Cakery.GameLogic
             public double Sugar = 100f;
 
             // Sell-price of baked goods
-            public double Cookies = 250f; // Costs 130 to make
-            public double Croissants = 450f; // Costs 250 to make
-            public double Cakes = 2750f; // Costs 2250 to make
+            public double Cookies = 375f; // Costs 190 to make
+            public double Croissants = 675f; // Costs 370 to make
+            public double Cakes = 4125f; // Costs 3375 to make
         }
 
         public class Market
@@ -224,9 +224,9 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
         public static (double, double, double) ComputeExpectedSales(double cashInGame)
         {
-            double expectedCookies = cashInGame / 400;
-            double expectedCroissants = cashInGame / 800;
-            double expectedCakes = cashInGame / 7000;
+            double expectedCookies = cashInGame / 600;
+            double expectedCroissants = cashInGame / 1200;
+            double expectedCakes = cashInGame / 10500;
 
             return (expectedCookies, expectedCroissants, expectedCakes);
         }

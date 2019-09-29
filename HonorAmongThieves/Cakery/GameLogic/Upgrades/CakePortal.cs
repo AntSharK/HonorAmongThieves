@@ -12,13 +12,14 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 
         public override bool Usable => true;
 
-        public override string Description => "Converts 1 Cake into Flour (unlimited uses). Purchase more to get more Flour (starts at 10kg) per Cake.";
+        public override string Description => "Converts 1 Cake into Flour (unlimited uses). Purchase more to get more Flour (starts at 15kg) per Cake.";
 
         public CakePortal(CakeryPlayer player) : base(player) {
             this.UseEffect = (0, 0, 0, 0, 0, 0, 0);
             this.UseCost = (0, 0, 0, 0, 0, 0, 1);
         }
 
+        private const double baseIncrement = 15000;
         public override void OnPurchaseFinalized(CakeryRoom room, int amountPurchased)
         {
             base.OnPurchaseFinalized(room, amountPurchased);
@@ -26,7 +27,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
             var flourGained = this.UseEffect.flour;
             for (int i = this.AmountOwned - amountPurchased; i < this.AmountOwned; i++)
             {
-                flourGained = flourGained + 10000 * Math.Pow(0.8, i);
+                flourGained = flourGained + baseIncrement * Math.Pow(0.8, i);
             }
 
             this.UseEffect = (0, 0, flourGained, 0, 0, 0, 0);
