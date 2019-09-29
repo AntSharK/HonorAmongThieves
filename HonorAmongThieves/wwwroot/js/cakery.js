@@ -167,16 +167,52 @@ function changeUiState(title, stateToChange) {
     bakingmenu.style.display = "block";
 }
 
+// -------------------------
+// ----- UTILITY METHODS ---
+// -------------------------
 function showCommonMenuButtons() {
+    document.getElementById("currentyear").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
+
     var elements = document.getElementsByClassName("commonmenubutton");
     for (var i = 0; i < elements.length; i++) {
         elements[i].style.display = "block";
     }
 }
 
-// -------------------------
-// ----- STATE: BAKING -----
-// -------------------------
+function getNumber(elementId, roundDown) {
+    var element = document.getElementById(elementId);
+    if (element == null) {
+        return;
+    }
+
+    var number = element.value;
+
+    // Do bounds checking and reflect changes in UI
+    if (number.length == 0 || number < 0) {
+        number = 0;
+        if (roundDown) {
+            document.getElementById(elementId).value = number;
+        }
+        else {
+            document.getElementById(elementId).value = "0.0";
+        }
+    }
+    else if (roundDown && number % 1 != 0) {
+        number = number - number % 1;
+        document.getElementById(elementId).value = number;
+    }
+
+    if (number > element.max) {
+        number = element.max;
+        document.getElementById(elementId).value = number;
+    }
+
+    return number;
+}
+
+// -----------------------------
+// ----- STATE: MENU (BAKING) --
+// -----------------------------
 // Entering the baking menu
 connection.on("UpdateProductionState", function (currentPrices, currentMarket, playerResources, playerUpgrades, playerJustPurchasedUpgrades, playerBakedGoods) {
     gameState.currentPrices = currentPrices;
@@ -185,13 +221,17 @@ connection.on("UpdateProductionState", function (currentPrices, currentMarket, p
     playerState.upgrades = playerUpgrades;
     playerState.justPurchasedUpgrades = playerJustPurchasedUpgrades;
     playerState.bakedGoods = playerBakedGoods;
+    showMenu();
+});
+
+function showMenu() {
     if (bakingMenuState == "baking") {
         showBakeMenu();
     }
     else if (bakingMenuState == "upgrading") {
         showUpgradeMenu();
     }
-});
+}
 
 function showBakeMenu() {
     bakingMenuState = "baking";
@@ -238,8 +278,6 @@ function showBakeMenu() {
     document.getElementById("cookierevenue").textContent = "$" + (gameState.currentPrices.cookies / 100).toFixed(2);
     document.getElementById("croissantrevenue").textContent = "$" + (gameState.currentPrices.croissants / 100).toFixed(2);
     document.getElementById("cakerevenue").textContent = "$" + (gameState.currentPrices.cakes / 100).toFixed(2);
-
-    document.getElementById("currentyear").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
     showCommonMenuButtons();
 }
 
@@ -292,37 +330,6 @@ document.getElementById("buysugaramount").addEventListener("change", function (e
 document.getElementById("buybutteramount").addEventListener("change", function (event) {
     updateIngredientsCost();
 });
-
-function getNumber(elementId, roundDown) {
-    var element = document.getElementById(elementId);
-    if (element == null) {
-        return;
-    }
-
-    var number = element.value;
-
-    // Do bounds checking and reflect changes in UI
-    if (number.length == 0 || number < 0) {
-        number = 0;
-        if (roundDown) {
-            document.getElementById(elementId).value = number;
-        }
-        else {
-            document.getElementById(elementId).value = "0.0";
-        }
-    }
-    else if (roundDown && number % 1 != 0) {
-        number = number - number % 1;
-        document.getElementById(elementId).value = number;
-    }
-
-    if (number > element.max) {
-        number = element.max;
-        document.getElementById(elementId).value = number;
-    }
-
-    return number;
-}
 
 function updateIngredientsCost() {
     var ingredientsCost = getIngredientsCost();
@@ -512,6 +519,9 @@ document.getElementById("switchtoupgradeviewbutton").addEventListener("click", f
     event.preventDefault();
 });
 
+// --------------------------------
+// ----- STATE: MENU (UPGRADE) ----
+// --------------------------------
 function showUpgradeMenu() {
     bakingMenuState = "upgrading";
     changeUiState("UPGRADE!!", "upgrademenu");
@@ -855,13 +865,7 @@ document.getElementById("switchtobakeviewbutton").addEventListener("click", func
 });
 
 document.getElementById("gobacktobakeviewbutton").addEventListener("click", function (event) {
-    if (bakingMenuState == "baking") {
-        showBakeMenu();
-    }
-    else if (bakingMenuState == "upgrading") {
-        showUpgradeMenu();
-    }
-
+    showMenu();
     event.preventDefault();
 });
 
@@ -874,7 +878,9 @@ document.getElementById("endturnbutton").addEventListener("click", function (eve
     event.preventDefault();
 });
 
-// Summarize the elements in goods baked
+// -------------------------
+// ----- STATE: SELLING ----
+// -------------------------
 function summarizeGoodsBaked() {
     changeUiState("SET UP SHOP", "goodsbaked");
     document.getElementById("currentyearsummary").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
@@ -911,7 +917,9 @@ document.getElementById("reallyendturnbutton").addEventListener("click", functio
     event.preventDefault();
 });
 
-// Show setting up shop screen
+// -------------------------
+// ----- STATE: WAITING ----
+// -------------------------
 connection.on("SetUpShop", function (currentPrices, currentMarket, playerResources, playerUpgrades, playerBakedGoods, readyPlayers, notReadyPlayers) {
     gameState.currentPrices = currentPrices;
     gameState.currentMarket = currentMarket;
@@ -948,7 +956,9 @@ function updatePlayerList(readyPlayers, slowBastards) {
     }
 }
 
-// Show market report
+// ------------------------------
+// ----- STATE: MARKET REPORT ---
+// ------------------------------
 connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices, playerProfit, currentMarket, playerUpgradeReport) {
     gameState.currentMarket = currentMarket;
     bakingMenuState = "baking";
@@ -1023,7 +1033,9 @@ document.getElementById("endmarketreportbutton").addEventListener("click", funct
     event.preventDefault();
 });
 
-// End of game
+// -------------------------
+// ----- STATE: ENDGAME ----
+// -------------------------
 connection.on("EndGame", function (totalSales, playerSales) {
     changeUiState("END OF GAME", "endgame");
 

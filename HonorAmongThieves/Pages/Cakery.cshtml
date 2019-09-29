@@ -46,11 +46,17 @@
         </div>
     </div>
 
+    <!----- COMMON HEADER FOR MENU ----->
+    <div style="text-align:center; display:none" class="state commonmenubutton display-1">
+        <div id="currentyear" class="h3"></div>
+        <input type="button" id="switchtoupgradeviewbutton" value="UPGRADES" />
+        <input type="button" id="switchtobakeviewbutton" value="BAKERY" /> 
+        <hr />
+    </div>
+
     <!------ BAKE THINGS --------->
     <div class="state" id="bakegoods" style="display:none">
-        <div class="display-4" style="text-align:center">
-            <div id="currentyear" class="h3"></div>
-            <input type="button" id="switchtoupgradeviewbutton" value="VIEW UPGRADES" /> <hr />
+        <div class="display-4" style="text-align:center">            
             <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center">
                 <tr>
                     <td id="moneyowned" colspan="4"></td>
@@ -155,7 +161,6 @@
     <!------ UPGRADE THINGS --------->
     <div class="state" id="upgrademenu" style="display:none">
         <div class="display-4" style="text-align:center">
-            <input type="button" id="switchtobakeviewbutton" value="BACK TO BAKING" /> <hr />
             <table align="center" class="h2" border="1px solid black" cellpadding="3%">
                 <tr>
                     <td id="moneyowned2" colspan="4"></td>
