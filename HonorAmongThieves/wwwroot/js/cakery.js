@@ -866,13 +866,21 @@ function summarizeGoodsBaked() {
 
     var upgradesBoughtList = document.getElementById("upgradesboughtlist");
     upgradesBoughtList.innerHTML = "";
+    var upgradesWerePurchased = false;
     for (var justPurchasedUpgrade in playerState.justPurchasedUpgrades) {
         var amountPurchased = playerState.justPurchasedUpgrades[justPurchasedUpgrade];
         if (amountPurchased > 0) {
+            upgradesWerePurchased = true;
             var li = document.createElement("li");
             li.textContent = amountPurchased + "x " + justPurchasedUpgrade.toUpperCase();
             upgradesBoughtList.appendChild(li);
         }
+    }
+
+    if (!upgradesWerePurchased) {
+        document.getElementById("upgradesboughtlistdiv").style.display = "none";
+    } else {
+        document.getElementById("upgradesboughtlistdiv").style.display = "block";
     }
 }
 
@@ -968,13 +976,21 @@ connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices,
 
     var upgradesBoughtList = document.getElementById("upgradesboughtlistmarketreport");
     upgradesBoughtList.innerHTML = "";
+    var upgradesWerePurchased = false;
     for (var justPurchasedUpgrade in playerState.justPurchasedUpgrades) {
         var amountPurchased = playerState.justPurchasedUpgrades[justPurchasedUpgrade];
         if (amountPurchased > 0) {
+            upgradesWerePurchased = true;
             var li = document.createElement("li");
             li.textContent = amountPurchased + "x " + justPurchasedUpgrade.toUpperCase();
             upgradesBoughtList.appendChild(li);
         }
+    }
+
+    if (!upgradesWerePurchased) {
+        document.getElementById("upgradesboughtlistmarketreportdiv").style.display = "none";
+    } else {
+        document.getElementById("upgradesboughtlistmarketreportdiv").style.display = "block";
     }
 
     document.getElementById("upgradesmarketreport").textContent = playerUpgradeReport;
