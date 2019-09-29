@@ -509,9 +509,9 @@ function showUpgradeMenu() {
     changeUiState("UPGRADE!!", "upgrademenu");
 
     document.getElementById("moneyowned2").textContent = "Cash Available: $" + (playerState.resources.money / 100).toFixed(2);
-    document.getElementById("flourowned2").textContent = (playerState.resources.flour / 1000) + "g";
-    document.getElementById("sugarowned2").textContent = (playerState.resources.sugar / 1000) + "g";
-    document.getElementById("butterowned2").textContent = (playerState.resources.butter / 1000) + "g";
+    document.getElementById("flourowned2").textContent = (playerState.resources.flour / 1000) + "kg";
+    document.getElementById("sugarowned2").textContent = (playerState.resources.sugar / 1000) + "kg";
+    document.getElementById("butterowned2").textContent = (playerState.resources.butter / 1000) + "kg";
 
     document.getElementById("cookiesbaked2").textContent = playerState.bakedGoods.cookies;
     document.getElementById("croissantsbaked2").textContent = playerState.bakedGoods.croissants;
