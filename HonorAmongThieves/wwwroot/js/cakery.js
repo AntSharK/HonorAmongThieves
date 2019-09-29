@@ -922,7 +922,7 @@ function updatePlayerList(readyPlayers, slowBastards) {
 }
 
 // Show market report
-connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices, playerProfit, currentMarket) {
+connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices, playerProfit, currentMarket, playerUpgradeReport) {
     gameState.currentMarket = currentMarket;
     baking = true;
     changeUiState("MARKET REPORT", "marketreport");
@@ -976,6 +976,8 @@ connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices,
             upgradesBoughtList.appendChild(li);
         }
     }
+
+    document.getElementById("upgradesmarketreport").textContent = playerUpgradeReport;
 });
 
 // Stop viewing market report

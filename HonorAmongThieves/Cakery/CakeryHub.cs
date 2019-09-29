@@ -272,7 +272,6 @@ namespace HonorAmongThieves.Cakery
         // Using upgrades for player
         public async Task UseUpgrade(string roomId, string playerName, string upgradeName, int amountToUse)
         {
-
             var room = this.lobby.Rooms[roomId];
             var player = room.Players[playerName];
 

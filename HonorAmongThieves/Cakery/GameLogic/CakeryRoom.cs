@@ -216,9 +216,10 @@ namespace HonorAmongThieves.Cakery.GameLogic
             var playerSales = marketReport.PlayerSalesData[player];
             var playerProfit = marketReport.PlayerProfits[player];
             var goodPrices = marketReport.Prices;
+            var playerUpgradeReport = player.GetUpgradeReport();
             await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("ShowMarketReport",
                 newsReport, playerSales, goodPrices,
-                playerProfit, this.CurrentMarket);
+                playerProfit, this.CurrentMarket, playerUpgradeReport);
         }
 
         public static (double, double, double) ComputeExpectedSales(double cashInGame)

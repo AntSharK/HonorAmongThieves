@@ -21,14 +21,9 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
             this.owner = owner;
         }
 
-        public virtual void OnJustPurchased(CakeryRoom room)
+        public virtual void OnPurchaseFinalized(CakeryRoom room, int amountPurchased)
         {
-            // Normally does nothing
-        }
-
-        public virtual void OnPurchaseFinalized(CakeryRoom room)
-        {
-            // Normally does nothing
+            this.AmountOwned = this.AmountOwned + amountPurchased;
         }
 
         public virtual void OnNextRound(CakeryRoom room)
@@ -42,6 +37,13 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
             // Should check that amount used is less than amount owned
             // Should increment the "UsesLeft" number
             return true;
+        }
+
+        public virtual string OnMarketReport()
+        {
+            // Normally returns nothing
+            // Returns what this upgrade reports on the market report.
+            return string.Empty;
         }
 
         // Initializes an empty dictionary with every single upgrade constructed

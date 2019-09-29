@@ -1,6 +1,7 @@
 ﻿using HonorAmongThieves.Cakery.GameLogic.Upgrades;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace HonorAmongThieves.Cakery.GameLogic
 {
@@ -136,9 +137,8 @@ namespace HonorAmongThieves.Cakery.GameLogic
             {
                 var upgrade = upgradePair.Value;
                 var upgradeName = upgradePair.Key;
-                upgrade.OnPurchaseFinalized(room);
 
-                CurrentUpgrades[upgradeName].AmountOwned = CurrentUpgrades[upgradeName].AmountOwned + upgrade.AmountOwned;
+                CurrentUpgrades[upgradeName].OnPurchaseFinalized(room, upgrade.AmountOwned);
                 upgrade.AmountOwned = 0;
             }
 
@@ -188,6 +188,20 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
             var upgrade = this.CurrentUpgrades[upgradeName];
             return upgrade.OnUse(amountToUse);
+        }
+
+        internal string GetUpgradeReport()
+        {
+            var sb = new StringBuilder();
+            foreach (var upgrade in this.CurrentUpgrades.Values)
+            {
+                if (upgrade.AmountOwned > 0)
+                {
+                    sb.Append(upgrade.OnMarketReport());
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }

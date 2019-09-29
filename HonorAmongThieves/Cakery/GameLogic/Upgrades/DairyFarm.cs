@@ -18,5 +18,10 @@
         {
             this.owner.CurrentResources.Butter = this.owner.CurrentResources.Butter + (1000 * this.AmountOwned);
         }
+
+        public override string OnMarketReport()
+        {
+            return $"Your Dairy Farms generate you {this.AmountOwned}kg of Butter. ";
+        }
     }
 }

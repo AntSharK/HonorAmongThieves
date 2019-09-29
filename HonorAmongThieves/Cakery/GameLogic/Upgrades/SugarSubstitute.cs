@@ -1,4 +1,6 @@
-﻿namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
+﻿using System;
+
+namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 {
     public class SugarSubstitute : Upgrade
     {
@@ -14,14 +16,29 @@
 
         public SugarSubstitute(CakeryPlayer player) : base(player) { }
 
-        public override void OnPurchaseFinalized(CakeryRoom room)
+        private int amountJustPurchased = 0;
+        public override void OnPurchaseFinalized(CakeryRoom room, int amountPurchased)
         {
-            for (var i = 0; i < this.AmountOwned; i++)
+            base.OnPurchaseFinalized(room, amountPurchased);
+            for (var i = 0; i < amountPurchased; i++)
             {
+                amountJustPurchased++;
                 this.owner.CurrentBakedGoods.CookieCost.butter = this.owner.CurrentBakedGoods.CookieCost.butter * 0.8;
                 this.owner.CurrentBakedGoods.CroissantCost.butter = this.owner.CurrentBakedGoods.CroissantCost.butter * 0.8;
                 this.owner.CurrentBakedGoods.CakeCost.butter = this.owner.CurrentBakedGoods.CakeCost.butter * 0.8;
             }
+        }
+
+        public override string OnMarketReport()
+        {
+            if (amountJustPurchased > 0)
+            {
+                var percentageReduction = Math.Floor(100 - (Math.Pow(0.8, amountJustPurchased) * 100));
+                amountJustPurchased = 0;
+                return $"Your research into Sugar Substitutes lowers your sugar usage by {percentageReduction}%. ";
+            }
+
+            return string.Empty;
         }
     }
 }
