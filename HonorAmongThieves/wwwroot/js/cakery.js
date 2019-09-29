@@ -3,7 +3,7 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/cakeryHub").build();
 var userName;
 var roomId;
-var bakingMenuState = "baking"; // Can be: 'baking', 'upgrading'
+var bakingMenuState = "buyingingredients"; // Can be: 'baking', 'upgrading', 'buyingingredients', 'usingupgrades'
 
 // -------------------------
 // ----- GAME OBJECTS ------
@@ -202,9 +202,10 @@ function getNumber(elementId, roundDown) {
 }
 
 // -----------------------------
-// ----- STATE: MENU (BAKING) --
+// ----- STATE: MENU -----------
 // -----------------------------
-// Entering the baking menu
+
+// Update from server-side
 connection.on("UpdateProductionState", function (currentPrices, currentMarket, playerResources, playerUpgrades, playerJustPurchasedUpgrades, playerBakedGoods) {
     gameState.currentPrices = currentPrices;
     gameState.currentMarket = currentMarket;
@@ -215,6 +216,7 @@ connection.on("UpdateProductionState", function (currentPrices, currentMarket, p
     showMenu();
 });
 
+// Display the common buttons and tables for baking menu
 function showCommonMenuButtons() {
     document.getElementById("currentyear").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
 
@@ -233,55 +235,62 @@ function showCommonMenuButtons() {
     document.getElementById("cakesbaked2").textContent = playerState.bakedGoods.cakes;
 }
 
+// Display the baking menu, looking at the baking menu state
 function showMenu() {
-    if (bakingMenuState == "baking") {
+    if (bakingMenuState == "buyingingredients") {
+        showGroceries();
+    }
+    else if (bakingMenuState == "baking") {
         showBakeMenu();
     }
     else if (bakingMenuState == "upgrading") {
         showUpgradeMenu();
     }
+    else if (bakingMenuState == "usingupgrades") {
+        showUseUpgradeMenu();
+    }
 
     showCommonMenuButtons();
 }
 
-function showBakeMenu() {
-    changeUiState("BAKE!!", "bakegoods");
+// Switch to "Groceries" view
+document.getElementById("switchtogroceryviewbutton").addEventListener("click", function (event) {
+    bakingMenuState = "buyingingredients";
+    showMenu();
+    event.preventDefault();
+});
+
+// Switch to "Baking" view
+document.getElementById("switchtobakeviewbutton").addEventListener("click", function (event) {
+    bakingMenuState = "baking";
+    showMenu();
+    event.preventDefault();
+});
+
+// Click on "Upgrade" view
+document.getElementById("switchtoupgradeviewbutton").addEventListener("click", function (event) {
+    bakingMenuState = "upgrading";
+    showMenu();
+    event.preventDefault();
+});
+
+// ---------------------------------
+// ----- STATE: MENU (GROCERIES) ---
+// ---------------------------------
+function showGroceries() {
+    changeUiState("BUY INGREDIENTS", "buyingredients");
 
     // Reset the input forms
     document.getElementById("buyingredientsbutton").disabled = true;
     document.getElementById("buyingredientsbutton").value = "BUY INGREDIENTS";
-    document.getElementById("bakethingsbutton").disabled = true;
-    document.getElementById("bakethingsbutton").value = "BAKE THINGS";
-    updateIngredientsCost();
-    updateBakingCost();
 
-    // Update the available resources and current prices
-    var cakeCost = playerState.bakedGoods.cakeCost;
-    var croissantCost = playerState.bakedGoods.croissantCost;
-    var cookieCost = playerState.bakedGoods.cookieCost;
-    document.getElementById("cookiepricebutter").textContent = parseFloat(cookieCost.item1) + "g";
-    document.getElementById("cookiepriceflour").textContent = cookieCost.item2 + "g";
-    document.getElementById("cookiepricesugar").textContent = cookieCost.item3 + "g";
-    document.getElementById("cookiepricemoney").textContent = "$" + (cookieCost.item4 / 100).toFixed(2);
-    document.getElementById("croissantpricebutter").textContent = croissantCost.item1 + "g";
-    document.getElementById("croissantpriceflour").textContent = croissantCost.item2 + "g";
-    document.getElementById("croissantpricesugar").textContent = croissantCost.item3 + "g";
-    document.getElementById("croissantpricemoney").textContent = "$" + (croissantCost.item4 / 100).toFixed(2);
-    document.getElementById("cakepricebutter").textContent = cakeCost.item1 + "g";
-    document.getElementById("cakepriceflour").textContent = cakeCost.item2 + "g";
-    document.getElementById("cakepricesugar").textContent = cakeCost.item3 + "g";
-    document.getElementById("cakepricemoney").textContent = "$" + (cakeCost.item4 / 100).toFixed(2);
+    updateIngredientsCost();
 
     document.getElementById("flourprice").textContent = "$" + (gameState.currentPrices.flour / 100).toFixed(2);
     document.getElementById("butterprice").textContent = "$" + (gameState.currentPrices.butter / 100).toFixed(2);
     document.getElementById("sugarprice").textContent = "$" + (gameState.currentPrices.sugar / 100).toFixed(2);
-
-    document.getElementById("cookierevenue").textContent = "$" + (gameState.currentPrices.cookies / 100).toFixed(2);
-    document.getElementById("croissantrevenue").textContent = "$" + (gameState.currentPrices.croissants / 100).toFixed(2);
-    document.getElementById("cakerevenue").textContent = "$" + (gameState.currentPrices.cakes / 100).toFixed(2);
 }
 
-// Click on buying ingredients
 document.getElementById("buyingredientsbutton").addEventListener("click", function (event) {
     var moneySpent = getIngredientsCost();
 
@@ -354,6 +363,39 @@ function updateIngredientsCost() {
         document.getElementById("buyingredientsbutton").disabled = false;
         document.getElementById("buyingredientsbutton").value = "BUY INGREDIENTS";
     }
+}
+
+// ----------------------------
+// ----- STATE: MENU (BAKE) ---
+// ----------------------------
+function showBakeMenu() {
+    changeUiState("BAKE GOODS", "bakegoods");
+
+    // Reset the input forms
+    document.getElementById("bakethingsbutton").disabled = true;
+    document.getElementById("bakethingsbutton").value = "BAKE THINGS";
+    updateBakingCost();
+
+    // Update the available resources and current prices
+    var cakeCost = playerState.bakedGoods.cakeCost;
+    var croissantCost = playerState.bakedGoods.croissantCost;
+    var cookieCost = playerState.bakedGoods.cookieCost;
+    document.getElementById("cookiepricebutter").textContent = parseFloat(cookieCost.item1) + "g";
+    document.getElementById("cookiepriceflour").textContent = cookieCost.item2 + "g";
+    document.getElementById("cookiepricesugar").textContent = cookieCost.item3 + "g";
+    document.getElementById("cookiepricemoney").textContent = "$" + (cookieCost.item4 / 100).toFixed(2);
+    document.getElementById("croissantpricebutter").textContent = croissantCost.item1 + "g";
+    document.getElementById("croissantpriceflour").textContent = croissantCost.item2 + "g";
+    document.getElementById("croissantpricesugar").textContent = croissantCost.item3 + "g";
+    document.getElementById("croissantpricemoney").textContent = "$" + (croissantCost.item4 / 100).toFixed(2);
+    document.getElementById("cakepricebutter").textContent = cakeCost.item1 + "g";
+    document.getElementById("cakepriceflour").textContent = cakeCost.item2 + "g";
+    document.getElementById("cakepricesugar").textContent = cakeCost.item3 + "g";
+    document.getElementById("cakepricemoney").textContent = "$" + (cakeCost.item4 / 100).toFixed(2);
+
+    document.getElementById("cookierevenue").textContent = "$" + (gameState.currentPrices.cookies / 100).toFixed(2);
+    document.getElementById("croissantrevenue").textContent = "$" + (gameState.currentPrices.croissants / 100).toFixed(2);
+    document.getElementById("cakerevenue").textContent = "$" + (gameState.currentPrices.cakes / 100).toFixed(2);
 }
 
 // Click on baking things
@@ -512,13 +554,6 @@ function updateBakingCost() {
         document.getElementById("bakethingsbutton").disabled = true;
     }
 }
-
-// Click on "Upgrade" view
-document.getElementById("switchtoupgradeviewbutton").addEventListener("click", function (event) {
-    bakingMenuState = "upgrading";
-    showMenu();
-    event.preventDefault();
-});
 
 // --------------------------------
 // ----- STATE: MENU (UPGRADE) ----
@@ -845,27 +880,6 @@ function updateUpgradeCost() {
     }
 }
 
-// Switch back to "Baking" view
-document.getElementById("switchtobakeviewbutton").addEventListener("click", function (event) {
-    bakingMenuState = "baking";
-    showMenu();
-    event.preventDefault();
-});
-
-document.getElementById("gobacktobakeviewbutton").addEventListener("click", function (event) {
-    showMenu();
-    event.preventDefault();
-});
-
-// Go to set up shop screen
-document.getElementById("endturnbutton").addEventListener("click", function (event) {
-    summarizeGoodsBaked();
-    document.getElementById("confirmationbuttons").style.display = "block";
-    document.getElementById("readylist").style.display = "none";
-
-    event.preventDefault();
-});
-
 // -------------------------
 // ----- STATE: SELLING ----
 // -------------------------
@@ -896,6 +910,20 @@ function summarizeGoodsBaked() {
         document.getElementById("upgradesboughtlistdiv").style.display = "block";
     }
 }
+
+document.getElementById("gobacktobakeviewbutton").addEventListener("click", function (event) {
+    showMenu();
+    event.preventDefault();
+});
+
+// Go to set up shop screen
+document.getElementById("endturnbutton").addEventListener("click", function (event) {
+    summarizeGoodsBaked();
+    document.getElementById("confirmationbuttons").style.display = "block";
+    document.getElementById("readylist").style.display = "none";
+
+    event.preventDefault();
+});
 
 // Confirm ending of turn
 document.getElementById("reallyendturnbutton").addEventListener("click", function (event) {
@@ -949,7 +977,7 @@ function updatePlayerList(readyPlayers, slowBastards) {
 // ------------------------------
 connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices, playerProfit, currentMarket, playerUpgradeReport) {
     gameState.currentMarket = currentMarket;
-    bakingMenuState = "baking";
+    bakingMenuState = "buyingingredients";
     changeUiState("MARKET REPORT", "marketreport");
 
     document.getElementById("marketreportnews").textContent = newsReport;

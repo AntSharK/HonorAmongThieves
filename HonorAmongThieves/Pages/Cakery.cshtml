@@ -49,43 +49,44 @@
     <!----- COMMON HEADER FOR MENU ----->
     <div style="text-align:center; display:none" class="state commonmenubutton display-3">
         <div id="currentyear" class="h3"></div>
-        <input type="button" id="switchtoupgradeviewbutton" value="UPGRADES" />
-        <input type="button" id="switchtobakeviewbutton" value="BAKERY" />
+        <input type="button" id="switchtogroceryviewbutton" value="SHOP" />
+        <input type="button" id="switchtobakeviewbutton" value="BAKE" />
+        <input type="button" id="switchtoupgradeviewbutton" value="UPGRADE" />
         <hr />
 
         <!---- The resources for current player --->
         <table align="center" class="h2" border="1px solid black" cellpadding="3%">
-        <tr>
-            <td id="moneyowned2" colspan="4"></td>
-        </tr>
-        <th></th>
-        <th>Owned</th>
-        <th></th>
-        <th>Baked</th>
-        </tr>
-        <tr>
-            <td>Flour</td>
-            <td id="flourowned2"></td>
-            <td>Cookies</td>
-            <td id="cookiesbaked2"></td>
-        </tr>
-        <tr>
-            <td>Butter</td>
-            <td id="butterowned2"></td>
-            <td>Croissants</td>
-            <td id="croissantsbaked2"></td>
-        </tr>
-        <tr>
-            <td>Sugar</td>
-            <td id="sugarowned2"></td>
-            <td>Cakes</td>
-            <td id="cakesbaked2"></td>
-        </tr>
+            <tr>
+                <td id="moneyowned2" colspan="4"></td>
+            </tr>
+            <th></th>
+            <th>Owned</th>
+            <th></th>
+            <th>Baked</th>
+            </tr>
+            <tr>
+                <td>Flour</td>
+                <td id="flourowned2"></td>
+                <td>Cookies</td>
+                <td id="cookiesbaked2"></td>
+            </tr>
+            <tr>
+                <td>Butter</td>
+                <td id="butterowned2"></td>
+                <td>Croissants</td>
+                <td id="croissantsbaked2"></td>
+            </tr>
+            <tr>
+                <td>Sugar</td>
+                <td id="sugarowned2"></td>
+                <td>Cakes</td>
+                <td id="cakesbaked2"></td>
+            </tr>
         </table> <hr />
     </div>
 
     <!------ BUY GROCERIES --------->
-    <div class="state" id="bakegoods" style="display:none">
+    <div class="state" id="buyingredients" style="display:none">
         <div class="display-4" style="text-align:center">
             <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center">
                 <tr>
@@ -116,8 +117,12 @@
                     <td colspan="3"><input type="button" id="buyingredientsbutton" value="BUY INGREDIENTS" class="display-4" /></td>
                 </tr>
             </table> <hr />
+        </div>
+    </div>
 
-<!------ BAKE THINGS --------->
+    <!------ BAKE THINGS --------->
+    <div class="state" id="bakegoods" style="display:none">
+        <div class="display-4" style="text-align:center">
             <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center">
                 <tr>
                     <th></th>
@@ -176,7 +181,7 @@
         </div>
     </div>
 
-<!------ BUY UPGRADES --------->
+    <!------ BUY UPGRADES --------->
     <div class="state" id="upgrademenu" style="display:none">
         <div class="display-4" style="text-align:center">
 
@@ -196,7 +201,7 @@
                 </tr>
             </table> <hr />
 
-<!------ USE UPGRADES --------->
+            <!------ USE UPGRADES --------->
             <table align="center" class="h4" border="1px solid black" cellpadding="3%" style="text-align:center" id="useupgradetable">
                 <tr>
                     <th colspan="5">USE UPGRADES</th>
