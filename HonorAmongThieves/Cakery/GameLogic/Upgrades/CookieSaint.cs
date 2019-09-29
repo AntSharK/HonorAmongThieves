@@ -10,7 +10,7 @@
 
         public override bool Usable => true;
 
-        public override string Description => "Converts 2 cookies into 1 croissant";
+        public override string Description => "Converts 2 Cookies into 1 Croissant (2 uses)";
 
         public CookieSaint(CakeryPlayer player) : base(player) {
             this.UseEffect = (0, 0, 0, 0, 0, 1, 0);

@@ -622,15 +622,15 @@ function showUpgradeMenu() {
 
             var upgradecost = document.createElement("TD");
             upgradecost.id = upgrade.name.toLowerCase() + "usagecost";
-            upgradecost.appendChild(document.createTextNode(getUpgradeCostText(upgrade.name.toLowerCase())));
+            upgradecost.appendChild(document.createTextNode("Costs " + getUpgradeCostText(upgrade.useCost, 1) + " Per Use"));
             tr.appendChild(upgradecost);
 
             var upgradeeffect = document.createElement("TD");
             upgradeeffect.id = upgrade.name.toLowerCase() + "usageeffect";
-            upgradeeffect.appendChild(document.createTextNode(getUpgradeEffectText(upgrade.name.toLowerCase())));
+            upgradeeffect.appendChild(document.createTextNode("Gives: " + getUpgradeCostText(upgrade.useEffect, 1) + " Per Use"));
             tr.appendChild(upgradeeffect);
 
-            if (upgrade.usesLeft != 0) {
+            //if (upgrade.usesLeft != 0) {
                 var amounttouse = document.createElement("TD");
                 var amounttouseinput = document.createElement("input");
                 amounttouseinput.type = "number";
@@ -666,7 +666,7 @@ function showUpgradeMenu() {
 
                 useupgradebuttonsquare.appendChild(useupgradebuttoninput);
                 tr.appendChild(useupgradebuttonsquare);
-            }
+            //}
 
             useUpgradeTable.appendChild(tr);
         }
@@ -692,33 +692,64 @@ function useUpgrade(upgrade) {
     });
 }
 
-function getUpgradeCostText(cost) {
-    // TODO (Upgrades)
-    return "SOME OTHER THING";
-}
+function getUpgradeCostText(cost, quantity) {
+    var costText = "";
+    if (cost.item1 > 0) {
+        costText = costText + "$" + (cost.item1 * quantity / 100).toFixed(2) + ", ";
+    }
+    if (cost.item2 > 0) {
+        costText = costText + cost.item2 * quantity + "g Butter, ";
+    }
+    if (cost.item3 > 0) {
+        costText = costText + cost.item3 * quantity + "g Flour, ";
+    }
+    if (cost.item4 > 0) {
+        costText = costText + cost.item4 * quantity + "g Sugar, ";
+    }
+    if (cost.item5 > 0) {
+        if (cost.item5 == 1 && quantity == 1) {
+            costText = costText + cost.item5 + " Cookie, ";
+        } else {
+            costText = costText + cost.item5 * quantity + " Cookies, ";
+        }
+    }
+    if (cost.item6 > 0) {
+        if (cost.item6 == 1 && quantity == 1) {
+            costText = costText + cost.item6 + " Croissant, ";
+        } else {
+            costText = costText + cost.item6 * quantity + " Croissants, ";
+        }
+    }
+    if (cost.item7 > 0) {
+        if (cost.item7 == 1 && quantity == 1) {
+            costText = costText + cost.item7 + " Cake, ";
+        } else {
+            costText = costText + cost.item7 * quantity + " Cakes, ";
+        }
+    }
 
-function getUpgradeEffectText(effect) {
-    // TODO (Upgrades)
-    return "SOMETHING";
+    return costText.substring(0, costText.length - 2);
 }
 
 function updateUpgradeUse(upgrade, useCost, useEffect) {
     var numberOfUses = getNumber(upgrade + "useamount", true);
 
     if (numberOfUses == 0) {
-        document.getElementById(upgrade + "usagecost").textContent = getUpgradeCostText(useCost);
-        document.getElementById(upgrade + "usageeffect").textContent = getUpgradeEffectText(useEffect);
-        document.getElementById(upgrade + "usagecost").style.color = "blue";
-        document.getElementById(upgrade + "usageeffect").style.color = "blue";
+        document.getElementById(upgrade + "usagecost").textContent = "Costs: " + getUpgradeCostText(useCost, 1) + " Per Use";
+        document.getElementById(upgrade + "usageeffect").textContent = "Gives: " + getUpgradeCostText(useEffect, 1) + " Per Use";
+        document.getElementById(upgrade + "usagecost").style.color = "black";
+        document.getElementById(upgrade + "usageeffect").style.color = "black";
         document.getElementById(upgrade + "use").disabled = true;
         return;
     }
 
     var usable = true;
 
+    document.getElementById(upgrade + "usagecost").textContent = getUpgradeCostText(useCost, numberOfUses);
+    document.getElementById(upgrade + "usageeffect").textContent = getUpgradeCostText(useEffect, numberOfUses);
+
     // TODO (Upgrades)
-    // Calculate whether there are enough resources
-    // Change the content of the costs and effects
+    // Calculate whether there are enough resources and reflect changes in UI color and button text
 
     if (usable) {
         document.getElementById(upgrade + "usagecost").style.color = "blue";
