@@ -66,14 +66,14 @@
             <th>Baked</th>
             </tr>
             <tr>
-                <td>Flour</td>
-                <td id="flourowned2"></td>
+                <td>Butter</td>
+                <td id="butterowned2"></td>
                 <td>Cookies</td>
                 <td id="cookiesbaked2"></td>
             </tr>
             <tr>
-                <td>Butter</td>
-                <td id="butterowned2"></td>
+                <td>Flour</td>
+                <td id="flourowned2"></td>
                 <td>Croissants</td>
                 <td id="croissantsbaked2"></td>
             </tr>
@@ -92,8 +92,13 @@
             <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center">
                 <tr>
                     <th></th>
-                    <th>Price/kg</th>
+                    <th>Price/1000g</th>
                     <th>Amount</th>
+                </tr>
+                <tr>
+                    <td>Butter</td>
+                    <td id="butterprice"></td>
+                    <td> <input type="number" step="0.1" min="0" max="9999" placeholder="0.0" id="buybutteramount" /> </td>
                 </tr>
                 <tr>
                     <td>Flour</td>
@@ -104,11 +109,6 @@
                     <td>Sugar</td>
                     <td id="sugarprice"></td>
                     <td> <input type="number" step="0.1" min="0" max="9999" placeholder="0.0" id="buysugaramount" /> </td>
-                </tr>
-                <tr>
-                    <td>Butter</td>
-                    <td id="butterprice"></td>
-                    <td> <input type="number" step="0.1" min="0" max="9999" placeholder="0.0" id="buybutteramount" /> </td>
                 </tr>
                 <tr>
                     <td>Cost</td>
@@ -131,9 +131,9 @@
                         Production
                         Cost
                     </th>
-                    <th>Flour</th>
-                    <th>Sugar</th>
                     <th>Butter</th>
+                    <th>Sugar</th>
+                    <th>Flour</th>
                     <th>Amount</th>
                     <th>
                         Estimated
@@ -143,36 +143,36 @@
                 <tr>
                     <td>Cookie</td>
                     <td id="cookiepricemoney"></td>
+                    <td id="cookiepricebutter"></td>
                     <td id="cookiepriceflour"></td>
                     <td id="cookiepricesugar"></td>
-                    <td id="cookiepricebutter"></td>
                     <td><input type="number" step="1" min="0" max="9999" placeholder="0" id="bakecookiesamount" /></td>
                     <td id="cookierevenue"></td>
                 </tr>
                 <tr>
                     <td>Croissant</td>
                     <td id="croissantpricemoney"></td>
+                    <td id="croissantpricebutter"></td>
                     <td id="croissantpriceflour"></td>
                     <td id="croissantpricesugar"></td>
-                    <td id="croissantpricebutter"></td>
                     <td><input type="number" step="1" min="0" max="9999" placeholder="0" id="bakecroissantsamount" /></td>
                     <td id="croissantrevenue"></td>
                 </tr>
                 <tr>
                     <td>Cake</td>
                     <td id="cakepricemoney"></td>
+                    <td id="cakepricebutter"></td>
                     <td id="cakepriceflour"></td>
                     <td id="cakepricesugar"></td>
-                    <td id="cakepricebutter"></td>
                     <td><input type="number" step="1" min="0" max="9999" placeholder="0" id="bakecakesamount" /></td>
                     <td id="cakerevenue"></td>
                 </tr>
                 <tr>
                     <td>Total</td>
                     <td id="moneyforbaking"></td>
+                    <td id="butterforbaking"></td>
                     <td id="flourforbaking"></td>
                     <td id="sugarforbaking"></td>
-                    <td id="butterforbaking"></td>
                 </tr>
                 <tr>
                     <td colspan="5"><input type="button" id="bakethingsbutton" value="BAKE THINGS" class="display-4" /></td>

@@ -309,8 +309,17 @@ document.getElementById("buyingredientsbutton").addEventListener("click", functi
     var moneySpent = getIngredientsCost();
 
     var butterbought = document.getElementById("buybutteramount").value;
+    if (butterbought.length == 0) {
+        butterbought = 0;
+    }
     var flourbought = document.getElementById("buyflouramount").value;
+    if (flourbought.length == 0) {
+        flourbought = 0;
+    }
     var sugarbought = document.getElementById("buysugaramount").value;
+    if (sugarbought.length == 0) {
+        sugarbought = 0;
+    }
 
     if (moneySpent > playerState.resources.money) {
         window.alert("NOT ENOUGH MONEY! Ingredients cost $" + (moneySpent / 100).toFixed(2)
@@ -418,8 +427,17 @@ function showBakeMenu() {
 // Click on baking things
 document.getElementById("bakethingsbutton").addEventListener("click", function (event) {
     var cookiesBaked = document.getElementById("bakecookiesamount").value;
+    if (cookiesBaked.length == 0) {
+        cookiesBaked = 0;
+    }
     var croissantsBaked = document.getElementById("bakecroissantsamount").value;
+    if (croissantsBaked.length == 0) {
+        croissantsBaked = 0;
+    }
     var cakesBaked = document.getElementById("bakecakesamount").value;
+    if (cakesBaked.length == 0) {
+        cakesBaked = 0;
+    }
 
     var cakeCost = playerState.bakedGoods.cakeCost;
     var croissantCost = playerState.bakedGoods.croissantCost;
@@ -900,6 +918,7 @@ function updateUpgradeUse(upgrade, useCost, useEffect) {
         document.getElementById(upgrade + "usagecost").style.color = "blue";
         document.getElementById(upgrade + "usageeffect").style.color = "blue";
         document.getElementById(upgrade + "use").disabled = false;
+        document.getElementById(upgrade + "use").value = "USE";
     }
     else {
         document.getElementById(upgrade + "usagecost").style.color = "red";
