@@ -139,7 +139,7 @@ namespace HonorAmongThieves.Cakery
             // All calculations for costs should be done by now
             foreach (var player in room.Players.Values)
             {
-                await this.UpdateProductionState(room, player);
+                await this.UpdateProductionState(room, player, false /*Don't update the caller*/);
             }
         }
 
@@ -204,7 +204,7 @@ namespace HonorAmongThieves.Cakery
             }
         }
 
-        private async Task UpdateProductionState(CakeryRoom room, CakeryPlayer player)
+        private async Task UpdateProductionState(CakeryRoom room, CakeryPlayer player, bool updateCaller = true)
         {
             var collatedUpgradeList = from newUpgrades
                                         in player.JustPurchasedUpgrades.Values
@@ -212,13 +212,26 @@ namespace HonorAmongThieves.Cakery
 
             var collatedDictionary = collatedUpgradeList.ToDictionary(x => x.Key.ToLower(), x => x.Value);
 
-            await Clients.Caller.SendAsync("UpdateProductionState",
-                    room.CurrentPrices,
-                    room.CurrentMarket,
-                    player.CurrentResources,
-                    player.CurrentUpgrades.Values,
-                    collatedDictionary,
-                    player.CurrentBakedGoods);
+            if (updateCaller)
+            {
+                await Clients.Caller.SendAsync("UpdateProductionState",
+                        room.CurrentPrices,
+                        room.CurrentMarket,
+                        player.CurrentResources,
+                        player.CurrentUpgrades.Values,
+                        collatedDictionary,
+                        player.CurrentBakedGoods);
+            }
+            else
+            {
+                await Clients.Client(player.ConnectionId).SendAsync("UpdateProductionState",
+                        room.CurrentPrices,
+                        room.CurrentMarket,
+                        player.CurrentResources,
+                        player.CurrentUpgrades.Values,
+                        collatedDictionary,
+                        player.CurrentBakedGoods);
+            }
         }
 
         // Buying ingredients for a player
