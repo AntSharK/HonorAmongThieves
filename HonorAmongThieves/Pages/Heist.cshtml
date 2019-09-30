@@ -1,4 +1,5 @@
 ﻿@page
+<title>HEIST</title>
 <div class="container">
     <div id="pageName" class="display-4" style="text-decoration:underline; text-align:center">JOIN A GAME</div>
     <div class="state" id="startLobby" style="display:none">
@@ -46,7 +47,7 @@
             You need a username to create a room.<br />
             Room ID is automatically generated when you create a room. <br />
         </h4>
-    <hr />
+        <hr />
         <div style="text-align:center" class="display-1">
             <input type="button" id="createroombutton" value="CREATE" />
         </div>
@@ -86,8 +87,9 @@
             <div class="display-4" style="text-align:center">
                 TAKE PART: <input type="checkbox" id="goforheistcheck" style="width:60px; height:60px" checked /> <br />
                 SNITCH: <input type="checkbox" id="snitchtopolicecheck" style="width:60px; height:60px" /> <br />
-                <div id="blackmaildisabled" class="h2" style="display:none">--BLACKMAIL DISABLED-- <br />
-                    <div id="cannotblackmailmessage"class="h4">Must go on heist to Blackmail</div>
+                <div id="blackmaildisabled" class="h2" style="display:none">
+                    --BLACKMAIL DISABLED-- <br />
+                    <div id="cannotblackmailmessage" class="h4">Must go on heist to Blackmail</div>
                 </div>
 
                 <div id="blackmailselection"></div> <h6><br /></h6>
