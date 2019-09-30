@@ -179,13 +179,20 @@ function getNumber(elementId, roundDown) {
     var number = element.value;
 
     // Do bounds checking and reflect changes in UI
-    if (number.length == 0 || number < 0) {
+    if (number.length == 0 || number <= 0) {
         number = 0;
         if (roundDown) {
-            document.getElementById(elementId).value = number;
+            if (number == 0) {
+                document.getElementById(elementId).value = "";
+                document.getElementById(elementId).placeholder = "0";
+            }
+            else {
+                document.getElementById(elementId).value = number;
+            }
         }
         else {
-            document.getElementById(elementId).value = "0.0";
+            document.getElementById(elementId).value = "";
+            document.getElementById(elementId).placeholder = "0.0";
         }
     }
     else if (roundDown && number % 1 != 0) {
@@ -310,9 +317,12 @@ document.getElementById("buyingredientsbutton").addEventListener("click", functi
             + " but you only have $" + (playerState.resources.money / 100).toFixed(2));
     }
     else {
-        document.getElementById("buybutteramount").value = "0.0";
-        document.getElementById("buyflouramount").value = "0.0";
-        document.getElementById("buysugaramount").value = "0.0";
+        document.getElementById("buybutteramount").value = "";
+        document.getElementById("buybutteramount").placeholder = "0.0";
+        document.getElementById("buyflouramount").value = "";
+        document.getElementById("buyflouramount").placeholder = "0.0";
+        document.getElementById("buysugaramount").value = "";
+        document.getElementById("buysugaramount").placeholder = "0.0";
         document.getElementById("ingredientcost").textContent = "";
         document.getElementById("buyingredientsbutton").disabled = true;
 
@@ -337,13 +347,13 @@ function getIngredientsCost() {
     return moneySpent;
 }
 
-document.getElementById("buyflouramount").addEventListener("change", function (event) {
+document.getElementById("buyflouramount").addEventListener("input", function (event) {
     updateIngredientsCost();
 });
-document.getElementById("buysugaramount").addEventListener("change", function (event) {
+document.getElementById("buysugaramount").addEventListener("input", function (event) {
     updateIngredientsCost();
 });
-document.getElementById("buybutteramount").addEventListener("change", function (event) {
+document.getElementById("buybutteramount").addEventListener("input", function (event) {
     updateIngredientsCost();
 });
 
@@ -429,9 +439,12 @@ document.getElementById("bakethingsbutton").addEventListener("click", function (
             + ", " + butterUsed + "g butter, " + flourUsed + "g flour, " + sugarUsed + "g sugar.");
     }
     else {
-        document.getElementById("bakecookiesamount").value = 0;
-        document.getElementById("bakecroissantsamount").value = 0;
-        document.getElementById("bakecakesamount").value = 0;
+        document.getElementById("bakecookiesamount").value = "";
+        document.getElementById("bakecookiesamount").placeholder = 0;
+        document.getElementById("bakecroissantsamount").value = "";
+        document.getElementById("bakecroissantsamount").placeholder = 0;
+        document.getElementById("bakecakesamount").value = "";
+        document.getElementById("bakecakesamount").placeholder = 0;
         document.getElementById("moneyforbaking").textContent = "";
         document.getElementById("flourforbaking").textContent = "";
         document.getElementById("sugarforbaking").textContent = "";
@@ -445,13 +458,13 @@ document.getElementById("bakethingsbutton").addEventListener("click", function (
     event.preventDefault();
 });
 
-document.getElementById("bakecookiesamount").addEventListener("change", function (event) {
+document.getElementById("bakecookiesamount").addEventListener("input", function (event) {
     updateBakingCost();
 });
-document.getElementById("bakecroissantsamount").addEventListener("change", function (event) {
+document.getElementById("bakecroissantsamount").addEventListener("input", function (event) {
     updateBakingCost();
 });
-document.getElementById("bakecakesamount").addEventListener("change", function (event) {
+document.getElementById("bakecakesamount").addEventListener("input", function (event) {
     updateBakingCost();
 });
 
@@ -601,9 +614,9 @@ function showUpgradeMenu() {
         amounttobuyinput.step = 1;
         amounttobuyinput.min = 0;
         amounttobuyinput.max = 999;
-        amounttobuyinput.value = 0;
+        amounttobuyinput.placeholder = 0;
         amounttobuyinput.id = upgrade.name.toLowerCase() + "buyamount";
-        amounttobuyinput.addEventListener("change", function (event) {
+        amounttobuyinput.addEventListener("input", function (event) {
             updateUpgradeCost();
         });
 
@@ -783,13 +796,13 @@ function showUseUpgradeMenu() {
                 amounttouseinput.max = 999;
             }
 
-            amounttouseinput.value = 0;
+            amounttouseinput.placeholder = 0;
             amounttouseinput.id = upgrade.name.toLowerCase() + "useamount";
             amounttouseinput.upgradeName = upgrade.name.toLowerCase();
             amounttouseinput.useCost = upgrade.useCost;
             amounttouseinput.useEffect = upgrade.useEffect;
 
-            amounttouseinput.addEventListener("change", function () {
+            amounttouseinput.addEventListener("input", function () {
                 updateUpgradeUse(this.upgradeName, this.useCost, this.useEffect);
             });
 
