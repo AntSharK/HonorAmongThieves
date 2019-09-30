@@ -14,26 +14,26 @@ namespace HonorAmongThieves.Cakery.GameLogic
             var croissantPercentageSold = croissantsSold / (expectedCroissants != 0 ? expectedCroissants : 0.1);
             var cakePercentageSold = cakesSold / (expectedCakes != 0 ? expectedCakes : 0.1);
 
-            newsReport.Append("All goods sold this year: ");
+            newsReport.AppendLine("All goods sold this year: ");
             if (cookiesSold > 0)
             {
                 newsReport.AppendLine($"{cookiesSold} Cookies " +
                     $"sold for {(marketReport.Prices.cookiePrice/100).ToString("C")}" +
-                    $" ({(int)(marketReport.Prices.cookiePrice * 100 / prices.Cookies)}%). ");
+                    $" ({(prices.Cookies / 100).ToString("C")} x {(int)(marketReport.Prices.cookiePrice * 100 / prices.Cookies)}%). ");
             }
 
             if (croissantsSold > 0)
             {
                 newsReport.AppendLine($"{croissantsSold} Croissants " +
                     $"sold for {(marketReport.Prices.croissantPrice / 100).ToString("C")}" +
-                    $" ({(int)(marketReport.Prices.croissantPrice * 100 / prices.Croissants)}%). ");
+                    $" (({(prices.Croissants / 100).ToString("C")} x {(int)(marketReport.Prices.croissantPrice * 100 / prices.Croissants)}%). ");
             }
 
             if (cakesSold > 0)
             {
                 newsReport.AppendLine($"{cakesSold} Cakes " +
                     $"sold for {(marketReport.Prices.cakePrice / 100).ToString("C")}" +
-                    $" ({(int)(marketReport.Prices.cakePrice * 100 / prices.Cakes)}%). ");
+                    $" (({(prices.Cakes / 100).ToString("C")} x {(int)(marketReport.Prices.cakePrice * 100 / prices.Cakes)}%). ");
             }
 
             if (cakesSold == 0 && cookiesSold == 0 && croissantsSold == 0)

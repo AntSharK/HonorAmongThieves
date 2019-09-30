@@ -1,8 +1,8 @@
 ﻿namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 {
-    public class CookieSaint : Upgrade
+    public class CookieSant : Upgrade
     {
-        public const string UpgradeName = "Cookie Saint";
+        public const string UpgradeName = "Cookiesant";
 
         public override string Name => UpgradeName;
 
@@ -12,7 +12,7 @@
 
         public override string Description => "Converts 2 Cookies into 1 Croissant (2 uses)";
 
-        public CookieSaint(CakeryPlayer player) : base(player) {
+        public CookieSant(CakeryPlayer player) : base(player) {
             this.UseEffect = (0, 0, 0, 0, 0, 1, 0);
             this.UseCost = (0, 0, 0, 0, 2, 0, 0);
         }
@@ -47,11 +47,11 @@
             {
                 if (this.amountJustPurchased == this.AmountOwned)
                 {
-                    return $"You have discovered the technique of creating Croissants from Cookies, and dub this new creation the 'Cookiesaint'. ";
+                    return $"You have discovered the technique of creating Croissants from Cookies, and dub this new creation the 'Cookiesant'. ";
                 }
                 else
                 {
-                    return $"You buy more Cookiesaint machines, letting you to produce {this.amountJustPurchased * this.UseEffect.croissants} more Cookie-Croissaints per year. ";
+                    return $"You buy more Cookiesant machines, letting you to produce {this.amountJustPurchased * this.UseEffect.croissants} more Cookie-Croissants per year. ";
                 }
             }
 

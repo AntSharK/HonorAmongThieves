@@ -55,7 +55,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
             {
                 { DairyFarm.UpgradeName.ToLower(), new DairyFarm(player) },
                 { SugarSubstitute.UpgradeName.ToLower(), new SugarSubstitute(player) },
-                { CookieSaint.UpgradeName.ToLower(), new CookieSaint(player) },
+                { CookieSant.UpgradeName.ToLower(), new CookieSant(player) },
                 { CakePortal.UpgradeName.ToLower(), new CakePortal(player) },
                 { PastryInterns.UpgradeName.ToLower(), new PastryInterns(player) },
             };

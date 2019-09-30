@@ -197,7 +197,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             {
                 if (upgrade.AmountOwned > 0)
                 {
-                    sb.Append(upgrade.OnMarketReport());
+                    sb.AppendLine(upgrade.OnMarketReport());
                 }
             }
 
