@@ -19,17 +19,17 @@ namespace HonorAmongThieves.Cakery.GameLogic
             public double Sugar = 100f;
 
             // Sell-price of baked goods
-            public double Cookies = 375f; // Costs 190 to make
-            public double Croissants = 675f; // Costs 370 to make
-            public double Cakes = 4125f; // Costs 3375 to make
+            public double Cookies = 180f; // Costs 90 to make
+            public double Croissants = 525f; // Costs 270 to make
+            public double Cakes = 3025f; // Costs 2475 to make
 
             public double EfficiencyCoefficient = 1.0f; // The efficiency of producers in general
         }
 
         // The amount of dollars in the market before we expect one of these goods to be produced
-        const double DollarsPerCookie = 190 * 3;
-        const double DollarsPerCroissant = 370 * 3;
-        const double DollarsPerCake = 3375 * 3;
+        const double DollarsPerCookie = 90 * 3; // Cost of cookie * number of choices
+        const double DollarsPerCroissant = 270 * 3; // Cost of croissant * number of choices
+        const double DollarsPerCake = 2475 * 3; // Cost of cake * number of choices
 
         public class Market
         {

@@ -12,7 +12,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 
         public override bool Usable => false;
 
-        public override string Description => "Lowers the monetary cost of production for Croissants and Cakes by 10%.";
+        public override string Description => "Lowers the Flour required for Croissants and Cakes by 10%.";
 
         public PastryInterns(CakeryPlayer player) : base(player) { }
 
@@ -21,8 +21,8 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
             base.OnPurchaseFinalized(room, amountPurchased);
             for (var i = 0; i < amountPurchased; i++)
             {
-                this.owner.CurrentBakedGoods.CroissantCost.money = this.owner.CurrentBakedGoods.CroissantCost.money * 0.9;
-                this.owner.CurrentBakedGoods.CakeCost.money = this.owner.CurrentBakedGoods.CakeCost.money * 0.9;
+                this.owner.CurrentBakedGoods.CroissantCost.flour = this.owner.CurrentBakedGoods.CroissantCost.flour * 0.9;
+                this.owner.CurrentBakedGoods.CakeCost.flour = this.owner.CurrentBakedGoods.CakeCost.flour * 0.9;
             }
         }
 
@@ -31,7 +31,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
             if (this.amountJustPurchased > 0)
             {
                 var percentageReduction = Math.Floor(100 - (Math.Pow(0.9, this.amountJustPurchased) * 100));
-                return $"Your hiring of cheap Pastry-Making Interns has reduced the monetary cost of producing Cakes and Croissants by {percentageReduction}%. ";
+                return $"Your hiring of cheap Pastry-Making Interns has reduced the Flour required in Cakes and Croissants by {percentageReduction}%. ";
             }
 
             return string.Empty;

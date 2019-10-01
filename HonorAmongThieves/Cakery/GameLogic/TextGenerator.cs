@@ -26,14 +26,14 @@ namespace HonorAmongThieves.Cakery.GameLogic
             {
                 newsReport.AppendLine($"{croissantsSold} Croissants " +
                     $"sold for {(marketReport.Prices.croissantPrice / 100).ToString("C")}" +
-                    $" (({(prices.Croissants / 100).ToString("C")} x {(int)(marketReport.Prices.croissantPrice * 100 / prices.Croissants)}%). ");
+                    $" ({(prices.Croissants / 100).ToString("C")} x {(int)(marketReport.Prices.croissantPrice * 100 / prices.Croissants)}%). ");
             }
 
             if (cakesSold > 0)
             {
                 newsReport.AppendLine($"{cakesSold} Cakes " +
                     $"sold for {(marketReport.Prices.cakePrice / 100).ToString("C")}" +
-                    $" (({(prices.Cakes / 100).ToString("C")} x {(int)(marketReport.Prices.cakePrice * 100 / prices.Cakes)}%). ");
+                    $" ({(prices.Cakes / 100).ToString("C")} x {(int)(marketReport.Prices.cakePrice * 100 / prices.Cakes)}%). ");
             }
 
             if (cakesSold == 0 && cookiesSold == 0 && croissantsSold == 0)

@@ -410,15 +410,12 @@ function showBakeMenu() {
     document.getElementById("cookiepricebutter").textContent = parseFloat(cookieCost.item1) + "g";
     document.getElementById("cookiepriceflour").textContent = cookieCost.item2 + "g";
     document.getElementById("cookiepricesugar").textContent = cookieCost.item3 + "g";
-    document.getElementById("cookiepricemoney").textContent = "$" + (cookieCost.item4 / 100).toFixed(2);
     document.getElementById("croissantpricebutter").textContent = croissantCost.item1 + "g";
     document.getElementById("croissantpriceflour").textContent = croissantCost.item2 + "g";
     document.getElementById("croissantpricesugar").textContent = croissantCost.item3 + "g";
-    document.getElementById("croissantpricemoney").textContent = "$" + (croissantCost.item4 / 100).toFixed(2);
     document.getElementById("cakepricebutter").textContent = cakeCost.item1 + "g";
     document.getElementById("cakepriceflour").textContent = cakeCost.item2 + "g";
     document.getElementById("cakepricesugar").textContent = cakeCost.item3 + "g";
-    document.getElementById("cakepricemoney").textContent = "$" + (cakeCost.item4 / 100).toFixed(2);
 
     document.getElementById("cookierevenue").textContent = "$" + (gameState.currentPrices.cookies / 100).toFixed(2);
     document.getElementById("croissantrevenue").textContent = "$" + (gameState.currentPrices.croissants / 100).toFixed(2);
@@ -464,7 +461,6 @@ document.getElementById("bakethingsbutton").addEventListener("click", function (
         document.getElementById("bakecroissantsamount").placeholder = 0;
         document.getElementById("bakecakesamount").value = "";
         document.getElementById("bakecakesamount").placeholder = 0;
-        document.getElementById("moneyforbaking").textContent = "";
         document.getElementById("flourforbaking").textContent = "";
         document.getElementById("sugarforbaking").textContent = "";
         document.getElementById("butterforbaking").textContent = "";
@@ -525,7 +521,6 @@ function updateBakingCost() {
     if (cookiesBaked + croissantsBaked + cakesBaked <= 0) {
         document.getElementById("bakethingsbutton").disabled = true;
         document.getElementById("bakethingsbutton").value = "BAKE THINGS";
-        document.getElementById("moneyforbaking").textContent = "";
         document.getElementById("flourforbaking").textContent = "";
         document.getElementById("sugarforbaking").textContent = "";
         document.getElementById("butterforbaking").textContent = "";
@@ -545,7 +540,6 @@ function updateBakingCost() {
     document.getElementById("butterforbaking").textContent = butterUsed + "g";
     document.getElementById("flourforbaking").textContent = flourUsed + "g";
     document.getElementById("sugarforbaking").textContent = sugarUsed + "g";
-    document.getElementById("moneyforbaking").textContent = "$" + (moneyUsed / 100).toFixed(2);
 
     var bakingEnabled = true;
 
@@ -574,15 +568,6 @@ function updateBakingCost() {
     }
     else {
         document.getElementById("sugarforbaking").style.color = "blue";
-    }
-
-    if (moneyUsed > playerState.resources.money) {
-        document.getElementById("moneyforbaking").style.color = "red";
-        document.getElementById("bakethingsbutton").value = "NOT ENOUGH MONEY";
-        bakingEnabled = false;
-    }
-    else {
-        document.getElementById("moneyforbaking").style.color = "blue";
     }
 
     if (bakingEnabled) {
