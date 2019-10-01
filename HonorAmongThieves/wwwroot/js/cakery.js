@@ -234,9 +234,9 @@ function showCommonMenuButtons() {
     }
 
     document.getElementById("moneyowned2").textContent = "Cash Available: $" + (playerState.resources.money / 100).toFixed(2);
-    document.getElementById("flourowned2").textContent = (playerState.resources.flour) + "g";
-    document.getElementById("sugarowned2").textContent = (playerState.resources.sugar) + "g";
-    document.getElementById("butterowned2").textContent = (playerState.resources.butter) + "g";
+    document.getElementById("flourowned2").textContent = Math.ceil(playerState.resources.flour) + "g";
+    document.getElementById("sugarowned2").textContent = Math.ceil(playerState.resources.sugar) + "g";
+    document.getElementById("butterowned2").textContent = Math.ceil(playerState.resources.butter) + "g";
 
     document.getElementById("cookiesbaked2").textContent = playerState.bakedGoods.cookies;
     document.getElementById("croissantsbaked2").textContent = playerState.bakedGoods.croissants;
@@ -407,15 +407,15 @@ function showBakeMenu() {
     var cakeCost = playerState.bakedGoods.cakeCost;
     var croissantCost = playerState.bakedGoods.croissantCost;
     var cookieCost = playerState.bakedGoods.cookieCost;
-    document.getElementById("cookiepricebutter").textContent = parseFloat(cookieCost.item1) + "g";
-    document.getElementById("cookiepriceflour").textContent = cookieCost.item2 + "g";
-    document.getElementById("cookiepricesugar").textContent = cookieCost.item3 + "g";
-    document.getElementById("croissantpricebutter").textContent = croissantCost.item1 + "g";
-    document.getElementById("croissantpriceflour").textContent = croissantCost.item2 + "g";
-    document.getElementById("croissantpricesugar").textContent = croissantCost.item3 + "g";
-    document.getElementById("cakepricebutter").textContent = cakeCost.item1 + "g";
-    document.getElementById("cakepriceflour").textContent = cakeCost.item2 + "g";
-    document.getElementById("cakepricesugar").textContent = cakeCost.item3 + "g";
+    document.getElementById("cookiepricebutter").textContent = Math.ceil(cookieCost.item1) + "g";
+    document.getElementById("cookiepriceflour").textContent = Math.ceil(cookieCost.item2) + "g";
+    document.getElementById("cookiepricesugar").textContent = Math.ceil(cookieCost.item3) + "g";
+    document.getElementById("croissantpricebutter").textContent = Math.ceil(croissantCost.item1) + "g";
+    document.getElementById("croissantpriceflour").textContent = Math.ceil(croissantCost.item2) + "g";
+    document.getElementById("croissantpricesugar").textContent = Math.ceil(croissantCost.item3) + "g";
+    document.getElementById("cakepricebutter").textContent = Math.ceil(cakeCost.item1) + "g";
+    document.getElementById("cakepriceflour").textContent = Math.ceil(cakeCost.item2) + "g";
+    document.getElementById("cakepricesugar").textContent = Math.ceil(cakeCost.item3) + "g";
 
     document.getElementById("cookierevenue").textContent = "$" + (gameState.currentPrices.cookies / 100).toFixed(2);
     document.getElementById("croissantrevenue").textContent = "$" + (gameState.currentPrices.croissants / 100).toFixed(2);
@@ -537,9 +537,9 @@ function updateBakingCost() {
     var moneyUsed = cookieCost.item4 * cookiesBaked + croissantCost.item4 * croissantsBaked + cakeCost.item4 * cakesBaked;
     // Copy+paste ends here
 
-    document.getElementById("butterforbaking").textContent = butterUsed + "g";
-    document.getElementById("flourforbaking").textContent = flourUsed + "g";
-    document.getElementById("sugarforbaking").textContent = sugarUsed + "g";
+    document.getElementById("butterforbaking").textContent = Math.ceil(butterUsed) + "g";
+    document.getElementById("flourforbaking").textContent = Math.ceil(flourUsed) + "g";
+    document.getElementById("sugarforbaking").textContent = Math.ceil(sugarUsed) + "g";
 
     var bakingEnabled = true;
 
@@ -663,13 +663,13 @@ function getUpgradeCostText(cost, quantity) {
         costText = costText + "$" + (cost.item1 * quantity / 100).toFixed(2) + ", ";
     }
     if (cost.item2 > 0) {
-        costText = costText + cost.item2 * quantity + "g Butter, ";
+        costText = costText + Math.ceil(cost.item2) * quantity + "g Butter, ";
     }
     if (cost.item3 > 0) {
-        costText = costText + cost.item3 * quantity + "g Flour, ";
+        costText = costText + Math.ceil(cost.item3) * quantity + "g Flour, ";
     }
     if (cost.item4 > 0) {
-        costText = costText + cost.item4 * quantity + "g Sugar, ";
+        costText = costText + Math.ceil(cost.item4) * quantity + "g Sugar, ";
     }
     if (cost.item5 > 0) {
         if (cost.item5 == 1 && quantity == 1) {

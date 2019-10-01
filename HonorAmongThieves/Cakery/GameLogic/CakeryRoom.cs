@@ -138,6 +138,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
             // Sell all goods baked
             marketReport.CashInPreviousRound = this.CashInGame;
+            this.CashInGame = 0;
             foreach (var player in this.Players.Values)
             {
                 player.SellGoods(marketReport);

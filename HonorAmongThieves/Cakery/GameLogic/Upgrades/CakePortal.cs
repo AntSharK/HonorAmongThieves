@@ -61,7 +61,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
                 }
                 else
                 {
-                    return $"After more research, you have increased the efficiency of your Cake-consuming portal, making it give you {this.UseEffect.flour}g of Flour per Cake. ";
+                    return $"After more research, you have increased the efficiency of your Cake-consuming portal, making it give you {Math.Round(this.UseEffect.flour)}g of Flour per Cake. ";
                 }
             }
 
