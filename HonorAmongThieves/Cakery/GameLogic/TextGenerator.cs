@@ -8,7 +8,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
         {
             StringBuilder newsReport = new StringBuilder();
             (var cookiesSold, var croissantsSold, var cakesSold) = marketReport.TotalSales;
-            (var expectedCookies, var expectedCroissants, var expectedCakes) = CakeryRoom.ComputeExpectedSales(marketReport.CashInPreviousRound);
+            (var expectedCookies, var expectedCroissants, var expectedCakes) = CakeryRoom.ComputeExpectedSales(marketReport.CashInPreviousRound, marketReport.EfficiencyCoefficient);
 
             var cookiePercentageSold = cookiesSold / (expectedCookies != 0 ? expectedCookies : 0.1);
             var croissantPercentageSold = croissantsSold / (expectedCroissants != 0 ? expectedCroissants : 0.1);
@@ -47,7 +47,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
         public static string GetNewsReport(CakeryRoom.MarketReport marketReport, CakeryRoom.Prices prices)
         {
             (var cookiesSold, var croissantsSold, var cakesSold) = marketReport.TotalSales;
-            (var expectedCookies, var expectedCroissants, var expectedCakes) = CakeryRoom.ComputeExpectedSales(marketReport.CashInPreviousRound);
+            (var expectedCookies, var expectedCroissants, var expectedCakes) = CakeryRoom.ComputeExpectedSales(marketReport.CashInPreviousRound, marketReport.EfficiencyCoefficient);
 
             var cookiePercentageSold = cookiesSold / (expectedCookies != 0 ? expectedCookies : 0.1);
             var croissantPercentageSold = croissantsSold / (expectedCroissants != 0 ? expectedCroissants : 0.1);

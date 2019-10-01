@@ -180,7 +180,6 @@ function getNumber(elementId, roundDown) {
 
     // Do bounds checking and reflect changes in UI
     if (number.length == 0 || number <= 0) {
-        number = 0;
         if (roundDown) {
             if (number == 0) {
                 document.getElementById(elementId).value = "";
@@ -190,10 +189,12 @@ function getNumber(elementId, roundDown) {
                 document.getElementById(elementId).value = number;
             }
         }
-        else {
+        else if (number < 0) {
             document.getElementById(elementId).value = "";
             document.getElementById(elementId).placeholder = "0.0";
         }
+
+        number = 0;
     }
     else if (roundDown && number % 1 != 0) {
         number = number - number % 1;

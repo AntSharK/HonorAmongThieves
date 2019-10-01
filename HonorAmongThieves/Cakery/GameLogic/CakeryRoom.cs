@@ -22,7 +22,14 @@ namespace HonorAmongThieves.Cakery.GameLogic
             public double Cookies = 375f; // Costs 190 to make
             public double Croissants = 675f; // Costs 370 to make
             public double Cakes = 4125f; // Costs 3375 to make
+
+            public double EfficiencyCoefficient = 1.0f; // The efficiency of producers in general
         }
+
+        // The amount of dollars in the market before we expect one of these goods to be produced
+        const double DollarsPerCookie = 190 * 3;
+        const double DollarsPerCroissant = 370 * 3;
+        const double DollarsPerCake = 3375 * 3;
 
         public class Market
         {
@@ -41,6 +48,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             public Dictionary<Player, double> PlayerProfits = new Dictionary<Player, double>();
             public (long cookiesSold, long croissantsSold, long cakesSold) TotalSales;
             public double CashInPreviousRound;
+            internal double EfficiencyCoefficient;
         }
 
         public Prices CurrentPrices { get; } = new Prices();
@@ -118,6 +126,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
             // Get total sales and compute the prices of baked goods
             marketReport.TotalSales = (0, 0, 0);
+            marketReport.EfficiencyCoefficient = this.CurrentPrices.EfficiencyCoefficient;
             foreach (var player in this.Players.Values)
             {
                 marketReport.TotalSales = (marketReport.TotalSales.cookiesSold + player.CurrentBakedGoods.Cookies,
@@ -125,7 +134,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
                     marketReport.TotalSales.cakesSold + player.CurrentBakedGoods.Cakes);
             }
 
-            ComputeMarketPrices(this.CurrentPrices, this.CashInGame, marketReport);
+            ComputeMarketPrices(this.CurrentPrices, this.CashInGame, marketReport);            
 
             // Sell all goods baked
             marketReport.CashInPreviousRound = this.CashInGame;
@@ -137,7 +146,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 player.CurrentResources.Money = player.CurrentResources.Money + this.CurrentMarket.AnnualAllowance;
 
                 this.CashInGame = this.CashInGame + player.CurrentResources.Money;
-            }
+            }            
 
             // Then, finalize upgrades
             foreach (var player in this.Players.Values)
@@ -229,11 +238,11 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 playerProfit, this.CurrentMarket, playerUpgradeReport);
         }
 
-        public static (double, double, double) ComputeExpectedSales(double cashInGame)
+        public static (double, double, double) ComputeExpectedSales(double cashInGame, double efficiencyCoefficient)
         {
-            double expectedCookies = cashInGame / 600;
-            double expectedCroissants = cashInGame / 1200;
-            double expectedCakes = cashInGame / 10500;
+            double expectedCookies = cashInGame / DollarsPerCookie * efficiencyCoefficient;
+            double expectedCroissants = cashInGame / DollarsPerCroissant * efficiencyCoefficient;
+            double expectedCakes = cashInGame / DollarsPerCake * efficiencyCoefficient;
 
             return (expectedCookies, expectedCroissants, expectedCakes);
         }
@@ -251,7 +260,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             currentPrices.Cakes = currentPrices.Cakes * random.Next(800, 1200) * 0.001f;
 
             // Then, adjust current cost based on number of goods in the market
-            (var expectedCookies, var expectedCroissants, var expectedCakes) = ComputeExpectedSales(cashInGame);
+            (var expectedCookies, var expectedCroissants, var expectedCakes) = ComputeExpectedSales(cashInGame, currentPrices.EfficiencyCoefficient);
 
             // Cookies - 200% at 0, 120% at quarter, 80% at expected quantity, 40% at double expected quantity
             marketReport.Prices.cookiePrice = currentPrices.Cookies *
@@ -264,6 +273,17 @@ namespace HonorAmongThieves.Cakery.GameLogic
             // Cakes - 400% at 0, 200% at quarter, 100% at expected quantity, 50% at double expected quantity
             marketReport.Prices.cakePrice = currentPrices.Cakes *
                 ComputeMultiplier(expectedCakes, marketReport.TotalSales.cakesSold, 4.0, 2.0, 1.0, 0.5);
+
+            // Adjust the efficiency coefficient
+            var realGoodsSold = marketReport.TotalSales.cookiesSold * DollarsPerCookie
+                + marketReport.TotalSales.croissantsSold * DollarsPerCroissant
+                + marketReport.TotalSales.cakesSold * DollarsPerCake;
+
+            // Only adjust efficiency if it goes down
+            if (realGoodsSold / 3 > cashInGame)
+            {
+                currentPrices.EfficiencyCoefficient = realGoodsSold / 3 / cashInGame;
+            }
         }
 
         private static double ComputeMultiplier(double expectedSales, double actualSales,
