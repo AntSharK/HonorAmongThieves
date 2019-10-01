@@ -147,7 +147,8 @@ document.getElementById("startbutton").addEventListener("click", function (event
     var gamelength = document.getElementById("gamelength").value;
     var startingcash = document.getElementById("startingcash").value;
     var annualallowance = document.getElementById("annualallowance").value;
-    connection.invoke("StartRoom", roomId, gamelength, startingcash, annualallowance).catch(function (err) {
+    var upgradeallowance = document.getElementById("upgradeallowance").value;
+    connection.invoke("StartRoom", roomId, gamelength, startingcash, annualallowance, upgradeallowance).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
@@ -221,6 +222,12 @@ connection.on("UpdateProductionState", function (currentPrices, currentMarket, p
     playerState.upgrades = playerUpgrades;
     playerState.justPurchasedUpgrades = playerJustPurchasedUpgrades;
     playerState.bakedGoods = playerBakedGoods;
+
+    // On the first year, start in the upgrade menu
+    if (gameState.currentMarket.currentYear == 0) {
+        bakingMenuState = "upgrading";
+    }
+
     showMenu();
 });
 

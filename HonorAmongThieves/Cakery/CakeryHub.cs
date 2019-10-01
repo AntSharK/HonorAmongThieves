@@ -108,7 +108,7 @@ namespace HonorAmongThieves.Cakery
             await Clients.Group(room.Id).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newPlayer.Name);
         }
 
-        public async Task StartRoom(string roomId, int gameLength, int startingCash, int annualallowance)
+        public async Task StartRoom(string roomId, int gameLength, int startingCash, int annualAllowance, int upgradeAllowance)
         {
 #if DEBUG
             const int MINPLAYERCOUNT = 1;
@@ -129,7 +129,7 @@ namespace HonorAmongThieves.Cakery
                 return;
             }
 
-            room.StartGame(gameLength, startingCash, annualallowance);
+            room.StartGame(gameLength, startingCash, annualAllowance, upgradeAllowance);
             await this.UpdateRoom_NextRound(room);
         }
 

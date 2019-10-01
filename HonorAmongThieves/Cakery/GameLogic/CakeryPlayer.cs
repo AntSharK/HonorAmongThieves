@@ -22,6 +22,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             public double Flour = 0;
             public double Sugar = 0;
             public double Money = 0;
+            public double UpgradeAllowance = 0;
         }
 
         public class BakedGoods
@@ -163,12 +164,20 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 totalCost = totalCost + this.JustPurchasedUpgrades[upgradeBought.Key].Cost * upgradeBought.Value;
             }
 
-            if (totalCost > this.CurrentResources.Money)
+            if (totalCost > this.CurrentResources.Money + this.CurrentResources.UpgradeAllowance)
             {
                 return false;
             }
 
-            this.CurrentResources.Money = this.CurrentResources.Money - totalCost;
+            if (totalCost <= this.CurrentResources.UpgradeAllowance)
+            {
+                this.CurrentResources.UpgradeAllowance = this.CurrentResources.UpgradeAllowance - totalCost;
+            }
+            else
+            {
+                this.CurrentResources.Money = this.CurrentResources.Money - totalCost + this.CurrentResources.UpgradeAllowance;
+                this.CurrentResources.UpgradeAllowance = 0;
+            }
 
             // Finalize the upgrade purchases
             foreach (var upgradeBought in upgradesBought)

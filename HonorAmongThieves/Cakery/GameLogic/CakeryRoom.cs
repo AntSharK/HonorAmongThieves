@@ -75,14 +75,15 @@ namespace HonorAmongThieves.Cakery.GameLogic
             return new CakeryPlayer(playerName, this);
         }
 
-        public void StartGame(int gameLength, int startingCash, int annualallowance)
+        public void StartGame(int gameLength, int startingCash, int annualAllowance, int upgradeAllowance)
         {
             this.CurrentMarket.MaxYears = gameLength;
-            this.CurrentMarket.AnnualAllowance = annualallowance;
+            this.CurrentMarket.AnnualAllowance = annualAllowance;
             foreach (var player in this.Players.Values)
             {
                 player.CurrentStatus = CakeryPlayer.Status.Producing;
                 player.CurrentResources.Money = startingCash;
+                player.CurrentResources.UpgradeAllowance = upgradeAllowance;
             }
 
             this.MarketReports = new MarketReport[gameLength];
