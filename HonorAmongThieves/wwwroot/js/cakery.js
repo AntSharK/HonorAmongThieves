@@ -943,6 +943,13 @@ function updateUpgradeUse(upgrade, useCost, useEffect) {
 // ----- STATE: SELLING ----
 // -------------------------
 function summarizeGoodsBaked() {
+    if (playerState.resources.upgradeAllowance > 0) {
+        document.getElementById("upgradecreditwarning").textContent = "YOU STILL HAVE $" + (playerState.resources.upgradeAllowance / 100).toFixed(2) + " OF UPGRADE CREDIT LEFT TO SPEND!";
+    }
+    else {
+        document.getElementById("upgradecreditwarning").style.display = "none";
+    }
+
     changeUiState("SET UP SHOP", "goodsbaked");
     document.getElementById("currentyearsummary").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
 
