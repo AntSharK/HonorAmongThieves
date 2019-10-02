@@ -229,12 +229,6 @@ namespace HonorAmongThieves.Cakery.GameLogic
             var goodPrices = marketReport.Prices;
             var playerUpgradeReport = player.GetUpgradeReport();
 
-            // Special text for the first year
-            if (this.CurrentMarket.CurrentYear == 1)
-            {
-                newsReport = newsReport + "Every year, the price of a good is determined by its total supply. The more of one good in the market, the lower it sells for.";
-            }
-
             await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("ShowMarketReport",
                 newsReport, playerSales, goodPrices,
                 playerProfit, this.CurrentMarket, playerUpgradeReport);
@@ -281,7 +275,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
                 + marketReport.TotalSales.croissantsSold * DollarsPerCroissant
                 + marketReport.TotalSales.cakesSold * DollarsPerCake;
 
-            // Only adjust efficiency if it goes down
+            // Only adjust efficiency if it goes up
             if (realGoodsSold / 3 > cashInGame)
             {
                 currentPrices.EfficiencyCoefficient = realGoodsSold / 3 / cashInGame;

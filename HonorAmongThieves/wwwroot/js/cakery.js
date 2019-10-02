@@ -224,7 +224,8 @@ connection.on("UpdateProductionState", function (currentPrices, currentMarket, p
     playerState.bakedGoods = playerBakedGoods;
 
     // On the first year, start in the upgrade menu
-    if (gameState.currentMarket.currentYear == 0) {
+    if (gameState.currentMarket.currentYear == 0
+        && playerState.resources.upgradeAllowance > 0) {
         bakingMenuState = "upgrading";
     }
 
@@ -531,6 +532,7 @@ function updateBakingCost() {
         document.getElementById("flourforbaking").textContent = "";
         document.getElementById("sugarforbaking").textContent = "";
         document.getElementById("butterforbaking").textContent = "";
+        document.getElementById("bakingingredientshortage").style.display = "none";
         return;
     }
 
@@ -552,7 +554,6 @@ function updateBakingCost() {
 
     if (butterUsed > playerState.resources.butter) {
         document.getElementById("butterforbaking").style.color = "red";
-        document.getElementById("bakethingsbutton").value = "NOT ENOUGH BUTTER";
         bakingEnabled = false;
     }
     else {
@@ -561,7 +562,6 @@ function updateBakingCost() {
 
     if (flourUsed > playerState.resources.flour) {
         document.getElementById("flourforbaking").style.color = "red";
-        document.getElementById("bakethingsbutton").value = "NOT ENOUGH FLOUR";
         bakingEnabled = false;
     }
     else {
@@ -570,7 +570,6 @@ function updateBakingCost() {
 
     if (sugarUsed > playerState.resources.sugar) {
         document.getElementById("sugarforbaking").style.color = "red";
-        document.getElementById("bakethingsbutton").value = "NOT ENOUGH SUGAR";
         bakingEnabled = false;
     }
     else {
@@ -580,9 +579,33 @@ function updateBakingCost() {
     if (bakingEnabled) {
         document.getElementById("bakethingsbutton").value = "BAKE THINGS";
         document.getElementById("bakethingsbutton").disabled = false;
+        document.getElementById("bakingingredientshortage").style.display = "none";
     }
     else {
+        document.getElementById("bakethingsbutton").value = "LACK INGREDIENTS";
         document.getElementById("bakethingsbutton").disabled = true;
+        document.getElementById("bakingingredientshortage").style.display = "";
+
+        if (butterUsed > playerState.resources.butter) {
+            document.getElementById("bakingbuttershortage").textContent = Math.ceil(butterUsed - playerState.resources.butter) + "g";
+        }
+        else {
+            document.getElementById("bakingbuttershortage").textContent = "";
+        }
+
+        if (flourUsed > playerState.resources.flour) {
+            document.getElementById("bakingflourshortage").textContent = Math.ceil(flourUsed - playerState.resources.flour) + "g";
+        }
+        else {
+            document.getElementById("bakingflourshortage").textContent = "";
+        }
+
+        if (sugarUsed > playerState.resources.sugar) {
+            document.getElementById("bakingsugarshortage").textContent = Math.ceil(sugarUsed - playerState.resources.sugar) + "g";
+        }
+        else {
+            document.getElementById("bakingsugarshortage").textContent = "";
+        }
     }
 }
 
