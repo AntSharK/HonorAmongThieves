@@ -3,7 +3,7 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/cakeryHub").build();
 var userName;
 var roomId;
-var bakingMenuState = "buyingingredients"; // Can be: 'baking', 'upgrading', 'buyingingredients', 'usingupgrades'
+var bakingMenuState = "upgrading"; // Can be: 'baking', 'upgrading', 'buyingingredients', 'usingupgrades'
 
 // -------------------------
 // ----- GAME OBJECTS ------
@@ -222,12 +222,6 @@ connection.on("UpdateProductionState", function (currentPrices, currentMarket, p
     playerState.upgrades = playerUpgrades;
     playerState.justPurchasedUpgrades = playerJustPurchasedUpgrades;
     playerState.bakedGoods = playerBakedGoods;
-
-    // On the first year, start in the upgrade menu
-    if (gameState.currentMarket.currentYear == 0
-        && playerState.resources.upgradeAllowance > 0) {
-        bakingMenuState = "upgrading";
-    }
 
     showMenu();
 });
