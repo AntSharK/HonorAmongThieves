@@ -1058,20 +1058,50 @@ function updatePlayerList(readyPlayers, slowBastards) {
 // ------------------------------
 // ----- STATE: MARKET REPORT ---
 // ------------------------------
-connection.on("ShowMarketReport", function (marketReport, playerSales, goodPrices, playerProfit, currentMarket, playerUpgradeReport) {
+connection.on("ShowMarketReport", function (marketReport, playerSales, goodPrices, playerProfit, currentMarket, playerUpgradeReport, newsReport) {
     gameState.currentMarket = currentMarket;
     bakingMenuState = "buyingingredients";
     changeUiState("MARKET REPORT", "marketreport");
+
+    document.getElementById("marketreportnews").textContent = newsReport;
+    var marketReportTable = document.getElementById("marketreporttable");
+    for (var i = marketReportTable.rows.length - 1; i > 2; i--) {
+        marketReportTable.deleteRow(i);
+    }
 
     for (var playerName in marketReport) {
         var playerSales = marketReport[playerName];
         var cookiesSold = playerSales.item1;
         var croissantsSold = playerSales.item2;
         var cakesSold = playerSales.item3;
-    // TODO: Create MarketReport table
+
+        var tr = document.createElement("TR");
+
+        var name = document.createElement("TD");
+        name.appendChild(document.createTextNode(playerName.toUpperCase()));
+        tr.appendChild(name);
+
+        var cookie = document.createElement("TD");
+        cookie.appendChild(document.createTextNode(cookiesSold));
+        tr.appendChild(cookie);
+
+        var croissant = document.createElement("TD");
+        croissant.appendChild(document.createTextNode(croissantsSold));
+        tr.appendChild(croissant);
+
+        var cake = document.createElement("TD");
+        cake.appendChild(document.createTextNode(cakesSold));
+        tr.appendChild(cake);
+
+        var salesNumber = (cookiesSold * goodPrices.item1) + (croissantsSold * goodPrices.item2) + (cakesSold * goodPrices.item3);
+        var sales = document.createElement("TD");
+        sales.appendChild(document.createTextNode("$" + (salesNumber/100).toFixed(2)));
+        tr.appendChild(sales);
+
+        marketReportTable.appendChild(tr);
     }
 
-    document.getElementById("salestabletitle").textContent = "YEAR: " + gameState.currentMarket.currentYear + "/"
+    document.getElementById("marketreporttitle").textContent = "YEAR: " + gameState.currentMarket.currentYear + "/"
         + gameState.currentMarket.maxYears + " SALES REPORT";
 
     if (playerSales.item1 > 0) {
@@ -1151,7 +1181,7 @@ connection.on("EndGame", function (totalSales, playerSales) {
         var tr = document.createElement("TR");
 
         var name = document.createElement("TD");
-        name.appendChild(document.createTextNode(totalSales[i].item1));
+        name.appendChild(document.createTextNode(totalSales[i].item1.toUpperCase()));
         tr.appendChild(name);
         var cookies = document.createElement("TD");
         cookies.appendChild(document.createTextNode(totalSales[i].item2));

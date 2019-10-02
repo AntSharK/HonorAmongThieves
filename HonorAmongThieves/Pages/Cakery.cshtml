@@ -278,10 +278,22 @@
     <div class="state" id="marketreport" style="display:none">
         <div class="display-4" style="text-align:center">
             <div id="marketreportnews" class="h1" style="white-space:pre-line"></div>
+            <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center" id="marketreporttable">
+                <tr>
+                    <td colspan="4" id="marketreporttitle"></td>
+                </tr>
+                <tr>
+                    <th>Bakery</th>
+                    <th>Cookies</th>
+                    <th>Croissants</th>
+                    <th>Cakes</th>
+                    <th>Revenue</th>
+                </tr>
+            </table>
             <hr />
             <table align="center" class="h2" border="1px solid black" cellpadding="3%" style="text-align:center">
                 <tr>
-                    <td colspan="4" id="salestabletitle"></td>
+                    <td colspan="4" id="salestabletitle">Your Sales report</td>
                 </tr>
                 <tr>
                     <th></th>
@@ -310,7 +322,8 @@
                 <tr>
                     <td colspan="4" id="salestablesummary"></td>
                 </tr>
-            </table> <hr />
+            </table>
+            <hr />
             <div class="h2" style="text-align:left">
                 <div id="upgradesboughtlistmarketreportdiv">
                     <u>Upgrades Bought:</u>
@@ -318,7 +331,8 @@
                     <br />
                 </div>
                 <div id="upgradesmarketreport" class="h3" style="white-space:pre-line"></div>
-            </div> <hr />
+            </div>
+            <hr />
             <input type="button" id="endmarketreportbutton" value="CLOSE REPORT" />
         </div>
     </div>
