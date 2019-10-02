@@ -592,6 +592,13 @@ function updateBakingCost() {
 function showUpgradeMenu() {
     changeUiState("BUY UPGRADES", "upgrademenu");
 
+    if (playerState.resources.upgradeAllowance > 0) {
+        document.getElementById("upgradecredit").textContent = "CREDIT: $" + (playerState.resources.upgradeAllowance / 100).toFixed(2);
+    }
+    else {
+        document.getElementById("upgradecredit").style.display = "none";
+    }
+
     // Clear table
     var upgradeTable = document.getElementById("upgradetable");
     for (var i = upgradeTable.rows.length - 1; i > 1; i--) {
@@ -734,9 +741,21 @@ function updateUpgradeCost() {
         return;
     }
 
-    document.getElementById("buyupgradeprice").textContent = "$" + (upgradeCost / 100).toFixed(2) + "/$" + (playerState.resources.money / 100).toFixed(2);
+    if (playerState.resources.upgradeAllowance > 0) {
+        if (playerState.resources.upgradeAllowance >= upgradeCost) {
+            document.getElementById("buyupgradeprice").textContent = "$" + (upgradeCost / 100).toFixed(2) + "/$" + (playerState.resources.upgradeAllowance / 100).toFixed(2) + " CREDIT";
+        }
+        else {
+            var cashNeeded = upgradeCost - playerState.resources.upgradeAllowance;
+            var upgradeCreditUsed = "$" + (playerState.resources.upgradeAllowance / 100).toFixed(2);
+            document.getElementById("buyupgradeprice").textContent = upgradeCreditUsed + "/" + upgradeCreditUsed + " CREDIT + $" + (cashNeeded / 100).toFixed(2) + "/$" + (playerState.resources.money / 100).toFixed(2);
+        }
+    }
+    else {
+        document.getElementById("buyupgradeprice").textContent = "$" + (upgradeCost / 100).toFixed(2) + "/$" + (playerState.resources.money / 100).toFixed(2);
+    }    
 
-    if (upgradeCost > playerState.resources.money) {
+    if (upgradeCost > playerState.resources.money + playerState.resources.upgradeAllowance) {
         document.getElementById("buyupgradeprice").style.color = "red";
         document.getElementById("buyupgradesbutton").disabled = true;
         document.getElementById("buyupgradesbutton").value = "NOT ENOUGH MONEY";
