@@ -1058,12 +1058,19 @@ function updatePlayerList(readyPlayers, slowBastards) {
 // ------------------------------
 // ----- STATE: MARKET REPORT ---
 // ------------------------------
-connection.on("ShowMarketReport", function (newsReport, playerSales, goodPrices, playerProfit, currentMarket, playerUpgradeReport) {
+connection.on("ShowMarketReport", function (marketReport, playerSales, goodPrices, playerProfit, currentMarket, playerUpgradeReport) {
     gameState.currentMarket = currentMarket;
     bakingMenuState = "buyingingredients";
     changeUiState("MARKET REPORT", "marketreport");
 
-    document.getElementById("marketreportnews").textContent = newsReport;
+    for (var playerName in marketReport) {
+        var playerSales = marketReport[playerName];
+        var cookiesSold = playerSales.item1;
+        var croissantsSold = playerSales.item2;
+        var cakesSold = playerSales.item3;
+    // TODO: Create MarketReport table
+    }
+
     document.getElementById("salestabletitle").textContent = "YEAR: " + gameState.currentMarket.currentYear + "/"
         + gameState.currentMarket.maxYears + " SALES REPORT";
 

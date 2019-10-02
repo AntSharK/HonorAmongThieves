@@ -223,15 +223,17 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
         public async Task DisplayMarketReport(CakeryPlayer player, MarketReport marketReport, Prices currentPrices)
         {
-            var newsReport = TextGenerator.GetExactMarketReport(marketReport, currentPrices);
             var playerSales = marketReport.PlayerSalesData[player];
             var playerProfit = marketReport.PlayerProfits[player];
             var goodPrices = marketReport.Prices;
             var playerUpgradeReport = player.GetUpgradeReport();
 
-            await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("ShowMarketReport",
-                newsReport, playerSales, goodPrices,
-                playerProfit, this.CurrentMarket, playerUpgradeReport);
+            var orderedSalesData = marketReport.PlayerSalesData.OrderBy(c => marketReport.PlayerProfits[c.Key]);
+            var orderedSalesDataNames = orderedSalesData.ToDictionary(p => p.Key.Name, p => p.Value);
+
+             await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("ShowMarketReport",
+                 orderedSalesDataNames, playerSales, goodPrices,
+                 playerProfit, this.CurrentMarket, playerUpgradeReport);
         }
 
         public static (double, double, double) ComputeExpectedSales(double cashInGame, double efficiencyCoefficient)
