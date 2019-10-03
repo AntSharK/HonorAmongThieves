@@ -900,7 +900,7 @@ function updateUpgradeUse(upgrade, useCost, useEffect) {
     var numberOfUses = getNumber(upgrade + "useamount", true);
 
     if (numberOfUses == 0) {
-        document.getElementById(upgrade + "usagecost").textContent = getUpgradeCostText(useCost, 1) + " /Use";
+        document.getElementById(upgrade + "usagecost").textContent = getUpgradeCostText(useCost, 1) + "/Use";
         document.getElementById(upgrade + "usageeffect").textContent = getUpgradeCostText(useEffect, 1) + "/Use";
         document.getElementById(upgrade + "usagecost").style.color = "black";
         document.getElementById(upgrade + "usageeffect").style.color = "black";
