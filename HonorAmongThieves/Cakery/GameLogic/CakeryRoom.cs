@@ -49,6 +49,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             public (long cookiesSold, long croissantsSold, long cakesSold) TotalSales;
             public double CashInPreviousRound;
             internal double EfficiencyCoefficient;
+            internal Dictionary<string, (long, long, long)> OrderedSalesDataNames;
         }
 
         public Prices CurrentPrices { get; } = new Prices();
@@ -157,6 +158,8 @@ namespace HonorAmongThieves.Cakery.GameLogic
             }
 
             // Finally, broadcast this year's report to each player
+            var orderedSalesData = marketReport.PlayerSalesData.OrderBy(c => marketReport.PlayerProfits[c.Key]);
+            marketReport.OrderedSalesDataNames = orderedSalesData.ToDictionary(p => p.Key.Name, p => p.Value);
             this.MarketReports[this.CurrentMarket.CurrentYear] = marketReport;
             this.CurrentMarket.CurrentYear++;
 
@@ -229,11 +232,8 @@ namespace HonorAmongThieves.Cakery.GameLogic
             var playerUpgradeReport = player.GetUpgradeReport();
             var newsReport = TextGenerator.GetExactMarketReport(marketReport, currentPrices);
 
-            var orderedSalesData = marketReport.PlayerSalesData.OrderBy(c => marketReport.PlayerProfits[c.Key]);
-            var orderedSalesDataNames = orderedSalesData.ToDictionary(p => p.Key.Name, p => p.Value);
-
              await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("ShowMarketReport",
-                 orderedSalesDataNames, playerSales, goodPrices,
+                 marketReport.OrderedSalesDataNames, playerSales, goodPrices,
                  playerProfit, this.CurrentMarket, playerUpgradeReport, newsReport);
         }
 
