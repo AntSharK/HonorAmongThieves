@@ -14,7 +14,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 
         public override string Description => "Lowers the Flour required for Croissants and Cakes by 10%.";
 
-        public PastryInterns(CakeryPlayer player) : base(player) { }
+        public PastryInterns(CakeryPlayer player, CakeryRoom room) : base(player, room) { }
 
         public override void OnPurchaseFinalized(CakeryRoom room, int amountPurchased)
         {

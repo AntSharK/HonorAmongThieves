@@ -12,7 +12,7 @@
 
         public override string Description => "Generates 1kg of butter per year";
 
-        public DairyFarm(CakeryPlayer player) : base(player) { }
+        public DairyFarm(CakeryPlayer player, CakeryRoom room) : base(player, room) { }
 
         public override void OnNextRound(CakeryRoom room)
         {

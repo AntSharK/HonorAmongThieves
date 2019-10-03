@@ -56,8 +56,8 @@ namespace HonorAmongThieves.Cakery.GameLogic
             : base(playerName)
         {
             this.Room = room;
-            this.CurrentUpgrades = Upgrade.Initialize(this);
-            this.JustPurchasedUpgrades = Upgrade.Initialize(this);
+            this.CurrentUpgrades = Upgrade.Initialize(this, room);
+            this.JustPurchasedUpgrades = Upgrade.Initialize(this, room);
         }
 
         internal bool MakePurchase(double butterBought, double flourBought, double sugarBought)

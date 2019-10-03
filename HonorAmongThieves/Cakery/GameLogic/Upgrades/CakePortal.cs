@@ -14,7 +14,8 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 
         public override string Description => "Converts 1 Cake into Flour (unlimited uses). Purchase more to get more Flour (starts at 15kg) per Cake.";
 
-        public CakePortal(CakeryPlayer player) : base(player) {
+        public CakePortal(CakeryPlayer player, CakeryRoom room) : base(player, room)
+        {
             this.UseEffect = (0, 0, 0, 0, 0, 0, 0);
             this.UseCost = (0, 0, 0, 0, 0, 0, 1);
         }

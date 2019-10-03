@@ -12,7 +12,7 @@
 
         public override string Description => "Converts 2 Cookies into 1 Croissant (2 uses)";
 
-        public CookieSant(CakeryPlayer player) : base(player) {
+        public CookieSant(CakeryPlayer player, CakeryRoom room) : base(player, room) {
             this.UseEffect = (0, 0, 0, 0, 0, 1, 0);
             this.UseCost = (0, 0, 0, 0, 2, 0, 0);
         }

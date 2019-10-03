@@ -15,11 +15,13 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
         public (double money, double butter, double flour, double sugar, double cookies, double croissants, double cakes) UseEffect { get; set; } = (0, 0, 0, 0, 0, 0, 0);
 
         protected CakeryPlayer owner;
+        protected CakeryRoom room;
         protected int amountJustPurchased;
 
-        public Upgrade(CakeryPlayer owner)
+        public Upgrade(CakeryPlayer owner, CakeryRoom room)
         {
             this.owner = owner;
+            this.room = room;
         }
 
         public virtual void OnPurchaseFinalized(CakeryRoom room, int amountPurchased)
@@ -49,15 +51,16 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
         }
 
         // Initializes an empty dictionary with every single upgrade constructed
-        internal static Dictionary<string, Upgrade> Initialize(CakeryPlayer player)
+        internal static Dictionary<string, Upgrade> Initialize(CakeryPlayer player, CakeryRoom room)
         {
             return new Dictionary<string, Upgrade>()
             {
-                { DairyFarm.UpgradeName.ToLower(), new DairyFarm(player) },
-                { SugarSubstitute.UpgradeName.ToLower(), new SugarSubstitute(player) },
-                { CookieSant.UpgradeName.ToLower(), new CookieSant(player) },
-                { CakePortal.UpgradeName.ToLower(), new CakePortal(player) },
-                { PastryInterns.UpgradeName.ToLower(), new PastryInterns(player) },
+                { DairyFarm.UpgradeName.ToLower(), new DairyFarm(player, room) },
+                { SugarSubstitute.UpgradeName.ToLower(), new SugarSubstitute(player, room) },
+                { CookieSant.UpgradeName.ToLower(), new CookieSant(player, room) },
+                { CakePortal.UpgradeName.ToLower(), new CakePortal(player, room) },
+                { PastryInterns.UpgradeName.ToLower(), new PastryInterns(player, room) },
+                { SugarTax.UpgradeName.ToLower(), new SugarTax(player, room) },
             };
         }
     }
