@@ -63,6 +63,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
                 { SugarTax.UpgradeName.ToLower(), new SugarTax(player, room) },
                 { SpreadVeganism.UpgradeName.ToLower(), new SpreadVeganism(player, room) },
                 { CroiCake.UpgradeName.ToLower(), new CroiCake(player, room) },
+                { ButterFreeCookie.UpgradeName.ToLower(), new ButterFreeCookie(player, room) },
             };
         }
     }

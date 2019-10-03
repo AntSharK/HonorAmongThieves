@@ -12,7 +12,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 
         public override bool Usable => false;
 
-        public override string Description => $"Increases the price of Butter by {Math.Floor(this.percentageIncrease * 1000)/10}%.";
+        public override string Description => $"Increases the price of Butter by {Math.Floor(this.percentageIncrease * 1000)/10}% for everyone";
 
         private double percentageIncrease => 0.15 / this.room.Players.Count;
 
