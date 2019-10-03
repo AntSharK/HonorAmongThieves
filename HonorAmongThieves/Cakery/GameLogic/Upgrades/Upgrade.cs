@@ -55,15 +55,15 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
         {
             return new Dictionary<string, Upgrade>()
             {
-                { DairyFarm.UpgradeName.ToLower(), new DairyFarm(player, room) },
-                { SugarSubstitute.UpgradeName.ToLower(), new SugarSubstitute(player, room) },
-                { CookieSant.UpgradeName.ToLower(), new CookieSant(player, room) },
-                { CakePortal.UpgradeName.ToLower(), new CakePortal(player, room) },
-                { PastryInterns.UpgradeName.ToLower(), new PastryInterns(player, room) },
-                { SugarTax.UpgradeName.ToLower(), new SugarTax(player, room) },
-                { SpreadVeganism.UpgradeName.ToLower(), new SpreadVeganism(player, room) },
-                { CroiCake.UpgradeName.ToLower(), new CroiCake(player, room) },
                 { ButterFreeCookie.UpgradeName.ToLower(), new ButterFreeCookie(player, room) },
+                { CakePortal.UpgradeName.ToLower(), new CakePortal(player, room) },
+                { CookieSant.UpgradeName.ToLower(), new CookieSant(player, room) },
+                { CroiCake.UpgradeName.ToLower(), new CroiCake(player, room) },
+                { DairyFarm.UpgradeName.ToLower(), new DairyFarm(player, room) },
+                { PastryInterns.UpgradeName.ToLower(), new PastryInterns(player, room) },
+                { SpreadVeganism.UpgradeName.ToLower(), new SpreadVeganism(player, room) },
+                { SugarSubstitute.UpgradeName.ToLower(), new SugarSubstitute(player, room) },
+                { SugarTax.UpgradeName.ToLower(), new SugarTax(player, room) },
             };
         }
     }

@@ -2,7 +2,7 @@
 {
     public class CookieSant : Upgrade
     {
-        public const string UpgradeName = "Cookiesant";
+        public const string UpgradeName = "CookieSant";
 
         public override string Name => UpgradeName;
 

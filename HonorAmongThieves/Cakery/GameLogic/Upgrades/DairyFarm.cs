@@ -10,7 +10,7 @@
 
         public override bool Usable => false;
 
-        public override string Description => "Generates 1kg of butter per year";
+        public override string Description => "Generates 1000g of butter per year";
 
         public DairyFarm(CakeryPlayer player, CakeryRoom room) : base(player, room) { }
 
@@ -21,7 +21,7 @@
 
         public override string OnMarketReport()
         {
-            return $"Your Dairy Farms generate you {this.AmountOwned}kg of Butter. ";
+            return $"Your Dairy Farms generate you {this.AmountOwned * 1000}g of Butter. ";
         }
     }
 }
