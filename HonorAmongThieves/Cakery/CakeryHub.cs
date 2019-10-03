@@ -304,7 +304,16 @@ namespace HonorAmongThieves.Cakery
             var room = this.lobby.Rooms[roomId];
             var player = room.Players[playerName];
 
-            await room.EndPlayerTurn(player);
+            await room.EndPlayerTurn(player, true /*End Turn*/);
+        }
+
+        // Player decides to set up shop
+        public async Task BackToBakery(string roomId, string playerName)
+        {
+            var room = this.lobby.Rooms[roomId];
+            var player = room.Players[playerName];
+
+            await room.EndPlayerTurn(player, false /*Revert turn ending*/);
         }
 
         // Player ends market report

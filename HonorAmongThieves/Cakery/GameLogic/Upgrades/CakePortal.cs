@@ -8,7 +8,7 @@ namespace HonorAmongThieves.Cakery.GameLogic.Upgrades
 
         public override string Name => UpgradeName;
 
-        public override int Cost => 1500;
+        public override int Cost => 1000;
 
         public override bool Usable => true;
 

@@ -6,7 +6,7 @@
 
         public override string Name => UpgradeName;
 
-        public override int Cost => 500;
+        public override int Cost => 200;
 
         public override bool Usable => true;
 

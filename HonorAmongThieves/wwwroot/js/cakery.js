@@ -995,24 +995,21 @@ function summarizeGoodsBaked() {
 }
 
 document.getElementById("gobacktobakeviewbutton").addEventListener("click", function (event) {
+    connection.invoke("BackToBakery", roomId, userName).catch(function (err) {
+        return console.error(err.toString());
+    });
+
     showMenu();
     event.preventDefault();
 });
 
-// Go to set up shop screen
+// Go to set up shop screen - ready to end turn
 document.getElementById("endturnbutton").addEventListener("click", function (event) {
     summarizeGoodsBaked();
-    document.getElementById("confirmationbuttons").style.display = "block";
-    document.getElementById("readylist").style.display = "none";
-
-    event.preventDefault();
-});
-
-// Confirm ending of turn
-document.getElementById("reallyendturnbutton").addEventListener("click", function (event) {
     connection.invoke("SetUpShop", roomId, userName).catch(function (err) {
         return console.error(err.toString());
     });
+
     event.preventDefault();
 });
 
@@ -1035,9 +1032,6 @@ connection.on("UpdatePlayerList", function (readyPlayers, notReadyPlayers) {
 })
 
 function updatePlayerList(readyPlayers, slowBastards) {
-    document.getElementById("confirmationbuttons").style.display = "none";
-    document.getElementById("readylist").style.display = "block";
-
     var readyList = document.getElementById("playerreadylist");
     readyList.innerHTML = "";
     for (let i = 0; i < readyPlayers.length; i++) {

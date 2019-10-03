@@ -92,9 +92,16 @@ namespace HonorAmongThieves.Cakery.GameLogic
             this.SettingUp = false;
         }
 
-        public async Task EndPlayerTurn(CakeryPlayer readyPlayer)
+        public async Task EndPlayerTurn(CakeryPlayer readyPlayer, bool playerIsReady)
         {
-            readyPlayer.CurrentStatus = CakeryPlayer.Status.SettingUpShop;
+            if (playerIsReady)
+            {
+                readyPlayer.CurrentStatus = CakeryPlayer.Status.SettingUpShop;
+            }
+            else
+            {
+                readyPlayer.CurrentStatus = CakeryPlayer.Status.Producing;
+            }
             
             var readyPlayerNames = from player 
                                    in this.Players.Values
