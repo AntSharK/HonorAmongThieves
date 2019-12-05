@@ -134,6 +134,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
         internal void RefundIngredients(CakeryRoom.Prices ingredientPrices)
         {
+            const double ingredientRefundCoefficient = 0.9;
             this.LatestIngredientRefund = this.CurrentResources.Butter * ingredientPrices.Butter / 1000
                 + this.CurrentResources.Flour * ingredientPrices.Flour / 1000
                 + this.CurrentResources.Sugar * ingredientPrices.Sugar / 1000;
@@ -142,7 +143,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
             this.CurrentResources.Flour = 0;
             this.CurrentResources.Sugar = 0;
 
-            this.CurrentResources.Money = this.CurrentResources.Money + this.LatestIngredientRefund;
+            this.CurrentResources.Money = this.CurrentResources.Money + this.LatestIngredientRefund * ingredientRefundCoefficient;
         }
 
         internal void FinalizeUpgrades(CakeryRoom room)
