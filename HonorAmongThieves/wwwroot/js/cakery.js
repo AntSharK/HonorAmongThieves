@@ -1052,7 +1052,7 @@ function updatePlayerList(readyPlayers, slowBastards) {
 // ------------------------------
 // ----- STATE: MARKET REPORT ---
 // ------------------------------
-connection.on("ShowMarketReport", function (marketReport, currentPlayerSales, goodPrices, playerProfit, currentMarket, playerUpgradeReport, newsReport) {
+connection.on("ShowMarketReport", function (marketReport, currentPlayerSales, goodPrices, playerProfit, currentMarket, playerIngredientRefund, playerUpgradeReport, newsReport) {
     gameState.currentMarket = currentMarket;
     bakingMenuState = "buyingingredients";
     changeUiState("MARKET REPORT", "marketreport");
@@ -1152,6 +1152,16 @@ connection.on("ShowMarketReport", function (marketReport, currentPlayerSales, go
         document.getElementById("upgradesboughtlistmarketreportdiv").style.display = "block";
     }
 
+    var otherIncomeText = "";
+    if (playerIngredientRefund > 0.1) {
+        otherIncomeText = "Sold unused ingredients for $" + (playerIngredientRefund / 100).toFixed(2) + ".";
+    }
+
+    if (currentMarket.annualAllowance > 0.1) {
+        otherIncomeText = otherIncomeText + " The state gives you an annual allowance of $" + (currentMarket.annualAllowance / 100).toFixed(2) + ".";
+    }
+
+    document.getElementById("otherincomesources").textContent = otherIncomeText;
     document.getElementById("upgradesmarketreport").textContent = playerUpgradeReport;
 });
 

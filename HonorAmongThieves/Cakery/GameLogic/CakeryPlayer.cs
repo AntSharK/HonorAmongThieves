@@ -51,6 +51,7 @@ namespace HonorAmongThieves.Cakery.GameLogic
         public Resources CurrentResources { get; set; } = new Resources();
         public BakedGoods CurrentBakedGoods { get; set; } = new BakedGoods();
         public long TotalSales { get; set; } = 0;
+        public double LatestIngredientRefund { get; set; } = 0;
 
         public CakeryPlayer(string playerName, CakeryRoom room)
             : base(playerName)
@@ -129,6 +130,19 @@ namespace HonorAmongThieves.Cakery.GameLogic
             this.CurrentBakedGoods.Cookies = 0;
             this.CurrentBakedGoods.Croissants = 0;
             this.CurrentBakedGoods.Cakes = 0;
+        }
+
+        internal void RefundIngredients(CakeryRoom.Prices ingredientPrices)
+        {
+            this.LatestIngredientRefund = this.CurrentResources.Butter * ingredientPrices.Butter / 1000
+                + this.CurrentResources.Flour * ingredientPrices.Flour / 1000
+                + this.CurrentResources.Sugar * ingredientPrices.Sugar / 1000;
+
+            this.CurrentResources.Butter = 0;
+            this.CurrentResources.Flour = 0;
+            this.CurrentResources.Sugar = 0;
+
+            this.CurrentResources.Money = this.CurrentResources.Money + this.LatestIngredientRefund;
         }
 
         internal void FinalizeUpgrades(CakeryRoom room)
