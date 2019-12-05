@@ -1059,7 +1059,7 @@ connection.on("ShowMarketReport", function (marketReport, currentPlayerSales, go
 
     document.getElementById("marketreportnews").textContent = newsReport;
     var marketReportTable = document.getElementById("marketreporttable");
-    for (var i = marketReportTable.rows.length - 1; i > 2; i--) {
+    for (var i = marketReportTable.rows.length - 1; i > 1; i--) {
         marketReportTable.deleteRow(i);
     }
 
