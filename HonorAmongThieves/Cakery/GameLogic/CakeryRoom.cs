@@ -151,12 +151,13 @@ namespace HonorAmongThieves.Cakery.GameLogic
             foreach (var player in this.Players.Values)
             {
                 player.SellGoods(marketReport);
+                player.RefundIngredients(this.CurrentPrices);
 
                 // Give the player his allowance
                 player.CurrentResources.Money = player.CurrentResources.Money + this.CurrentMarket.AnnualAllowance;
 
                 this.CashInGame = this.CashInGame + player.CurrentResources.Money;
-            }            
+            }
 
             // Then, finalize upgrades
             foreach (var player in this.Players.Values)
@@ -241,7 +242,8 @@ namespace HonorAmongThieves.Cakery.GameLogic
 
              await this.hubContext.Clients.Client(player.ConnectionId).SendAsync("ShowMarketReport",
                  marketReport.OrderedSalesDataNames, playerSales, goodPrices,
-                 playerProfit, this.CurrentMarket, playerUpgradeReport, newsReport);
+                 playerProfit, this.CurrentMarket, player.LatestIngredientRefund,
+                 playerUpgradeReport, newsReport);
         }
 
         public static (double, double, double) ComputeExpectedSales(double cashInGame, double efficiencyCoefficient)
