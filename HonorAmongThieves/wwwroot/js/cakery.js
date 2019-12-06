@@ -1052,14 +1052,14 @@ function updatePlayerList(readyPlayers, slowBastards) {
 // ------------------------------
 // ----- STATE: MARKET REPORT ---
 // ------------------------------
-connection.on("ShowMarketReport", function (marketReport, playerSales, goodPrices, playerProfit, currentMarket, playerUpgradeReport, newsReport) {
+connection.on("ShowMarketReport", function (marketReport, currentPlayerSales, goodPrices, playerProfit, currentMarket, playerUpgradeReport, newsReport) {
     gameState.currentMarket = currentMarket;
     bakingMenuState = "buyingingredients";
     changeUiState("MARKET REPORT", "marketreport");
 
     document.getElementById("marketreportnews").textContent = newsReport;
     var marketReportTable = document.getElementById("marketreporttable");
-    for (var i = marketReportTable.rows.length - 1; i > 2; i--) {
+    for (var i = marketReportTable.rows.length - 1; i > 1; i--) {
         marketReportTable.deleteRow(i);
     }
 
@@ -1098,10 +1098,10 @@ connection.on("ShowMarketReport", function (marketReport, playerSales, goodPrice
     document.getElementById("marketreporttitle").textContent = "YEAR: " + gameState.currentMarket.currentYear + "/"
         + gameState.currentMarket.maxYears + " SALES REPORT";
 
-    if (playerSales.item1 > 0) {
+    if (currentPlayerSales.item1 > 0) {
         document.getElementById("marketreportcookieprice").textContent = "$" + (goodPrices.item1 / 100).toFixed(2)
-        document.getElementById("marketreportcookieamount").textContent = playerSales.item1;
-        document.getElementById("marketreportcookierevenue").textContent = "$" + (playerSales.item1 * goodPrices.item1 / 100).toFixed(2);
+        document.getElementById("marketreportcookieamount").textContent = currentPlayerSales.item1;
+        document.getElementById("marketreportcookierevenue").textContent = "$" + (currentPlayerSales.item1 * goodPrices.item1 / 100).toFixed(2);
     }
     else {
         document.getElementById("marketreportcookieprice").textContent = ""
@@ -1109,10 +1109,10 @@ connection.on("ShowMarketReport", function (marketReport, playerSales, goodPrice
         document.getElementById("marketreportcookierevenue").textContent = ""
     }
 
-    if (playerSales.item2 > 0) {
+    if (currentPlayerSales.item2 > 0) {
         document.getElementById("marketreportcroissantprice").textContent = "$" + (goodPrices.item2 / 100).toFixed(2)
-        document.getElementById("marketreportcroissantamount").textContent = playerSales.item2;
-        document.getElementById("marketreportcroissantrevenue").textContent = "$" + (playerSales.item2 * goodPrices.item2 / 100).toFixed(2);
+        document.getElementById("marketreportcroissantamount").textContent = currentPlayerSales.item2;
+        document.getElementById("marketreportcroissantrevenue").textContent = "$" + (currentPlayerSales.item2 * goodPrices.item2 / 100).toFixed(2);
     }
     else {
         document.getElementById("marketreportcroissantprice").textContent = ""
@@ -1120,10 +1120,10 @@ connection.on("ShowMarketReport", function (marketReport, playerSales, goodPrice
         document.getElementById("marketreportcroissantrevenue").textContent = ""
     }
 
-    if (playerSales.item3 > 0) {
+    if (currentPlayerSales.item3 > 0) {
         document.getElementById("marketreportcakeprice").textContent = "$" + (goodPrices.item3 / 100).toFixed(2)
-        document.getElementById("marketreportcakeamount").textContent = playerSales.item3;
-        document.getElementById("marketreportcakerevenue").textContent = "$" + (playerSales.item3 * goodPrices.item3 / 100).toFixed(2);
+        document.getElementById("marketreportcakeamount").textContent = currentPlayerSales.item3;
+        document.getElementById("marketreportcakerevenue").textContent = "$" + (currentPlayerSales.item3 * goodPrices.item3 / 100).toFixed(2);
     }
     else {
         document.getElementById("marketreportcakeprice").textContent = ""
