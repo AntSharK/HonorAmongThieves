@@ -228,7 +228,7 @@ connection.on("UpdateProductionState", function (currentPrices, currentMarket, p
 
 // Display the common buttons and tables for baking menu
 function showCommonMenuButtons() {
-    document.getElementById("currentyear").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
+    document.getElementById("currentyear").textContent = "ROUND: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
 
     var elements = document.getElementsByClassName("commonmenubutton");
     for (var i = 0; i < elements.length; i++) {
@@ -881,7 +881,7 @@ function showUseUpgradeMenu() {
 
         var buyupgradetousemessage = document.createElement("TD");
         buyupgradetousemessage.colSpan = 5;
-        buyupgradetousemessage.appendChild(document.createTextNode("You don't have any usable upgrades. Buy some above. Upgrades only come into play the year after they are purchased."));
+        buyupgradetousemessage.appendChild(document.createTextNode("You don't have any usable upgrades. Buy some above. Upgrades only come into play the round after they are purchased."));
         tr.appendChild(buyupgradetousemessage);
         useUpgradeTable.appendChild(tr);
     }
@@ -968,7 +968,7 @@ function summarizeGoodsBaked() {
     }
 
     changeUiState("SET UP SHOP", "goodsbaked");
-    document.getElementById("currentyearsummary").textContent = "YEAR: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
+    document.getElementById("currentyearsummary").textContent = "ROUND: " + (gameState.currentMarket.currentYear + 1) + "/" + gameState.currentMarket.maxYears;
 
     document.getElementById("cookiesbeingsold").textContent = playerState.bakedGoods.cookies;
     document.getElementById("croissantsbeingsold").textContent = playerState.bakedGoods.croissants;
@@ -1095,7 +1095,7 @@ connection.on("ShowMarketReport", function (marketReport, currentPlayerSales, go
         marketReportTable.appendChild(tr);
     }
 
-    document.getElementById("marketreporttitle").textContent = "YEAR: " + gameState.currentMarket.currentYear + "/"
+    document.getElementById("marketreporttitle").textContent = "ROUND: " + gameState.currentMarket.currentYear + "/"
         + gameState.currentMarket.maxYears + " SALES REPORT";
 
     if (currentPlayerSales.item1 > 0) {
