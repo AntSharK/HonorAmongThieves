@@ -961,7 +961,7 @@ function updateUpgradeUse(upgrade, useCost, useEffect) {
 // -------------------------
 function summarizeGoodsBaked() {
     if (playerState.resources.upgradeAllowance > 0) {
-        document.getElementById("upgradecreditwarning").textContent = "Note: You have ended your turn with $" + (playerState.resources.upgradeAllowance / 100).toFixed(2) + " of unspent Upgrade Credit! Buy upgrades early to use them more.";
+        document.getElementById("upgradecreditwarning").textContent = "Note: You have ended your turn with $" + (playerState.resources.upgradeAllowance / 100).toFixed(2) + " of unspent Upgrade Credit.";
     }
     else {
         document.getElementById("upgradecreditwarning").style.display = "none";
