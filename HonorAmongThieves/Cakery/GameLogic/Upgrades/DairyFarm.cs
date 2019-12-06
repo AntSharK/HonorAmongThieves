@@ -10,7 +10,7 @@
 
         public override bool Usable => false;
 
-        public override string Description => "Generates 1000g of butter per year";
+        public override string Description => "Generates 1000g of butter per round";
 
         public DairyFarm(CakeryPlayer player, CakeryRoom room) : base(player, room) { }
 
