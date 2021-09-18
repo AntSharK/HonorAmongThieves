@@ -45,6 +45,7 @@ namespace Necronomnomnom
         {
             for(var i = 0; i < this.MaxCards; i++)
             {
+                this.CurrentCardEvaluated = i;
                 if (this.Cards[i] == null)
                 {
                     continue;

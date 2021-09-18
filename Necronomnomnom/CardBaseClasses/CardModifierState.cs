@@ -6,8 +6,8 @@
     public class CardModifierState
     {
         public int DamageMultiplier = 1;
-        public int DamageIncrease = 1;
+        public int DamageIncrease = 0;
         public int DurationMultipler = 1;
-        public int DurationIncrease = 1;
+        public int DurationIncrease = 0;
     }
 }
