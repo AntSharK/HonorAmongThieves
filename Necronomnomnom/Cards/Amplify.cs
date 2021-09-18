@@ -10,8 +10,6 @@ namespace Necronomnomnom.Cards
         public int Multiplier = 2;
         public int Duration = 2;
 
-        public Amplify(Player player) : base(player) { }
-
         public override void ActOnRound(RoundState roundState, CardModifierState cardModifierState)
         {
             var totalDuration = (this.Duration + cardModifierState.DurationIncrease) * cardModifierState.DurationMultipler;

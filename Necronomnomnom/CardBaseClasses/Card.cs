@@ -5,11 +5,7 @@
     /// </summary>
     public abstract class Card
     {
-        protected Player owner;
-        public Card(Player owner)
-        {
-            this.owner = owner;
-        }
+        public Player Owner;
 
         /// <summary>
         /// Has the card act on the round state

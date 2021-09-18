@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heist", "Heist\Heist.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Necronomnomnom", "Necronomnomnom\Necronomnomnom.csproj", "{C3B71B7B-0F03-4F8F-8E98-F645034BDF5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{6199B8C0-B365-4A1C-914D-04316DF05627}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{C3B71B7B-0F03-4F8F-8E98-F645034BDF5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3B71B7B-0F03-4F8F-8E98-F645034BDF5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3B71B7B-0F03-4F8F-8E98-F645034BDF5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6199B8C0-B365-4A1C-914D-04316DF05627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6199B8C0-B365-4A1C-914D-04316DF05627}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6199B8C0-B365-4A1C-914D-04316DF05627}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6199B8C0-B365-4A1C-914D-04316DF05627}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

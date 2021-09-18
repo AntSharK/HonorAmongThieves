@@ -6,6 +6,7 @@
     <UserSecretsId>2ccc6a9e-f604-4c13-9307-f70695e04405</UserSecretsId>
   </PropertyGroup>
 
+
   <ItemGroup>
     <Compile Remove="Categories\**" />
     <Content Remove="Categories\**" />
@@ -15,15 +16,11 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-  </ItemGroup>
-
-
-  <ItemGroup>
     <ProjectReference Include="..\Cakery\Cakery.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Heist\Heist.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

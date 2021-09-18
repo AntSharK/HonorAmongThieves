@@ -28,7 +28,7 @@ namespace Necronomnomnom
             CardModifiers = new List<CardModifier>[maxCards];
             for(var i = 0; i < maxCards; i++)
             {
-                CardModifiers[0] = new List<CardModifier>();
+                CardModifiers[i] = new List<CardModifier>();
             }
 
             foreach(var player in players)
@@ -45,6 +45,11 @@ namespace Necronomnomnom
         {
             for(var i = 0; i < this.MaxCards; i++)
             {
+                if (this.Cards[i] == null)
+                {
+                    continue;
+                }
+
                 var cardModifierState = new CardModifierState();
                 foreach(var modifier in CardModifiers[i])
                 {
