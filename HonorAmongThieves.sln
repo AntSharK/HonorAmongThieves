@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31613.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HonorAmongThieves", "HonorAmongThieves\HonorAmongThieves.csproj", "{C651769E-2D3B-4B11-9C23-1E45EBE2A50C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Utils\Common.csproj", "{63AA993B-3BCD-4117-9476-90E9E768778F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{63AA993B-3BCD-4117-9476-90E9E768778F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
