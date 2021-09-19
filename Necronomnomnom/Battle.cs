@@ -16,7 +16,16 @@ namespace Necronomnomnom
         {
             this.CurrentTurn.EvaluateCards();
 
-            // TODO: End the turn by dealing out damage numbers
+            // End the turn by dealing out damage numbers
+            foreach (var damageToPlayer in this.CurrentTurn.DamageToPlayer)
+            {
+                damageToPlayer.Key.HitPoints -= damageToPlayer.Value;
+            }
+
+            foreach (var damageToMonster in this.CurrentTurn.DamageToMonster)
+            {
+                this.CurrentEnemy.HitPoints -= damageToMonster.Value;
+            }
         }
     }
 }

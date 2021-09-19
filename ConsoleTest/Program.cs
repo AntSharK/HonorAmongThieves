@@ -28,6 +28,13 @@ namespace ConsoleTest
             dungeon.CurrentBattle = new Battle() { Players = dungeon.Players, CurrentEnemy = monster }; 
             dungeon.CurrentBattle.CurrentTurn = new RoundState(6, dungeon.Players);
 
+            // Test card shuffling
+            p1.RefreshHand();
+            p1.RefreshHand();
+            p1.RefreshHand();
+            p1.RefreshHand();
+            p1.RefreshHand();
+
             // Play some player cards
             dungeon.CurrentBattle.CurrentTurn.Cards[0] = p1.Cards[0];
             dungeon.CurrentBattle.CurrentTurn.Cards[1] = p1.Cards[1];

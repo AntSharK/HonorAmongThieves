@@ -7,7 +7,19 @@ namespace Necronomnomnom
     /// </summary>
     public abstract class Monster
     {
-        public int HitPoints { get; set; }
+        private int hitPoints;
+        public int HitPoints
+        {
+            get { return this.hitPoints; }
+            set
+            {
+                this.hitPoints = value;
+                if (this.hitPoints > this.MaxHitPoints)
+                {
+                    this.hitPoints = this.MaxHitPoints;
+                }
+            }
+        }
         public abstract int MaxHitPoints { get; }
         public List<Card> Cards = new List<Card>();
     }
