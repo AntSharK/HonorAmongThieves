@@ -12,18 +12,9 @@ namespace Necronomnomnom.Cards
 
         public override void ActOnRound(RoundState roundState, CardModifierState cardModifierState)
         {
-            var totalDuration = (this.Duration + cardModifierState.DurationIncrease) * cardModifierState.DurationMultipler;
-            for (var i = 1; i <= totalDuration; i++)
-            {
-                var roundNum = i + roundState.CurrentCardEvaluated;
-                if (roundNum >= roundState.MaxCards)
-                {
-                    break;
-                }
-
-                roundState.CardModifiers[roundNum].Add(new MultiplyDuration(this.Multiplier));
-                roundState.CardModifiers[roundNum].Add(new MultiplyDamage(this.Multiplier));
-            }
+            var totalDuration = cardModifierState.GetDuration(this.Duration);
+            roundState.AddCardModifier(totalDuration, new MultiplyDuration(this.Multiplier));
+            roundState.AddCardModifier(totalDuration, new MultiplyDamage(this.Multiplier));
         }
     }
 }

@@ -10,5 +10,13 @@ namespace Necronomnomnom
         public List<Player> Players;
         public RoundState CurrentTurn;
         public int TurnNumber = 0;
+        public Monster CurrentEnemy;
+
+        public void FinishCurrentTurn()
+        {
+            this.CurrentTurn.EvaluateCards();
+
+            // TODO: End the turn by dealing out damage numbers
+        }
     }
 }

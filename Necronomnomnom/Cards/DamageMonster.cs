@@ -9,7 +9,7 @@
 
         public override void ActOnRound(RoundState roundState, CardModifierState cardModifierState)
         {
-            var totalDamage = (this.DamageDone + cardModifierState.DamageIncrease) * cardModifierState.DamageMultiplier;
+            var totalDamage = cardModifierState.GetDamageDone(this.DamageDone);
             roundState.DamageToMonster[this.Owner] += totalDamage;
         }
     }

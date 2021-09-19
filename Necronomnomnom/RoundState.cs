@@ -26,15 +26,34 @@ namespace Necronomnomnom
             this.MaxCards = maxCards;
             Cards = new Card[maxCards];
             CardModifiers = new List<CardModifier>[maxCards];
-            for(var i = 0; i < maxCards; i++)
+            for (var i = 0; i < maxCards; i++)
             {
                 CardModifiers[i] = new List<CardModifier>();
             }
 
-            foreach(var player in players)
+            foreach (var player in players)
             {
                 DamageToMonster[player] = 0;
                 DamageToPlayer[player] = 0;
+            }
+        }
+
+        /// <summary>
+        /// Adds a card modifier for the cards after the current card
+        /// </summary>
+        /// <param name="duration">The number of cards that this modifier lasts for</param>
+        /// <param name="modifier">The modifier</param>
+        public void AddCardModifier(int duration, CardModifier modifier)
+        {
+            for (var i = 1; i <= duration; i++)
+            {
+                var roundNum = i + this.CurrentCardEvaluated;
+                if (roundNum >= this.MaxCards)
+                {
+                    break;
+                }
+
+                this.CardModifiers[roundNum].Add(modifier);
             }
         }
 

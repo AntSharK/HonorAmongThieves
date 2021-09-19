@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Necronomnomnom;
 using Necronomnomnom.Cards;
+using Necronomnomnom.Monsters;
 
 namespace ConsoleTest
 {
@@ -23,18 +24,22 @@ namespace ConsoleTest
             p2.GiveCard(new DamageMonster());
             p2.GiveCard(new Amplify());
 
-            dungeon.CurrentBattle = new Battle() { Players = dungeon.Players }; 
+            var monster = new RiceMonster();
+            dungeon.CurrentBattle = new Battle() { Players = dungeon.Players, CurrentEnemy = monster }; 
             dungeon.CurrentBattle.CurrentTurn = new RoundState(6, dungeon.Players);
 
-            // Play some cards
+            // Play some player cards
             dungeon.CurrentBattle.CurrentTurn.Cards[0] = p1.Cards[0];
             dungeon.CurrentBattle.CurrentTurn.Cards[1] = p1.Cards[1];
             dungeon.CurrentBattle.CurrentTurn.Cards[2] = p1.Cards[2];
             dungeon.CurrentBattle.CurrentTurn.Cards[3] = p2.Cards[2];
             dungeon.CurrentBattle.CurrentTurn.Cards[4] = p2.Cards[1];
 
+            // Play some monster cards
+            dungeon.CurrentBattle.CurrentTurn.Cards[0] = monster.Cards[0];
+
             // Finish playing cards. Evaluate.
-            dungeon.CurrentBattle.CurrentTurn.EvaluateCards();
+            dungeon.CurrentBattle.FinishCurrentTurn();
             Console.WriteLine("Finished");
         }
     }
