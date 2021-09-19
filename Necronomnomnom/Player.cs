@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using HonorAmongThieves;
 
 namespace Necronomnomnom
 {
@@ -8,10 +9,8 @@ namespace Necronomnomnom
     /// </summary>
     public class Player
     {
-        private static Random rng = new Random();
         private int hitPoints = 100;
         public List<Card> Cards = new List<Card>();
-        public List<Card> CurrentHand = new List<Card>();
 
         public int MaxHandSize = 2; // The number of cards the player can see at once
         public int MaxRefreshes = 2; // The number of times the player can refresh his hand
@@ -40,27 +39,7 @@ namespace Necronomnomnom
         public void RefreshHand()
         {
             this.CurrentRefreshes++;
-            if (this.MaxHandSize >= this.Cards.Count)
-            {
-                this.CurrentHand = this.Cards;
-                return;
-            }
-
-            // Take random cards from the deck and put it into the current hand
-            this.CurrentHand = new List<Card>();
-            var indexes = new List<int>();
-            for(var i = 0; i < this.Cards.Count; i++)
-            {
-                indexes.Add(i);
-            }
-
-            for(var i = 0; i < this.MaxHandSize; i++)
-            {
-                var randomIndex = rng.Next(0, indexes.Count);
-                var index = indexes[randomIndex]; // Pick a random number from the index
-                indexes.RemoveAt(randomIndex);
-                this.CurrentHand.Add(this.Cards[index]);
-            }
+            Utils.Shuffle(this.Cards);
         }
 
         public void GiveCard(Card card)
