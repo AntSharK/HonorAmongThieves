@@ -6,6 +6,13 @@
     <UserSecretsId>2ccc6a9e-f604-4c13-9307-f70695e04405</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Categories\**" />
+    <Content Remove="Categories\**" />
+    <EmbeddedResource Remove="Categories\**" />
+    <None Remove="Categories\**" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
@@ -14,7 +21,9 @@
 
 
   <ItemGroup>
-    <Folder Include="Categories\" />
+    <ProjectReference Include="..\Cakery\Cakery.csproj" />
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Heist\Heist.csproj" />
   </ItemGroup>
 
 </Project>
