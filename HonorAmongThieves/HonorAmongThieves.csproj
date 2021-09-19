@@ -21,7 +21,9 @@
 
 
   <ItemGroup>
+    <ProjectReference Include="..\Cakery\Cakery.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Heist\Heist.csproj" />
   </ItemGroup>
 
 </Project>
