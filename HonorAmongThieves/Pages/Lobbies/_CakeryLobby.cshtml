@@ -1,0 +1,17 @@
+﻿@page
+@model HonorAmongThieves.Pages.CakeryModel
+<div id="startButtonDiv" style="display:none" class="h5">
+    <br />
+    <div style="text-align:center">
+        <input type="button" id="startbutton" value="BEGIN GAME" class="display-2" /><br /><br />
+        <br />
+        <br />
+        <div class="display-4">
+            <u>GAME PARAMETERS</u><br />
+            Starting $$: <input type="number" step="1" min="0" max="9999999" value="1200" id="startingcash" /><br />
+            Allowance $$: <input type="number" step="1" min="0" max="9999999" value="200" id="annualallowance" /><br />
+            Upgrade $$: <input type="number" step="1" min="0" max="9999999" value="10000" id="upgradeallowance" /><br />
+            Game Length: <input type="number" step="1" min="2" max="999" value="6" id="gamelength" /><br />
+        </div>
+    </div>
+</div>

@@ -1,21 +1,32 @@
 ﻿@page
+@model HonorAmongThieves.Pages.CakeryModel
 <title>CAKERY</title>
 <div class="container">
     @await Html.PartialAsync("_GameLobby")
-    <div id="startButtonDiv" style="display:none" class="h5">
-        <br />
-        <div style="text-align:center">
-            <input type="button" id="startbutton" value="BEGIN GAME" class="display-2" /><br /><br />
+    @await Html.PartialAsync("Lobbies/_CakeryLobby", Model)
+
+    <div class="state" id="pregame" style="text-align:center">
+        <hr />
+        <h4 class="display-4"><a href="CakeryInstructions.html" target="_blank" rel="noopener noreferrer">Instructions</a></h4>
+        <hr />
+        <h2><u>Existing Lobbies</u></h2>
+        @{
+            <table border="1">
+                <th>Room ID</th>
+                <th>Updated Time</th>
+                <th>Player Count</th>
+                @foreach (var heistGame in Model.CakeryRooms)
+                {
+                    <tr>
+                        <th>@heistGame.Item1</th>
+                        <th>@heistGame.Item2.ToString()</th>
+                        <th>@heistGame.Item3.ToString()</th>
+                        <th>@heistGame.Item4.ToString()</th>
+                    </tr>
+                }
+            </table>
             <br />
-            <br />
-            <div class="display-4">
-                <u>GAME PARAMETERS</u><br />
-                Starting $$: <input type="number" step="1" min="0" max="9999999" value="1200" id="startingcash" /><br />
-                Allowance $$: <input type="number" step="1" min="0" max="9999999" value="200" id="annualallowance" /><br />
-                Upgrade $$: <input type="number" step="1" min="0" max="9999999" value="10000" id="upgradeallowance" /><br />
-                Game Length: <input type="number" step="1" min="2" max="999" value="6" id="gamelength" /><br />
-            </div>
-        </div>
+        }
     </div>
 
     <!----- COMMON HEADER FOR MENU ----->
