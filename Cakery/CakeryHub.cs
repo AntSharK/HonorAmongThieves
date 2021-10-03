@@ -1,111 +1,58 @@
 ﻿using HonorAmongThieves.Cakery.GameLogic;
 using Microsoft.AspNetCore.SignalR;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Cakery
 {
-    public class CakeryHub : Hub
+    public class CakeryHub : GameHub<CakeryHub, CakeryRoom, CakeryPlayer>
     {
-        private readonly CakeryGame lobby;
-
         public CakeryHub(CakeryGame lobby)
         {
             this.lobby = lobby;
         }
 
-        // On connected
-        public override async Task OnConnectedAsync()
+        /// <inheritdoc />
+        public override async Task ResumePlayerSession(CakeryPlayer player)
         {
-            await Clients.Caller.SendAsync("FreshConnection");
-            await base.OnConnectedAsync();
-        }
-
-        // Display an error message
-        internal async Task ShowError(string errorMessage)
-        {
-            await Clients.Caller.SendAsync("ShowError", errorMessage);
-        }
-
-        // Room creation
-        public async Task CreateRoom(string userName)
-        {
-            var roomId = this.lobby.CreateRoom(userName);
-            if (!string.IsNullOrEmpty(roomId))
+            switch (player.CurrentStatus)
             {
-                await this.JoinRoom(roomId, userName);
-            }
-            else
-            {
-                if (!Utils.IsValidName(userName))
-                {
-                    await this.ShowError("Invalid UserName. A valid UserName is required to create a room.");
-                }
-                else
-                {
-                    var numRooms = this.lobby.Rooms.Count;
-                    await this.ShowError("Unable to create room. Number of total rooms: " + numRooms);
-                }
-            }
-        }
+                case CakeryPlayer.Status.WaitingForGameStart:
+                    await this.JoinRoom_UpdateView(player.Room, player);
+                    break;
+                case CakeryPlayer.Status.Producing:
+                    await UpdateProductionState(player.Room, player);
+                    break;
+                case CakeryPlayer.Status.SettingUpShop:
+                    var readyPlayerNames = from readyPlayer
+                                           in player.Room.Players.Values
+                                           where readyPlayer.CurrentStatus != CakeryPlayer.Status.Producing
+                                           select readyPlayer.Name;
 
-        // Joining Room
-        public async Task JoinRoom(string roomId, string userName)
-        {
-            CakeryRoom room;
-            if (!this.lobby.Rooms.TryGetValue(roomId, out room))
-            {
-                // Room does not exist
-                await this.ShowError("Room does not exist.");
-                return;
-            }
+                    var notReadyPlayerNames = from notReadyPlayer
+                                           in player.Room.Players.Values
+                                              where notReadyPlayer.CurrentStatus == CakeryPlayer.Status.Producing
+                                              select notReadyPlayer.Name;
 
-            var createdPlayer = this.lobby.JoinRoom(userName, room, Context.ConnectionId);
-            if (createdPlayer != null)
-            {
-                await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-                await this.JoinRoom_UpdateView(room, createdPlayer);
+                    await Clients.Caller.SendAsync("SetUpShop",
+                            player.Room.CurrentPrices,
+                            player.Room.CurrentMarket,
+                            player.CurrentResources,
+                            player.CurrentUpgrades,
+                            player.CurrentBakedGoods,
+                            readyPlayerNames,
+                            notReadyPlayerNames);
+                    break;
+                case CakeryPlayer.Status.MarketReport:
+                    var yearToDisplay = player.Room.CurrentMarket.CurrentYear - 1;
+                    var marketReport = player.Room.MarketReports[yearToDisplay];
+                    await player.Room.DisplayMarketReport(player, marketReport, player.Room.CurrentPrices);
+                    break;
+                case CakeryPlayer.Status.CleaningUp:
+                    await Clients.Caller.SendAsync("EndGame", player.Room.FinalTotalSalesData, player.Room.FinalYearlySalesData[player]);
+                    break;
             }
-            else if (!room.SettingUp
-                && room.Players.ContainsKey(userName))
-            {
-                // Take over the existing session
-                await this.ResumeSession(roomId, userName);
-                return;
-            }
-            else
-            {
-                await this.ShowError("Unable to create player in room. Ensure you have a valid and unique UserName.");
-                return;
-            }
-        }
-
-        internal async Task JoinRoom_UpdateView(CakeryRoom room, CakeryPlayer newPlayer)
-        {
-            await Clients.Group(room.Id).SendAsync("JoinRoom", room.Id, newPlayer.Name);
-            await Clients.Caller.SendAsync("JoinRoom_ChangeState", room.Id, newPlayer.Name);
-
-            if (room.OwnerName == newPlayer.Name)
-            {
-                await Clients.Caller.SendAsync("JoinRoom_CreateStartButton");
-            }
-
-            var playerNames = new StringBuilder();
-            foreach (var player in room.Players.Values)
-            {
-                playerNames.Append(player.Name);
-                playerNames.Append("|");
-            }
-
-            if (playerNames.Length > 0)
-            {
-                playerNames.Length--;
-            }
-
-            await Clients.Group(room.Id).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newPlayer.Name);
         }
 
         public async Task StartRoom(string roomId, int gameLength, int startingCash, int annualAllowance, int upgradeAllowance)
@@ -140,67 +87,6 @@ namespace HonorAmongThieves.Cakery
             foreach (var player in room.Players.Values)
             {
                 await this.UpdateProductionState(room, player, false /*Don't update the caller*/);
-            }
-        }
-
-        // Resuming session
-        public async Task ResumeSession(string roomId, string userName)
-        {
-            CakeryRoom room;
-            if (!this.lobby.Rooms.TryGetValue(roomId, out room))
-            {
-                await this.ShowError("Cannot find Room ID.");
-                await Clients.Caller.SendAsync("ClearState");
-                return;
-            }
-
-            CakeryPlayer player;
-            if (!room.Players.TryGetValue(userName, out player))
-            {
-                await this.ShowError("Cannot find player in room.");
-                await Clients.Caller.SendAsync("ClearState");
-                return;
-            }
-
-            player.ConnectionId = Context.ConnectionId;
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-
-            switch (player.CurrentStatus)
-            {
-                case CakeryPlayer.Status.WaitingForGameStart:
-                    await this.JoinRoom_UpdateView(room, player);
-                    break;
-                case CakeryPlayer.Status.Producing:
-                    await UpdateProductionState(room, player);
-                    break;
-                case CakeryPlayer.Status.SettingUpShop:
-                    var readyPlayerNames = from readyPlayer
-                                           in room.Players.Values
-                                           where readyPlayer.CurrentStatus != CakeryPlayer.Status.Producing
-                                           select readyPlayer.Name;
-
-                    var notReadyPlayerNames = from notReadyPlayer
-                                           in room.Players.Values
-                                              where notReadyPlayer.CurrentStatus == CakeryPlayer.Status.Producing
-                                              select notReadyPlayer.Name;
-
-                    await Clients.Caller.SendAsync("SetUpShop",
-                            room.CurrentPrices,
-                            room.CurrentMarket,
-                            player.CurrentResources,
-                            player.CurrentUpgrades,
-                            player.CurrentBakedGoods,
-                            readyPlayerNames,
-                            notReadyPlayerNames);
-                    break;
-                case CakeryPlayer.Status.MarketReport:
-                    var yearToDisplay = room.CurrentMarket.CurrentYear - 1;
-                    var marketReport = room.MarketReports[yearToDisplay];
-                    await room.DisplayMarketReport(player, marketReport, room.CurrentPrices);
-                    break;
-                case CakeryPlayer.Status.CleaningUp:
-                    await Clients.Caller.SendAsync("EndGame", room.FinalTotalSalesData, room.FinalYearlySalesData[player]);
-                    break;
             }
         }
 
