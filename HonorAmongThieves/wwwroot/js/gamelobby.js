@@ -69,6 +69,7 @@ document.getElementById("joinroombutton").addEventListener("click", function (ev
 
 // Game created - create the start button for the lobby owner
 connection.on("JoinRoom_CreateStartButton", function () {
+    // The "Start Button" div also contains all game parameters
     var startButton = document.getElementById("startButtonDiv");
     startButton.style.display = "block";
 });
@@ -116,6 +117,20 @@ var conditionalReload = function () {
         //    }
         //}, 10000)
     }
+}
+
+function changeUiState(title, stateToChange) {
+    document.getElementById("pageName").textContent = title;
+
+    // Hide all elements
+    var elements = document.getElementsByClassName("state");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+    }
+
+    // Display the new UI
+    var bakingmenu = document.getElementById(stateToChange);
+    bakingmenu.style.display = "block";
 }
 
 window.onload = conditionalReload;

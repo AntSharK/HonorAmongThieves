@@ -1,7 +1,7 @@
 ﻿@page
 <title>HEIST</title>
 <div class="container">
-    @Html.Partial("_GameLobby")
+    @await Html.PartialAsync("_GameLobby")
     <div id="startButtonDiv" style="display:none" class="h5">
         At least 2 players are required to start the game.<br />
         Make sure there are no players who are in the lobby but cannot see the game!!.<br />
