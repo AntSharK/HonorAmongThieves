@@ -19,10 +19,6 @@ document.getElementById("createroombutton").addEventListener("click", function (
 
 // Update the page for the player when they join a room
 connection.on("JoinRoom_ChangeState", function (roomJoined, userJoined) {
-    // Hide the start button by default
-    var startButton = document.getElementById("startButtonDiv");
-    startButton.style.display = "none";
-
     // This event is only sent to the caller on joining a room
     userName = userJoined;
     roomId = roomJoined;
@@ -76,3 +72,50 @@ connection.on("JoinRoom_CreateStartButton", function () {
     var startButton = document.getElementById("startButtonDiv");
     startButton.style.display = "block";
 });
+
+connection.start().catch(function (err) {
+    return console.error(err.toString());
+});
+
+connection.on("FreshConnection", function () {
+    var sessionUserName = sessionStorage.getItem("username");
+    var sessionRoomId = sessionStorage.getItem("roomid");
+    //reconnecting = false;
+
+    if (sessionUserName != null && sessionRoomId != null) {
+        // Resume the session
+        userName = sessionUserName;
+        roomId = sessionRoomId;
+
+        connection.invoke("ResumeSession", roomId, userName).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+});
+
+connection.on("ClearState", function () {
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("roomid");
+})
+
+var conditionalReload = function () {
+    var sessionUserName = sessionStorage.getItem("username");
+    var sessionRoomId = sessionStorage.getItem("roomid");
+
+    if (sessionUserName != null && sessionRoomId != null) {
+        //reconnecting = true;
+        var elements = document.getElementsByClassName("state");
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].style.display = "none";
+        }
+
+        document.getElementById("pageName").textContent = "RECONNECTING...";
+        //setInterval(function () {
+        //    if (reconnecting === true) {
+        //        window.location.reload()
+        //    }
+        //}, 10000)
+    }
+}
+
+window.onload = conditionalReload;

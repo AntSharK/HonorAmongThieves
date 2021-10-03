@@ -34,8 +34,6 @@ namespace HonorAmongThieves.Heist.GameLogic
 
         public bool Okay { get; set; } = true;
 
-        public bool IsBot { get; set; } = false;
-
         public Heist CurrentHeist;
 
         public HeistPlayer(string name, HeistRoom room)
@@ -73,54 +71,6 @@ namespace HonorAmongThieves.Heist.GameLogic
             this.Decision.FateSummary = TextGenerator.GenerateFateSummary(this.Decision);
         }
 
-        public async Task ResumePlayerSession(HeistHub hub)
-        {
-            if (this.Room.SettingUp)
-            {
-                await hub.JoinRoom_UpdateView(this.Room, this);
-                return;
-            }
-
-            // This doesn't actually happen since the endgame_broadcast deletes the session state
-            if (this.Room.CurrentYear == this.Room.MaxYears)
-            {
-                await hub.EndGame_Broadcast(this.Room, true);
-                return;
-            }
-
-            await hub.ReconnectToActiveGame(this);
-            await hub.StartRoom_UpdatePlayer(this);
-
-            if (this.Room.CurrentStatus == HeistRoom.Status.ResolvingHeists)
-            {
-                await this.UpdateFateView(hub, !this.Okay /*Don't set the OKAY button if it has already been pressed*/);
-                return;
-            }
-
-            if (this.Room.CurrentStatus == HeistRoom.Status.AwaitingHeistDecisions
-                || this.Room.CurrentStatus == HeistRoom.Status.NoHeists)
-            {
-                switch (this.CurrentStatus)
-                {
-                    // Idle statuses
-                    case Status.FindingHeist:
-                    case Status.InJail:
-                        await hub.UpdateIdleStatus(this, !this.Okay /*Don't set the OKAY button if it has already been pressed*/);
-                        return;
-                    case Status.InHeist:
-                        await hub.HeistPrep_ChangeState(this.CurrentHeist, true);
-                        return;
-                    case Status.HeistDecisionMade:
-                        await hub.HeistPrep_UpdateDecision(this);
-                        return;
-                    default:
-                        // This should not happen
-                        await hub.ShowError("ERROR RESUMING CURRENT STATE");
-                        return;
-                }
-            }
-        }
-
         public async Task UpdateFateLogic(HeistHub hub)
         {
             this.PreviousStatus = this.CurrentStatus;
@@ -149,7 +99,7 @@ namespace HonorAmongThieves.Heist.GameLogic
             }
         }
 
-        private async Task UpdateFateView(HeistHub hub, bool setOkayButton = true)
+        internal async Task UpdateFateView(HeistHub hub, bool setOkayButton = true)
         {
             // Update idle people with some more information
             switch (this.PreviousStatus)

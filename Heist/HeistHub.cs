@@ -1,6 +1,5 @@
 ﻿using HonorAmongThieves.Heist.GameLogic;
 using Microsoft.AspNetCore.SignalR;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,65 +7,68 @@ using System.Threading.Tasks;
 
 namespace HonorAmongThieves.Heist
 {
-    public class HeistHub : Hub
+    public class HeistHub : GameHub<HeistHub, HeistRoom, HeistPlayer>
     {
-        private readonly HeistGame lobby;
-
         public HeistHub(HeistGame lobby)
         {
             this.lobby = lobby;
         }
 
-        public override async Task OnConnectedAsync()
+        /// <inheritdoc />
+        public override async Task ResumePlayerSession(HeistPlayer player)
         {
-            await Clients.Caller.SendAsync("FreshConnection");
-            await base.OnConnectedAsync();
-        }
-
-        public override async Task OnDisconnectedAsync(Exception exception)
-        {
-            // TODO: This requires keeping track of players on a global level
-            // That's not hard - but screwing up means leaking players in memory
-            // Which is highly resource-intensive for a moderate reward
-            await base.OnDisconnectedAsync(exception);
-        }
-
-        public async Task ResumeSession(string roomId, string userName)
-        {
-            HeistRoom room;
-            if (!this.lobby.Rooms.TryGetValue(roomId, out room))
+            if (player.Room.SettingUp)
             {
-                await Clients.Caller.SendAsync("ClearState");
-                await this.ShowError("Cannot find Room ID.");
+                await this.JoinRoom_UpdateView(player.Room, player);
                 return;
             }
 
-            HeistPlayer player;
-            if (!room.Players.TryGetValue(userName, out player))
+            // This doesn't actually happen since the endgame_broadcast deletes the session state
+            if (player.Room.CurrentYear == player.Room.MaxYears)
             {
-                await Clients.Caller.SendAsync("ClearState");
-                await this.ShowError("Cannot find player in room.");
+                await this.EndGame_Broadcast(player.Room, true);
                 return;
             }
 
-            // Transfer the connection ID
-            player.ConnectionId = Context.ConnectionId;
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            await this.ReconnectToActiveGame(player, player.Room);
+            await this.StartRoom_UpdatePlayer(player);
 
-            await player.ResumePlayerSession(this);
+            if (player.Room.CurrentStatus == HeistRoom.Status.ResolvingHeists)
+            {
+                await player.UpdateFateView(this, !player.Okay /*Don't set the OKAY button if it has already been pressed*/);
+                return;
+            }
+
+            if (player.Room.CurrentStatus == HeistRoom.Status.AwaitingHeistDecisions
+                || player.Room.CurrentStatus == HeistRoom.Status.NoHeists)
+            {
+                switch (player.CurrentStatus)
+                {
+                    // Idle statuses
+                    case HeistPlayer.Status.FindingHeist:
+                    case HeistPlayer.Status.InJail:
+                        await this.UpdateIdleStatus(player, !player.Okay /*Don't set the OKAY button if it has already been pressed*/);
+                        return;
+                    case HeistPlayer.Status.InHeist:
+                        await this.HeistPrep_ChangeState(player.CurrentHeist, true);
+                        return;
+                    case HeistPlayer.Status.HeistDecisionMade:
+                        await this.HeistPrep_UpdateDecision(player);
+                        return;
+                    default:
+                        // This should not happen
+                        await this.ShowError("ERROR RESUMING CURRENT STATE");
+                        return;
+                }
+            }
         }
 
-        internal async Task ReconnectToActiveGame(HeistPlayer player)
+        /// <inheritdoc />
+        public override async Task ReconnectToActiveGame(HeistPlayer player, HeistRoom room)
         {
-            await Clients.Caller.SendAsync("JoinRoom_ChangeState", player.Room.Id, player.Name);
-            await Clients.Caller.SendAsync("JoinRoom_TakeOverSession", player.Room.Id, player.Name);
-            await player.Room.UpdateRoomInfo(player);
+            await base.ReconnectToActiveGame(player, room);
+            await room.UpdateRoomInfo(player);
             await this.RoomOkay(player.Room, true /*Only update the current caller*/);
-        }
-
-        internal async Task ShowError(string errorMessage)
-        {
-            await Clients.Caller.SendAsync("ShowError", errorMessage);
         }
 
         public async Task OkayButton(string roomId, string playerName)
@@ -77,27 +79,6 @@ namespace HonorAmongThieves.Heist
             player.Okay = true;
             await room.Okay(this);
             await this.RoomOkay(room);
-        }
-
-        public async Task CreateRoom(string userName)
-        {
-            var roomId = this.lobby.CreateRoom(userName);
-            if (!string.IsNullOrEmpty(roomId))
-            {
-                await this.JoinRoom(roomId, userName);
-            }
-            else
-            {
-                if (!Utils.IsValidName(userName))
-                {
-                    await this.ShowError("Invalid UserName. A valid UserName is required to create a room.");
-                }
-                else
-                {
-                    var numRooms = this.lobby.Rooms.Count;
-                    await this.ShowError("Unable to create room. Number of total rooms: " + numRooms);
-                }
-            }
         }
 
         public async Task AddBot(string roomId)
@@ -120,65 +101,6 @@ namespace HonorAmongThieves.Heist
                 await this.ShowError("Bot creation failed.");
                 return;
             }
-        }
-
-        public async Task JoinRoom(string roomId, string userName)
-        {
-            HeistRoom room;
-            if (!this.lobby.Rooms.TryGetValue(roomId, out room))
-            {
-                // Room does not exist
-                await this.ShowError("Room does not exist.");
-                return;
-            }
-
-            var createdPlayer = this.lobby.JoinRoom(userName, room, Context.ConnectionId);
-            if (createdPlayer != null)
-            {
-                await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-                await this.JoinRoom_UpdateView(room, createdPlayer);
-            }
-            else if (!room.SettingUp
-                && room.Players.ContainsKey(userName))
-            {
-                // Take over the existing session
-                await this.ResumeSession(roomId, userName);
-                return;
-            }
-            else
-            {
-                await this.ShowError("Unable to create player in room. Ensure you have a valid and unique UserName.");
-                return;
-            }
-        }
-
-        internal async Task JoinRoom_UpdateView(HeistRoom room, HeistPlayer newPlayer)
-        {
-            await Clients.Group(room.Id).SendAsync("JoinRoom", room.Id, newPlayer.Name);
-
-            if (!newPlayer.IsBot)
-            {
-                await Clients.Caller.SendAsync("JoinRoom_ChangeState", room.Id, newPlayer.Name);
-            }
-
-            if (room.OwnerName == newPlayer.Name)
-            {
-                await Clients.Caller.SendAsync("JoinRoom_CreateStartButton");
-            }
-
-            var playerNames = new StringBuilder();
-            foreach (var player in room.Players.Values)
-            {
-                playerNames.Append(player.Name);
-                playerNames.Append("|");
-            }
-
-            if (playerNames.Length > 0)
-            {
-                playerNames.Length--;
-            }
-
-            await Clients.Group(room.Id).SendAsync("JoinRoom_UpdateState", playerNames.ToString(), newPlayer.Name);
         }
 
         public async Task StartRoom(string roomId, int betrayalReward, int maxGameLength, int minGameLength, int maxHeistSize, int minHeistSize, int snitchBlackmailWindow, int networthFudgePercentage, int blackmailRewardPercentage, int jailFinePercentage)
