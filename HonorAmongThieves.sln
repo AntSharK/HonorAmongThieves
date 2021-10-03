@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HonorAmongThieves", "HonorA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{63AA993B-3BCD-4117-9476-90E9E768778F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cakery", "Cakery\Cakery.csproj", "{1BF3DE1A-6F77-445A-95D4-70D9C51B365B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cakery", "Cakery\Cakery.csproj", "{1BF3DE1A-6F77-445A-95D4-70D9C51B365B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heist", "Heist\Heist.csproj", "{3F454723-2E8C-4953-9460-7A51F0F9355B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Heist", "Heist\Heist.csproj", "{3F454723-2E8C-4953-9460-7A51F0F9355B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Necronomnomnom", "Necronomnomnom\Necronomnomnom.csproj", "{C3B71B7B-0F03-4F8F-8E98-F645034BDF5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Necronomnomnom", "Necronomnomnom\Necronomnomnom.csproj", "{C3B71B7B-0F03-4F8F-8E98-F645034BDF5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{6199B8C0-B365-4A1C-914D-04316DF05627}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{6199B8C0-B365-4A1C-914D-04316DF05627}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
