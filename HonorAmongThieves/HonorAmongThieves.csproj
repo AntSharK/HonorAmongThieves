@@ -26,4 +26,9 @@
     <ProjectReference Include="..\Heist\Heist.csproj" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Folder Include="Pages\Lobbies\" />
+  </ItemGroup>
+
 </Project>
