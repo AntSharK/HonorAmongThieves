@@ -1,30 +1,32 @@
 ﻿@page
+@model HonorAmongThieves.Pages.HeistModel
 <title>HEIST</title>
 <div class="container">
     @await Html.PartialAsync("_GameLobby")
-    <div id="startButtonDiv" style="display:none" class="h5">
-        At least 2 players are required to start the game.<br />
-        Make sure there are no players who are in the lobby but cannot see the game!!.<br />
-        <br />
-        <div style="text-align:center">
-            <input type="button" id="startbutton" value="BEGIN GAME" class="display-2" /><br /><br />
-            <input type="button" id="addbotbutton" value="ADD BOT" class="display-4" />
+    @await Html.PartialAsync("Lobbies/_HeistLobby", Model)
+
+    <div class="state" id="pregame" style="text-align:center">
+        <hr />
+        <h4 class="display-4"><a href="HeistInstructions.html" target="_blank" rel="noopener noreferrer">Instructions</a></h4>
+        <hr />
+        <h2><u>Existing Lobbies</u></h2>
+        @{
+            <table border="1">
+                <th>Room ID</th>
+                <th>Updated Time</th>
+                <th>Player Count</th>
+                @foreach (var heistGame in Model.HeistRooms)
+                {
+                    <tr>
+                        <th>@heistGame.Item1</th>
+                        <th>@heistGame.Item2.ToString()</th>
+                        <th>@heistGame.Item3.ToString()</th>
+                        <th>@heistGame.Item4.ToString()</th>
+                    </tr>
+                }
+            </table>
             <br />
-            <br />
-            <div class="display-4">
-                <u>GAME PARAMETERS</u><br />
-                Betrayal Reward: <input type="number" step="1" min="0" max="99999" value="60" id="betrayalreward" /><br />
-                Min Game Length: <input type="number" step="1" min="1" max="999" value="5" id="mingamelength" /><br />
-                Max Game Length: <input type="number" step="1" min="3" max="999" value="10" id="maxgamelength" /><br />
-                Min Heist Size: <input type="number" step="1" min="2" max="99" value="3" id="minheistsize" /><br />
-                Max Heist Size: <input type="number" step="1" min="2" max="99" value="5" id="maxheistsize" /><br />
-                Blackmail Window: <input type="number" step="1" min="-1" max="99" value="4" id="snitchblackmailwindow" /><br />
-                Blackmail Reward %: <input type="number" step="1" min="1" max="99" value="60" id="blackmailrewardpercentage" /><br />
-                Networth Fudge %: <input type="number" step="1" min="0" max="99" value="10" id="networthfudgepercentage" /><br />
-                Jail Fine %: <input type="number" step="1" min="0" max="99" value="20" id="jailfinepercentage" /><br />
-            </div>
-        </div>
-        <br />
+        }
     </div>
 
     <div class="state" id="gamestart" style="display:none">
