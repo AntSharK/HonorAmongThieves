@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace HonorAmongThieves
 {
@@ -27,15 +28,15 @@ namespace HonorAmongThieves
             });
 
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddSignalR();
+            services.AddSignalR().AddNewtonsoftJsonProtocol();
             services.AddSingleton<Heist.GameLogic.HeistGame>();
             services.AddSingleton<Cakery.GameLogic.CakeryGame>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -46,10 +47,11 @@ namespace HonorAmongThieves
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseSignalR(routes =>
+            app.UseRouting();
+            app.UseEndpoints(endPoints =>
             {
-                routes.MapHub<Heist.HeistHub>("/heistHub");
-                routes.MapHub<Cakery.CakeryHub>("/cakeryHub");
+                endPoints.MapHub<Heist.HeistHub>("/heistHub");
+                endPoints.MapHub<Cakery.CakeryHub>("/cakeryHub");
             });
 
             app.UseMvc();
