@@ -8,15 +8,15 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/heistHub").build()
 
 // Start button clicked
 document.getElementById("startbutton").addEventListener("click", function (event) {
-    var betrayalReward = Number(document.getElementById("betrayalreward").value);
-    var minGameLength = Number(document.getElementById("mingamelength").value);
-    var maxGameLength = Number(document.getElementById("maxgamelength").value);
-    var minHeistSize = Number(document.getElementById("minheistsize").value);
-    var maxHeistSize = Number(document.getElementById("maxheistsize").value);
-    var snitchBlackmailWindow = Number(document.getElementById("snitchblackmailwindow").value);
-    var blackmailRewardPercentage = Number(document.getElementById("blackmailrewardpercentage").value);
-    var networthFudgePercentage = Number(document.getElementById("networthfudgepercentage").value);
-    var jailFinePercentage = Number(document.getElementById("jailfinepercentage").value);
+    var betrayalReward = document.getElementById("betrayalreward").value;
+    var minGameLength = document.getElementById("mingamelength").value;
+    var maxGameLength = document.getElementById("maxgamelength").value;
+    var minHeistSize = document.getElementById("minheistsize").value;
+    var maxHeistSize = document.getElementById("maxheistsize").value;
+    var snitchBlackmailWindow = document.getElementById("snitchblackmailwindow").value;
+    var blackmailRewardPercentage = document.getElementById("blackmailrewardpercentage").value;
+    var networthFudgePercentage = document.getElementById("networthfudgepercentage").value;
+    var jailFinePercentage = document.getElementById("jailfinepercentage").value;
     connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, minGameLength, maxHeistSize, minHeistSize, snitchBlackmailWindow, networthFudgePercentage, blackmailRewardPercentage, jailFinePercentage).catch(function (err) {
         return console.error(err.toString());
     });
