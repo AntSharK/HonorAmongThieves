@@ -13,6 +13,10 @@
     <None Remove="Categories\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="5.0.10" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <ProjectReference Include="..\Cakery\Cakery.csproj" />

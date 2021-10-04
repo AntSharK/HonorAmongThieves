@@ -30,7 +30,7 @@ namespace HonorAmongThieves
 
             services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddSignalR();
+            services.AddSignalR().AddNewtonsoftJsonProtocol();
             services.AddSingleton<Heist.GameLogic.HeistGame>();
             services.AddSingleton<Cakery.GameLogic.CakeryGame>();
         }
