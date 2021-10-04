@@ -47,10 +47,11 @@ namespace HonorAmongThieves
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseSignalR(routes =>
+            app.UseRouting();
+            app.UseEndpoints(endPoints =>
             {
-                routes.MapHub<Heist.HeistHub>("/heistHub");
-                routes.MapHub<Cakery.CakeryHub>("/cakeryHub");
+                endPoints.MapHub<Heist.HeistHub>("/heistHub");
+                endPoints.MapHub<Cakery.CakeryHub>("/cakeryHub");
             });
 
             app.UseMvc();
