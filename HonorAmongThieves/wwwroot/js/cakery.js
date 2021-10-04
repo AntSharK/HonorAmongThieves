@@ -21,10 +21,10 @@ var gameState = {
 }
 
 document.getElementById("startbutton").addEventListener("click", function (event) {
-    var gamelength = document.getElementById("gamelength").value;
-    var startingcash = document.getElementById("startingcash").value;
-    var annualallowance = document.getElementById("annualallowance").value;
-    var upgradeallowance = document.getElementById("upgradeallowance").value;
+    var gamelength = Number(document.getElementById("gamelength").value);
+    var startingcash = Number(document.getElementById("startingcash").value);
+    var annualallowance = Number(document.getElementById("annualallowance").value);
+    var upgradeallowance = Number(document.getElementById("upgradeallowance").value);
     connection.invoke("StartRoom", roomId, gamelength, startingcash, annualallowance, upgradeallowance).catch(function (err) {
         return console.error(err.toString());
     });

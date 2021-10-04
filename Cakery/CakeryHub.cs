@@ -81,7 +81,7 @@ namespace HonorAmongThieves.Cakery
         }
 
         // Updates everyone in the room for the next round
-        public async Task UpdateRoom_NextRound(CakeryRoom room)
+        private async Task UpdateRoom_NextRound(CakeryRoom room)
         {
             // All calculations for costs should be done by now
             foreach (var player in room.Players.Values)
