@@ -1,26 +1,39 @@
 ﻿"use strict";
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/heistHub").build();
-var userName;
-var roomId;
 
-var reconnecting = true;
+// ---------------------------
+// ----- STATE: PRE-GAME -----
+// ---------------------------
 
-connection.on("ShowError", function (errorMessage) {
-    window.alert(errorMessage);
+// Start button clicked
+document.getElementById("startbutton").addEventListener("click", function (event) {
+    var betrayalReward = document.getElementById("betrayalreward").value;
+    var minGameLength = document.getElementById("mingamelength").value;
+    var maxGameLength = document.getElementById("maxgamelength").value;
+    var minHeistSize = document.getElementById("minheistsize").value;
+    var maxHeistSize = document.getElementById("maxheistsize").value;
+    var snitchBlackmailWindow = document.getElementById("snitchblackmailwindow").value;
+    var blackmailRewardPercentage = document.getElementById("blackmailrewardpercentage").value;
+    var networthFudgePercentage = document.getElementById("networthfudgepercentage").value;
+    var jailFinePercentage = document.getElementById("jailfinepercentage").value;
+    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, minGameLength, maxHeistSize, minHeistSize, snitchBlackmailWindow, networthFudgePercentage, blackmailRewardPercentage, jailFinePercentage).catch(function (err) {
+        return console.error(err.toString());
+    });
+    document.getElementById("startButtonDiv").style.display = "none";
+    event.preventDefault();
+});
+
+document.getElementById("addbotbutton").addEventListener("click", function (event) {
+    connection.invoke("AddBot", roomId).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
 });
 
 // -------------------------
 // ----- STATE: LOBBY ------
 // -------------------------
-document.getElementById("createroombutton").addEventListener("click", function (event) {
-    var userNameIn = document.getElementById("username").value;
-
-    connection.invoke("CreateRoom", userNameIn).catch(function (err) {
-        return console.error(err.toString());
-    });
-    event.preventDefault();
-});
 
 connection.on("UpdateHeistStatus", function (title, statusMessage, showOkayButton) {
     var elements = document.getElementsByClassName("state");
@@ -51,92 +64,6 @@ connection.on("UpdateHeistStatus", function (title, statusMessage, showOkayButto
 document.getElementById("okaybutton").addEventListener("click", function (event) {
     document.getElementById("okaybutton").style.display = "none";
     connection.invoke("OkayButton", roomId, userName).catch(function (err) {
-        return console.error(err.toString());
-    });
-    event.preventDefault();
-});
-
-//connection.on("OkayButton_Acknowledge", function () {
-//    document.getElementById("okaybutton").style.display = "none";
-//});
-
-// ---------------------------
-// ----- STATE: PRE-GAME -----
-// ---------------------------
-connection.on("JoinRoom_ChangeState", function (roomJoined, userJoined) {
-    // Hide the start button by default
-    var startButton = document.getElementById("startButtonDiv");
-    startButton.style.display = "none";
-
-    // This event is only sent to the caller on joining a room
-    userName = userJoined;
-    roomId = roomJoined;
-
-    // Write to session storage
-    sessionStorage.setItem("username", userName);
-    sessionStorage.setItem("roomid", roomId);
-
-    var elements = document.getElementsByClassName("state");
-    for (var i = 0; i < elements.length; i++) {
-        elements[i].style.display = "none";
-    }
-
-    document.getElementById("pageName").textContent = "LOBBY: " + roomJoined;
-    document.getElementById("startLobby").style.display = "block";    
-});
-
-connection.on("JoinRoom_TakeOverSession", function (roomJoined, userJoined) {
-    userName = userJoined;
-    roomId = roomJoined;
-})
-
-connection.on("JoinRoom_UpdateState", function (playersConcat, userJoined) {
-    var playerList = document.getElementById("lobbyList");
-    playerList.innerHTML = "";
-    var players = playersConcat.split("|");
-    for (let i = 0; i < players.length; i++) {
-        var li = document.createElement("li");
-        li.textContent = players[i];
-        playerList.appendChild(li);
-    }
-
-    document.getElementById("lobbyplayercount").textContent = players.length + "/20";
-});
-
-document.getElementById("joinroombutton").addEventListener("click", function (event) {
-    var userNameIn = document.getElementById("username").value;
-    var roomIdIn = document.getElementById("roomid").value;
-
-    connection.invoke("JoinRoom", roomIdIn, userNameIn).catch(function (err) {
-        return console.error(err.toString());
-    });
-    event.preventDefault();
-});
-
-// Start button
-connection.on("JoinRoom_CreateStartButton", function () {
-    var startButton = document.getElementById("startButtonDiv");
-    startButton.style.display = "block";
-});
-
-document.getElementById("startbutton").addEventListener("click", function (event) {
-    var betrayalReward = document.getElementById("betrayalreward").value;
-    var minGameLength = document.getElementById("mingamelength").value;
-    var maxGameLength = document.getElementById("maxgamelength").value;
-    var minHeistSize = document.getElementById("minheistsize").value;
-    var maxHeistSize = document.getElementById("maxheistsize").value;
-    var snitchBlackmailWindow = document.getElementById("snitchblackmailwindow").value;
-    var blackmailRewardPercentage = document.getElementById("blackmailrewardpercentage").value;
-    var networthFudgePercentage = document.getElementById("networthfudgepercentage").value;
-    var jailFinePercentage = document.getElementById("jailfinepercentage").value;
-    connection.invoke("StartRoom", roomId, betrayalReward, maxGameLength, minGameLength, maxHeistSize, minHeistSize, snitchBlackmailWindow, networthFudgePercentage, blackmailRewardPercentage, jailFinePercentage).catch(function (err) {
-        return console.error(err.toString());
-    });
-    event.preventDefault();
-});
-
-document.getElementById("addbotbutton").addEventListener("click", function (event) {
-    connection.invoke("AddBot", roomId).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
@@ -351,50 +278,3 @@ connection.on("EndGame_Broadcast", function (year, leaderboarddata) {
     sessionStorage.removeItem("username");
     sessionStorage.removeItem("roomid");
 });
-
-connection.start().catch(function (err) {
-    return console.error(err.toString());
-});
-
-connection.on("FreshConnection", function () {
-    var sessionUserName = sessionStorage.getItem("username");
-    var sessionRoomId = sessionStorage.getItem("roomid");
-    //reconnecting = false;
-
-    if (sessionUserName != null && sessionRoomId != null) {
-        // Resume the session
-        userName = sessionUserName;
-        roomId = sessionRoomId;
-
-        connection.invoke("ResumeSession", roomId, userName).catch(function (err) {
-            return console.error(err.toString());
-        });
-    }
-});
-
-connection.on("ClearState", function () {
-    sessionStorage.removeItem("username");
-    sessionStorage.removeItem("roomid");
-})
-
-var conditionalReload = function () {
-    var sessionUserName = sessionStorage.getItem("username");
-    var sessionRoomId = sessionStorage.getItem("roomid");
-
-    if (sessionUserName != null && sessionRoomId != null) {
-        //reconnecting = true;
-        var elements = document.getElementsByClassName("state");
-        for (var i = 0; i < elements.length; i++) {
-            elements[i].style.display = "none";
-        }
-
-        document.getElementById("pageName").textContent = "RECONNECTING...";
-        //setInterval(function () {
-        //    if (reconnecting === true) {
-        //        window.location.reload()
-        //    }
-        //}, 10000)
-    }
-}
-
-window.onload = conditionalReload;

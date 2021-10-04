@@ -1,57 +1,9 @@
 ﻿@page
+@model HonorAmongThieves.Pages.HeistModel
 <title>HEIST</title>
 <div class="container">
-    <div id="pageName" class="display-4" style="text-decoration:underline; text-align:center">JOIN A GAME</div>
-    <div class="state" id="startLobby" style="display:none">
-        <h3><u style="text-align:center">PLAYERS IN GAME</u></h3>
-        <div id="lobbyplayercount" class="h4"></div>
-        <ul id="lobbyList" class="h4"></ul>
-
-        <div id="startButtonDiv" style="display:none" class="h5">
-            At least 2 players are required to start the game.<br />
-            Make sure there are no players who are in the lobby but cannot see the game!!.<br />
-            <br />
-            <div style="text-align:center">
-                <input type="button" id="startbutton" value="BEGIN GAME" class="display-2" /><br /><br />
-                <input type="button" id="addbotbutton" value="ADD BOT" class="display-4" />
-                <br />
-                <br />
-                <div class="display-4">
-                    <u>GAME PARAMETERS</u><br />
-                    Betrayal Reward: <input type="number" step="1" min="0" max="99999" value="60" id="betrayalreward" /><br />
-                    Min Game Length: <input type="number" step="1" min="1" max="999" value="5" id="mingamelength" /><br />
-                    Max Game Length: <input type="number" step="1" min="3" max="999" value="10" id="maxgamelength" /><br />
-                    Min Heist Size: <input type="number" step="1" min="2" max="99" value="3" id="minheistsize" /><br />
-                    Max Heist Size: <input type="number" step="1" min="2" max="99" value="5" id="maxheistsize" /><br />
-                    Blackmail Window: <input type="number" step="1" min="-1" max="99" value="4" id="snitchblackmailwindow" /><br />
-                    Blackmail Reward %: <input type="number" step="1" min="1" max="99" value="60" id="blackmailrewardpercentage" /><br />
-                    Networth Fudge %: <input type="number" step="1" min="0" max="99" value="10" id="networthfudgepercentage" /><br />
-                    Jail Fine %: <input type="number" step="1" min="0" max="99" value="20" id="jailfinepercentage" /><br />
-                </div>
-            </div>
-            <br />
-        </div>
-    </div>
-    <div class="row">&nbsp;</div>
-
-    <div class="state" id="joinroom">
-        <div class="display-4" style="text-align:center">
-            Name: <input type="text" id="username" maxlength="10" size="10" oninput="this.value = this.value.toUpperCase()" /><br />
-            Room ID: <input type="text" id="roomid" maxlength="5" size="5" oninput="this.value = this.value.toUpperCase()" /><br /><br />
-            <input type="button" class="display-1" id="joinroombutton" value="JOIN" />
-        </div>
-        <h4>
-            <br />
-            Names are unique per room.<br />
-            Only letters and numbers allowed in username. Username cannot be longer than 10 letters.<br />
-            You need a username to create a room.<br />
-            Room ID is automatically generated when you create a room. <br />
-        </h4>
-        <hr />
-        <div style="text-align:center" class="display-1">
-            <input type="button" id="createroombutton" value="CREATE" />
-        </div>
-    </div>
+    @await Html.PartialAsync("_GameLobby")
+    @await Html.PartialAsync("Lobbies/_HeistLobby", Model)
 
     <div class="state" id="gamestart" style="display:none">
         <div class="state" id="heiststatus" style="display:none">
@@ -135,6 +87,7 @@
 
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/heist.js"></script>
+<script src="~/js/gamelobby.js"></script>
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>

@@ -1,50 +1,9 @@
 ﻿@page
+@model HonorAmongThieves.Pages.CakeryModel
 <title>CAKERY</title>
 <div class="container">
-    <div id="pageName" class="display-4" style="text-decoration:underline; text-align:center">JOIN A GAME</div>
-
-    <!------ JOIN/CREATE MENU --------->
-    <div class="state" id="joinroom">
-        <div class="display-4" style="text-align:center">
-            Bakery Name: <input type="text" id="username" maxlength="10" size="10" oninput="this.value = this.value.toUpperCase()" /><br />
-            Room ID: <input type="text" id="roomid" maxlength="5" size="5" oninput="this.value = this.value.toUpperCase()" /><br /><br />
-            <input type="button" class="display-1" id="joinroombutton" value="JOIN" />
-        </div>
-        <h4>
-            <br />
-            Names are unique per room.<br />
-            Only letters and numbers allowed in username. Bakery name cannot be longer than 10 letters.<br />
-            You need a bakery name to create a room.<br />
-            Room ID is automatically generated when you create a room. <br />
-        </h4>
-        <hr />
-        <div style="text-align:center" class="display-1">
-            <input type="button" id="createroombutton" value="CREATE" />
-        </div>
-    </div>
-
-    <!------- GAME START LOBBY -------->
-    <div class="state" id="startLobby" style="display:none">
-        <h3><u style="text-align:center">PLAYERS IN GAME</u></h3>
-        <div id="lobbyplayercount" class="h4"></div>
-        <ul id="lobbyList" class="h4"></ul>
-
-        <div id="startButtonDiv" style="display:none" class="h5">
-            <br />
-            <div style="text-align:center">
-                <input type="button" id="startbutton" value="BEGIN GAME" class="display-2" /><br /><br />
-                <br />
-                <br />
-                <div class="display-4">
-                    <u>GAME PARAMETERS</u><br />
-                    Starting $$: <input type="number" step="1" min="0" max="9999999" value="1200" id="startingcash" /><br />
-                    Allowance $$: <input type="number" step="1" min="0" max="9999999" value="200" id="annualallowance" /><br />
-                    Upgrade $$: <input type="number" step="1" min="0" max="9999999" value="10000" id="upgradeallowance" /><br />
-                    Game Length: <input type="number" step="1" min="2" max="999" value="6" id="gamelength" /><br />
-                </div>
-            </div>
-        </div>
-    </div>
+    @await Html.PartialAsync("_GameLobby")
+    @await Html.PartialAsync("Lobbies/_CakeryLobby", Model)
 
     <!----- COMMON HEADER FOR MENU ----->
     <div style="text-align:center; display:none" class="state commonmenubutton display-3">
@@ -369,6 +328,7 @@
 
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/cakery.js"></script>
+    <script src="~/js/gamelobby.js"></script>
 </div>
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">

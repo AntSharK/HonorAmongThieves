@@ -17,6 +17,11 @@
         public string Name { get; protected set; }
 
         /// <summary>
+        /// Whether this player is a bot
+        /// </summary>
+        public bool IsBot { get; set; } = false;
+
+        /// <summary>
         /// Creates an instance of the player
         /// </summary>
         /// <param name="playerName">The name of the player</param>

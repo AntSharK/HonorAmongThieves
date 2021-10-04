@@ -1,0 +1,26 @@
+﻿<div id="pageName" class="display-4" style="text-decoration:underline; text-align:center">CREATE/JOIN GAME</div>
+<div class="state" id="startLobby" style="display:none">
+    <h3><u style="text-align:center">PLAYERS IN GAME</u></h3>
+    <div id="lobbyplayercount" class="h4"></div>
+    <ul id="lobbyList" class="h4"></ul>
+</div>
+<div class="row">&nbsp;</div>
+
+<div class="state" id="joinroom">
+    <div class="display-4" style="text-align:center">
+        Username - Max 10 letters or numbers
+        <input type="text" id="username" maxlength="10" size="10" oninput="this.value = this.value.toUpperCase()" /><br />
+    </div>
+    <hr />
+    <div class="display-4" style="text-align:center">
+        Room ID: <input type="text" id="roomid" maxlength="5" size="5" oninput="this.value = this.value.toUpperCase()" /><br />
+        <input type="button" class="display-1" id="joinroombutton" value="JOIN" />
+    </div>
+    <hr />
+    <div style="text-align:center" class="display-4">
+        Room ID automatically generated on creation
+    </div>
+    <div style="text-align:center" class="display-1">
+        <input type="button" id="createroombutton" value="CREATE" />
+    </div>
+</div>
